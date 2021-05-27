@@ -68,49 +68,49 @@ export const Cart = () => {
     dispatch(fetchtoppings());
   }, []);
 
-  useEffect(() => {
-    let array = []
-    if (cartItems.lengh !== 0) {
-      //cartItemの情報と一致する商品の情報を取得する
-      cartItems.forEach(cartItem => {
-        items.forEach(item => {
-          let itemData = item
-          if (cartItem.itemId === item.id) {
-            itemData.itemSize = cartItem.itemSize
-            itemData.itemNum = cartItem.itemNum
-            //cartItemにトッピングの情報が存在した場合
-//ここの処理がなんかおかしいーーーーーーーーーーーーーーーーー
-            if (cartItem.toppings) {
-              //カート内のトッピングをひとつづつ取り出して
-              cartItem.toppings.forEach(cartTopping => {
-                //トッピングデータもひとつづつ取り出して
-                toppings.forEach(toppingData => {
-                  //データとカート内のトッピングが同じだった時
-                  if (cartTopping.toppingId === toppingData.id) {
-                    //カート内のトッピングのサイズをコピートッピングに代入
-                    toppingData.size = cartTopping.toppingSize
-                    if (itemData.toppings) {
-                      itemData.toppings.forEach(topping => {
-                        if (topping.id !== toppingData.id) {
-                          itemData.toppings.push(toppingData)
-                        }
-                      })
-                    } else {
-                      itemData.toppings = [toppingData]
-                    }
-                  }
-                })
-              })
-            }
-            array.push(itemData) 
-          }
-        })
-      })
-    }
-    setCartArray(array)
-  }, [toppings, items, cartItems])
-  console.log(cartArray)
-  //vrtdfvd
+//   useEffect(() => {
+//     let array = []
+//     if (cartItems.lengh !== 0) {
+//       //cartItemの情報と一致する商品の情報を取得する
+//       cartItems.forEach(cartItem => {
+//         items.forEach(item => {
+//           let itemData = item
+//           if (cartItem.itemId === item.id) {
+//             itemData.itemSize = cartItem.itemSize
+//             itemData.itemNum = cartItem.itemNum
+//             //cartItemにトッピングの情報が存在した場合
+// //ここの処理がなんかおかしいーーーーーーーーーーーーーーーーー
+//             if (cartItem.toppings) {
+//               //カート内のトッピングをひとつづつ取り出して
+//               cartItem.toppings.forEach(cartTopping => {
+//                 //トッピングデータもひとつづつ取り出して
+//                 toppings.forEach(toppingData => {
+//                   //データとカート内のトッピングが同じだった時
+//                   if (cartTopping.toppingId === toppingData.id) {
+//                     //カート内のトッピングのサイズをコピートッピングに代入
+//                     toppingData.size = cartTopping.toppingSize
+//                     if (itemData.toppings) {
+//                       itemData.toppings.forEach(topping => {
+//                         if (topping.id !== toppingData.id) {
+//                           itemData.toppings.push(toppingData)
+//                         }
+//                       })
+//                     } else {
+//                       itemData.toppings = [toppingData]
+//                     }
+//                   }
+//                 })
+//               })
+//             }
+//             array.push(itemData) 
+//           }
+//         })
+//       })
+//     }
+//     setCartArray(array)
+//   }, [toppings, items, cartItems])
+//   console.log(cartArray)
+//   //vrtdfvd
   return (
     <div>
       <h1>ショッピングカート</h1>
@@ -129,30 +129,35 @@ export const Cart = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {/* {cartItems.map((item, index) => (
+                {cartItems.map((item, index) => (
                   <TableRow key={index}>
                     <TableCell align="center">{item.img}</TableCell>
-                    <TableCell align="center">{todo.person}</TableCell>
                     <TableCell align="center">
-                      <Checkbox
-                        color="primary"
-                        type="checkbox"
-                        onChange={() => {
-                          dispatch(doneTodo(index));
-                        }}
-                        checked={todo.flg}
-                      />
-                      <IconButton
-                        variant="contained"
-                        onClick={() => {
-                          dispatch(deleteTodo(index));
-                        }}
-                      >
-                        <Delete />
-                      </IconButton>
+                      {item.toppings ? (
+                        <ul>
+                          {item.toppings.map((topping, index) =>
+                            toppings.map(
+                              (top) =>
+                                topping.toppingId === top.id && (
+                                  <li key={index}>
+                                    <div>{top.name}</div>
+                                    {topping.toppingSize === 0 && (
+                                      <div>{top.mprice}</div>
+                                    )}
+                                    {topping.toppingSize === 1 && (
+                                      <div>{top.lprice}</div>
+                                    )}
+                                  </li>
+                                )
+                            )
+                          )}
+                        </ul>
+                      ) : (
+                          <div>なし</div>
+                      )}
                     </TableCell>
                   </TableRow>
-                ))} */}
+                ))}
               </TableBody>
             </Table>
           </TableContainer>
@@ -160,13 +165,12 @@ export const Cart = () => {
           <h3>内消費税：</h3>
           <Button variant="contained" onClick={() => setShow(true)}>
             注文に進む
-        </Button>
+          </Button>
           {show && <Order />}
         </React.Fragment>
       ) : (
         <div>カートに商品がありません</div>
-      )
-      }
+      )}
     </div>
   );
 };
