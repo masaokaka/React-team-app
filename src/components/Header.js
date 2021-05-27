@@ -43,7 +43,7 @@ export const Header = () => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h4" className={classes.title}>
-            ラクラクカレー
+            <img src="/img/header_logo.png"/>
           </Typography>
           <div>
             <span>ようこそ 〇〇 さん</span>
