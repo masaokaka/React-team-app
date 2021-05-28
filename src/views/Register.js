@@ -29,7 +29,9 @@ export const Register = () => {
       }
       
       const ClearName = (e) => {
-        setName(e.target.value)
+        const nameChecked = e.target.value
+          setName(e.target.value)
+        
       }
 
       const ClearEmail = (e) => {
@@ -93,6 +95,10 @@ export const Register = () => {
       addressValue = address
     }).catch(()=> setAddress('取得に失敗しました'))
   }
+
+  
+
+
 
   
 
