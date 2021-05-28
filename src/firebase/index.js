@@ -8,4 +8,5 @@ firebase.initializeApp(firebaseConfig);
 export const auth = firebase.auth();
 export const db = firebase.firestore();
 export const storage = firebase.storage();
-export const FirebaseTimestamp = firebase.firestore.Timestamp
+export const FirebaseTimestamp = firebase.firestore.Timestamp;
+export const sessionPersistance = firebase.auth.Auth.Persistence.SESSION;
