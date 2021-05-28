@@ -1,4 +1,4 @@
-import { auth, db, sessionPersistance } from "../firebase/index";
+import { db } from "../firebase/index";
 
 export const SIDENAV = "sidenav";
 export const SETUSER = "setuser";
@@ -75,3 +75,30 @@ export const addtopping = (newtoppings) => (dispatch) => {
       });
     });
 };
+
+//カートに商品を追加する処理ーーーーーーーーーーーーーーーーーーーーーーーーーーー
+export const updatecart = (itemInfo, uid) => (dispatch) => {
+  //ログインチェック
+  if (uid) {
+    db.collection(`users/${uid}/order`).doc()
+    dispatch({})
+  } else {
+    dispatch({
+      type: ADDCARTITEMS,
+      cartItems:cartItems  //配列を渡してやる
+    })
+  }
+}
+//カートに商品を新しく作成する処理ーーーーーーーーーーーーーーーーーーーーーーーーーーー
+export const createcart = (cartItems, uid) => (dispatch) => {
+  //ログインチェック
+  if (uid) {
+    db.collection(`users/${uid}/order`).add()
+    dispatch({})
+  } else {
+    dispatch({
+      type: ADDCARTITEMS,
+      cartItems:cartItems //配列を渡してやる
+    })
+  }
+}

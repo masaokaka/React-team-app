@@ -38,17 +38,6 @@ const cartItems = [
     ],
   },
   {
-    id: "2m45ytrhntrgc45",
-    itemId: 16,
-    itemNum: 1,
-    itemSize: 0,
-    toppings: [
-      { toppingId: 5, toppingSize: 1 },
-      { toppingId: 6, toppingSize: 0 },
-      { toppingId: 10, toppingSize: 0 },
-    ],
-  },
-  {
     id: "2mergfertcgc45",
     itemId: 7,
     itemNum: 7,
@@ -60,7 +49,6 @@ export const Cart = () => {
   const [show, setShow] = useState(false);
   const items = useSelector((state) => state.items);
   const toppings = useSelector((state) => state.toppings);
-  const [cartArray, setCartArray] = useState([]);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -68,49 +56,6 @@ export const Cart = () => {
     dispatch(fetchtoppings());
   }, []);
 
-  //   useEffect(() => {
-  //     let array = []
-  //     if (cartItems.lengh !== 0) {
-  //       //cartItemの情報と一致する商品の情報を取得する
-  //       cartItems.forEach(cartItem => {
-  //         items.forEach(item => {
-  //           let itemData = item
-  //           if (cartItem.itemId === item.id) {
-  //             itemData.itemSize = cartItem.itemSize
-  //             itemData.itemNum = cartItem.itemNum
-  //             //cartItemにトッピングの情報が存在した場合
-  // //ここの処理がなんかおかしいーーーーーーーーーーーーーーーーー
-  //             if (cartItem.toppings) {
-  //               //カート内のトッピングをひとつづつ取り出して
-  //               cartItem.toppings.forEach(cartTopping => {
-  //                 //トッピングデータもひとつづつ取り出して
-  //                 toppings.forEach(toppingData => {
-  //                   //データとカート内のトッピングが同じだった時
-  //                   if (cartTopping.toppingId === toppingData.id) {
-  //                     //カート内のトッピングのサイズをコピートッピングに代入
-  //                     toppingData.size = cartTopping.toppingSize
-  //                     if (itemData.toppings) {
-  //                       itemData.toppings.forEach(topping => {
-  //                         if (topping.id !== toppingData.id) {
-  //                           itemData.toppings.push(toppingData)
-  //                         }
-  //                       })
-  //                     } else {
-  //                       itemData.toppings = [toppingData]
-  //                     }
-  //                   }
-  //                 })
-  //               })
-  //             }
-  //             array.push(itemData)
-  //           }
-  //         })
-  //       })
-  //     }
-  //     setCartArray(array)
-  //   }, [toppings, items, cartItems])
-  //   console.log(cartArray)
-  //   //vrtdfvd
   return (
     <div>
       <h1>ショッピングカート</h1>
@@ -123,41 +68,70 @@ export const Cart = () => {
                   <TableCell align="center"></TableCell>
                   <TableCell align="center">商品名</TableCell>
                   <TableCell align="center">価格</TableCell>
-                  <TableCell align="center">トッピング</TableCell>
+                  <TableCell align="center">トッピング、価格(税抜)</TableCell>
                   <TableCell align="center">小計</TableCell>
                   <TableCell align="center"></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {cartItems.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell align="center">{item.img}</TableCell>
-                    <TableCell align="center">
-                      {item.toppings ? (
-                        <ul>
-                          {item.toppings.map((topping, index) =>
-                            toppings.map(
-                              (top) =>
-                                topping.toppingId === top.id && (
-                                  <li key={index}>
-                                    <div>{top.name}</div>
-                                    {topping.toppingSize === 0 && (
-                                      <div>{top.mprice}</div>
-                                    )}
-                                    {topping.toppingSize === 1 && (
-                                      <div>{top.lprice}</div>
-                                    )}
-                                  </li>
-                                )
-                            )
+                {cartItems.map((item, index) =>
+                  items.map(
+                    (it) =>
+                      it.id === item.itemId && (
+                        <TableRow key={index}>
+                          {/* 画像 */}
+                          <TableCell align="center">
+                            <img
+                              src={it.img}
+                              width="180"
+                              height="140"
+                              alt="カレー"
+                            />
+                          </TableCell>
+                          {/* 名前 */}
+                          <TableCell align="center">{it.name}</TableCell>
+                          {/* 価格 */}
+                          {item.itemSize === 0 ? (
+                            <TableCell align="center">
+                              {it.mprice}円(Mサイズ)
+                            </TableCell>
+                          ) : (
+                            <TableCell align="center">
+                              {it.lprice}円(Lサイズ)
+                            </TableCell>
                           )}
-                        </ul>
-                      ) : (
-                        <div>なし</div>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                          {/* トッピング */}
+                          <TableCell align="center">
+                            {item.toppings ? (
+                              <div>
+                                {item.toppings.map((topping, index) =>
+                                  toppings.map(
+                                    (top) =>
+                                      topping.toppingId === top.id && (
+                                        <div key={index}>
+                                          <span>{top.name}：</span>
+                                          {topping.toppingSize === 0 ? (
+                                            <span>{top.mprice}円</span>
+                                          ) : (
+                                            <span>{top.lprice}円</span>
+                                          )}
+                                        </div>
+                                      )
+                                  )
+                                )}
+                              </div>
+                            ) : (
+                              <div>なし</div>
+                            )}
+                          </TableCell>
+                          {/* 削除ボタン */}
+                          <TableCell>
+                            <Button variant="contained">削除</Button>
+                          </TableCell>
+                        </TableRow>
+                      )
+                  )
+                )}
               </TableBody>
             </Table>
           </TableContainer>
