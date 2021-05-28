@@ -1,10 +1,9 @@
 import React, { useState, }  from "react";
 
 
-export const Search = () => {
+export const Search = (props) => {
   
   const [keyword, setKeyword] = useState();
-
 
   return (
     <React.Fragment>
@@ -23,7 +22,7 @@ export const Search = () => {
 								</div>
 							</div>
 							<div class="text-center">
-								<button type="submit" value="検索" class="btn btn-primary">検索</button>
+								<button type="submit" value="検索" class="btn btn-primary" onClick={() => props.setItemsData(props.itemsData.name).fetch(keyword)} >検索</button>
 								<button type="reset" value="クリア" class="btn btn-default" onClick={()=>setKeyword()}>クリア</button>
 							</div>
 						</form>
