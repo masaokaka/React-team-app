@@ -1,8 +1,13 @@
+import React from "react";
+import { Search } from "../components/home/Search";
+import { Items } from "../components/home/Items";
+
 export const Home = () => {
+
   return (
-    <div>
-      <p>ホーム画面です。</p>
-      <img src="/img/1.jpg"/>
-    </div>
+      <React.Fragment>
+        <Search />
+        <Items />
+    </React.Fragment>
   );
 };
