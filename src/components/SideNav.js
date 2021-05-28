@@ -23,7 +23,7 @@ const useStyles = makeStyles({
 });
 
 export const SideNav = () => {
-  const toggle = useSelector(state => state.sidenav.navOnOff);
+  const toggle = useSelector((state) => state.sidenav.navOnOff);
   const dispatch = useDispatch();
   return (
     <React.Fragment>
@@ -39,7 +39,6 @@ export const SideNav = () => {
     </React.Fragment>
   );
 };
-
 
 const SideNavContent = () => {
   const classes = useStyles();
@@ -80,4 +79,3 @@ const SideNavContent = () => {
     </div>
   );
 };
-
