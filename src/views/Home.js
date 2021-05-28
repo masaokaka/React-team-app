@@ -13,7 +13,6 @@ export const Home = () => {
   useEffect(() => { 
     dispatch(fetchitems())
   }, [])
-  console.log(items)
 
   useEffect(() => { 
     setItemsData(items)
