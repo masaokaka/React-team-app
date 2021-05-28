@@ -163,7 +163,7 @@ export const Register = () => {
       //ユーザー登録処理（エラー文の実装の余地あり）
       const handleRegist = (e) =>{
         console.log(2)
-        if(nameFlag && emailFlag){
+        if(nameFlag && emailFlag && zipFlag && addressFlag &&tellFlag && passwordFlag && confirmFlag){
           console.log(3)
           let listElements = Array.from(e.target.previousElementSibling.getElementsByTagName('input'));
           console.log(listElements)
