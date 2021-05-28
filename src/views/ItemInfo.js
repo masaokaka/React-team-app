@@ -1,46 +1,87 @@
-import Button from '@material-ui/core/Button'
-import {useSelector,useDispatch} from 'react-redux'
-import {updatecart,createcart} from '../actions'
+import { useEffect } from "react";
+import { useHistory } from "react-router-dom";
+import Button from "@material-ui/core/Button";
+import { useSelector, useDispatch } from "react-redux";
+import { createcart, fetchcart, updatecart } from "../actions";
+
+//ランダム文字生成
+const getUniqueStr = () => {
+  return (
+    new Date().getTime().toString(16) +
+    Math.floor(1000 * Math.random()).toString(16)
+  );
+};
+
 export const ItemInfo = () => {
-  const user = useSelector(state => state.user);
-  const cartItems = useSelector(state=>state.cartitems)//配列
-  const dispatch = useDispatch()
+  const user = useSelector((state) => state.user);
+  const cartInfo = useSelector((state) => state.cartinfo); //オブジェクト
+  const dispatch = useDispatch();
+  const history = useHistory();
+
   //仮データーーーーーーーーーーーーー
   //商品詳細から追加される予定の形
   const item = {
-    // id: "2m45y56etgc45",
-    itemId: 1,
-    itemNum: 3,
-    itemSize: 0,
+    itemId: 18,
+    itemNum: 6,
+    itemSize: 1,
     toppings: [
-      { toppingId: 3, toppingSize: 1 },
-      { toppingId: 6, toppingSize: 0 },
-    ]
-  },
-  //----------------------------
+      { toppingId: 26, toppingSize: 0 },
+      { toppingId: 17, toppingSize: 1 },
+    ],
+  };
+
+  useEffect(() => {
+    if (user) {
+      dispatch(fetchcart(user.uid));
+    }
+  }, [user]);
+
+  //カートにアイテムを追加する処理
   const doAddCart = () => {
+    item.id = getUniqueStr();
     //ログイン確認してログインしていたらuidを渡す
     let uid;
     if (user) {
-      uid = user.uid
+      uid = user.uid;
     } else {
-      uid = null
+      uid = null;
     }
     //カートにアイテムが入っていたら中身も一緒に渡す。
-    if (cartItems) {
-      dispatch(updatecart([...cartItems,item],uid))
-    //入ってなかったら配列に格納して渡す。
+    if (cartInfo) {
+      dispatch(updatecart([...cartInfo.itemInfo, item], uid, cartInfo.id));
+      history.push("/cart");
+      //入ってなかったら配列に格納して渡す。
     } else {
-      let order = {
+      let cartInfo = {
         itemInfo: [item],
         status: 0, //カート(あとで定数に置き換える)
-        user
-      }
-      dispatch(createcart(order,uid))
+        userId: uid,
+      };
+      dispatch(createcart(cartInfo, uid));
+      history.push("/cart");
     }
-  }
+  };
 
   return (
-    <Button onClick={doAddCart}>カートに入れる</Button>
+    <div>
+      {cartInfo !== null ? (
+        cartInfo.itemInfo.length !== 0 && (
+          <div>
+            {cartInfo.itemInfo.map((item, index) => (
+              <div key={index}>
+                <p>id:{item.itemId}</p>
+                <p>個数：{item.itemNum}</p>
+              </div>
+            ))}
+          </div>
+        )
+      ) : (
+        <div>アイテムないよ</div>
+      )}
+      <h4>仮で作成↓押すと定数に入ったアイテムが登録される。</h4>
+      <Button onClick={doAddCart} variant="contained">
+        カートに入れる
+      </Button>
+    </div>
   );
 };
