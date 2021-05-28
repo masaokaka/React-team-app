@@ -12,6 +12,8 @@ import { Cart } from "./views/Cart";
 import { OrderHistory } from "./views/OrderHistory";
 import { OrderComp } from "./views/OrderComp";
 import { ItemInfo } from "./views/ItemInfo";
+import { Admin } from "./views/Admin";
+import { OrderHistory } from "./views/OrderHistory";
 
 import Container from "@material-ui/core/Container";
 
@@ -29,7 +31,8 @@ function App() {
             <Route path="/login" exact component={Login} />
             <Route path="/cart" exact component={Cart} />
             <Route path="/orderhistory" exact component={OrderHistory} />
-            <Route path="/orderComp" exact component={OrderComp} />
+            <Route path="/ordercomp" exact component={OrderHistory} />
+            <Route path="/admin" exact component={Admin} />
           </Switch>
         </Container>
         <Footer />
