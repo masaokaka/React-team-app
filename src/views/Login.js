@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { auth } from '../firebase/index';
+import { Link } from 'react-router-dom'
 
 export const Login = () => {
   const [mail,setMail] = useState()
@@ -18,6 +19,7 @@ export const Login = () => {
       <input type="email" onChange={(e) => setMail(e.target.value)}/>
       <input type="password" onChange={(e) => setPass(e.target.value)}/>
       <button onClick={submit}>登録</button>
+      <Link to="/register" >ユーザー登録はこちら</Link>
     </div>
   );
 };
