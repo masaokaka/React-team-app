@@ -9,5 +9,5 @@ export const Home = () => {
         <Search />
         <Items />
     </React.Fragment>
-  );
+  )
 };
