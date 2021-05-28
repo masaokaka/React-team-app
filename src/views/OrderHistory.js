@@ -3,13 +3,17 @@ import { Link } from "react-router-dom";
 import { db } from "../firebase";
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@material-ui/core";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchitems, fetchtoppings } from "../actions";
 
 const useStyles = makeStyles({
   table: {
@@ -21,27 +25,32 @@ function createData(name, calories, fat, carbs, protein) {
   return { name, calories, fat, carbs, protein };
 }
 
-const rows = [
+/* const rows = [
   createData("カツカレー", "Mサイズ/800円/1個", "オニオン/200円", "1,100円"),
   createData("チキンカレー", "Mサイズ/800円/1個", "オニオン/200円", "1,100円"),
   createData("サグカレー", "Mサイズ/800円/1個", "オニオン/200円", "1,100円"),
-];
+]; */
 
 export const OrderHistory = () => {
-  useEffect(() => {
-    console.log("useEffect!!");
-  }, []);
   const classes = useStyles();
-  /*   const checkbtn = () => {
-    db.collection("users")
-      .get()
+  const items = useSelector((state) => state.items);
+  const toppings = useSelector((state) => state.toppings);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    db.collection("admin/HdPaXiBx3VTswieJGJlFxLYOs092/item")
+      .where("id", "==", "1")
       .then((res) => {
         console.log(res);
       });
-  }; */
+    dispatch(fetchitems());
+    dispatch(fetchtoppings());
+  }, []);
+
   return (
     <div align="center">
       <h2>注文履歴一覧</h2>
+      <button onClick={() => console.log(items)}>アイテム取得確認</button>
+      <button onClick={() => console.log(toppings)}>アイテム取得確認</button>
       <TableContainer component={Paper}>
         <Table
           className={classes.table}
@@ -62,16 +71,16 @@ export const OrderHistory = () => {
                 2021年5月27日(木)
               </TableCell>
             </TableRow>
-            {rows.map((row) => (
-              <TableRow key={row.name}>
-                <TableCell component="th" scope="row" align="center">
-                  <img src="/img/1.jpg" height="120" />
+            {items.map((items) => (
+              <TableRow key={items.id}>
+                <TableCell component="th" scope="items" align="center">
+                  <img src={items.img} height="120" />
                   <br />
-                  {row.name}
+                  {items.name}
                 </TableCell>
-                <TableCell align="center">{row.calories}</TableCell>
-                <TableCell align="center">{row.fat}</TableCell>
-                <TableCell align="center">{row.carbs}</TableCell>
+                <TableCell align="center">{items.lprice}</TableCell>
+                <TableCell align="center">{items.mprice}</TableCell>
+                <TableCell align="center">{items.lprice}</TableCell>
               </TableRow>
             ))}
             <TableRow>

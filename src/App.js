@@ -9,7 +9,6 @@ import { Home } from "./views/Home";
 import { Register } from "./views/Register";
 import { Login } from "./views/Login";
 import { Cart } from "./views/Cart";
-import { OrderHistory } from "./views/OrderHistory";
 import { OrderComp } from "./views/OrderComp";
 import { ItemInfo } from "./views/ItemInfo";
 import { Admin } from "./views/Admin";
