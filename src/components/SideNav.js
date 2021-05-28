@@ -12,6 +12,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import MailIcon from "@material-ui/icons/Mail";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import HistoryIcon from "@material-ui/icons/History";
+import AdminIcon from "@material-ui/icons/SupervisorAccount";
 
 const useStyles = makeStyles({
   list: {
@@ -50,6 +51,7 @@ const SideNavContent = () => {
     { text: "ホーム", icon: <MailIcon />, link: "/" },
     { text: "カート", icon: <ShoppingCartIcon />, link: "/cart" },
     { text: "購入履歴", icon: <HistoryIcon />, link: "/orderhistory" },
+    { text: "管理画面", icon: <AdminIcon />, link: "/admin" },
   ];
   const link = (link) => {
     dispatch(sidenav(false));

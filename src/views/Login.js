@@ -12,6 +12,7 @@ export const Login = () => {
       setUid(user.user.uid)
     })
   }
+  
   return (
     <div>
       <p>{ uid }</p>

@@ -1,5 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom"
 import { sidenav } from "../actions";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -28,6 +29,8 @@ const useStyles = makeStyles((theme) => ({
 export const Header = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
+  
 
   return (
     <div className={classes.root}>
@@ -43,20 +46,27 @@ export const Header = () => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h4" className={classes.title}>
-            <img src="/img/header_logo.png"/>
+            <img src="/img/header_logo.png" alt="ロゴ" />
           </Typography>
           <div>
             <span>ようこそ 〇〇 さん</span>
-            <Button variant="contained">
+            <Button variant="contained" onClick={() => history.push("/admin")}>
+              管理画面
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => history.push("/cart")}
+            >
               カート
             </Button>
-            <Button variant="contained">
+            <Button
+              variant="contained"
+              onClick={() => history.push("/orderhistory")}
+            >
               注文履歴
             </Button>
-            <Button variant="contained">
-              ログアウト
-            </Button>
-            <Button variant="contained">
+            <Button variant="contained">ログアウト</Button>
+            <Button variant="contained" onClick={() => history.push("/login")}>
               ログイン
             </Button>
           </div>
