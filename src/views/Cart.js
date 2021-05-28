@@ -1,8 +1,8 @@
-import {useState,useEffect} from 'react'
-import {useSelector,useDispatch} from 'react-redux'
-import { Order } from '../components/cart/Order.js'
-import Button from '@material-ui/core/Button'
-import {fetchitems,fetchtoppings} from '../actions'
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Order } from "../components/cart/Order.js";
+import Button from "@material-ui/core/Button";
+import { fetchitems, fetchtoppings } from "../actions";
 import {
   Table,
   TableBody,
@@ -12,7 +12,7 @@ import {
   TableRow,
   Paper,
 } from "@material-ui/core";
-import React from 'react'
+import React from "react";
 
 //仮データ
 const cartItems = [
@@ -68,49 +68,49 @@ export const Cart = () => {
     dispatch(fetchtoppings());
   }, []);
 
-//   useEffect(() => {
-//     let array = []
-//     if (cartItems.lengh !== 0) {
-//       //cartItemの情報と一致する商品の情報を取得する
-//       cartItems.forEach(cartItem => {
-//         items.forEach(item => {
-//           let itemData = item
-//           if (cartItem.itemId === item.id) {
-//             itemData.itemSize = cartItem.itemSize
-//             itemData.itemNum = cartItem.itemNum
-//             //cartItemにトッピングの情報が存在した場合
-// //ここの処理がなんかおかしいーーーーーーーーーーーーーーーーー
-//             if (cartItem.toppings) {
-//               //カート内のトッピングをひとつづつ取り出して
-//               cartItem.toppings.forEach(cartTopping => {
-//                 //トッピングデータもひとつづつ取り出して
-//                 toppings.forEach(toppingData => {
-//                   //データとカート内のトッピングが同じだった時
-//                   if (cartTopping.toppingId === toppingData.id) {
-//                     //カート内のトッピングのサイズをコピートッピングに代入
-//                     toppingData.size = cartTopping.toppingSize
-//                     if (itemData.toppings) {
-//                       itemData.toppings.forEach(topping => {
-//                         if (topping.id !== toppingData.id) {
-//                           itemData.toppings.push(toppingData)
-//                         }
-//                       })
-//                     } else {
-//                       itemData.toppings = [toppingData]
-//                     }
-//                   }
-//                 })
-//               })
-//             }
-//             array.push(itemData) 
-//           }
-//         })
-//       })
-//     }
-//     setCartArray(array)
-//   }, [toppings, items, cartItems])
-//   console.log(cartArray)
-//   //vrtdfvd
+  //   useEffect(() => {
+  //     let array = []
+  //     if (cartItems.lengh !== 0) {
+  //       //cartItemの情報と一致する商品の情報を取得する
+  //       cartItems.forEach(cartItem => {
+  //         items.forEach(item => {
+  //           let itemData = item
+  //           if (cartItem.itemId === item.id) {
+  //             itemData.itemSize = cartItem.itemSize
+  //             itemData.itemNum = cartItem.itemNum
+  //             //cartItemにトッピングの情報が存在した場合
+  // //ここの処理がなんかおかしいーーーーーーーーーーーーーーーーー
+  //             if (cartItem.toppings) {
+  //               //カート内のトッピングをひとつづつ取り出して
+  //               cartItem.toppings.forEach(cartTopping => {
+  //                 //トッピングデータもひとつづつ取り出して
+  //                 toppings.forEach(toppingData => {
+  //                   //データとカート内のトッピングが同じだった時
+  //                   if (cartTopping.toppingId === toppingData.id) {
+  //                     //カート内のトッピングのサイズをコピートッピングに代入
+  //                     toppingData.size = cartTopping.toppingSize
+  //                     if (itemData.toppings) {
+  //                       itemData.toppings.forEach(topping => {
+  //                         if (topping.id !== toppingData.id) {
+  //                           itemData.toppings.push(toppingData)
+  //                         }
+  //                       })
+  //                     } else {
+  //                       itemData.toppings = [toppingData]
+  //                     }
+  //                   }
+  //                 })
+  //               })
+  //             }
+  //             array.push(itemData)
+  //           }
+  //         })
+  //       })
+  //     }
+  //     setCartArray(array)
+  //   }, [toppings, items, cartItems])
+  //   console.log(cartArray)
+  //   //vrtdfvd
   return (
     <div>
       <h1>ショッピングカート</h1>
@@ -153,7 +153,7 @@ export const Cart = () => {
                           )}
                         </ul>
                       ) : (
-                          <div>なし</div>
+                        <div>なし</div>
                       )}
                     </TableCell>
                   </TableRow>
