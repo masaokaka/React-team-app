@@ -21,36 +21,56 @@ const useStyles = makeStyles({
   },
 });
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
-
-/* const rows = [
-  createData("カツカレー", "Mサイズ/800円/1個", "オニオン/200円", "1,100円"),
-  createData("チキンカレー", "Mサイズ/800円/1個", "オニオン/200円", "1,100円"),
-  createData("サグカレー", "Mサイズ/800円/1個", "オニオン/200円", "1,100円"),
-]; */
+//仮データ
+const order = {
+  itemInfo: [
+    {
+      id: "",
+      itemId: 2,
+      itemNum: 3,
+      itemSize: 0,
+      toppings: [
+        { toppingId: 3, toppingSize: 1 },
+        { toppingId: 6, toppingSize: 0 },
+      ],
+    },
+    {
+      id: "",
+      itemId: 6,
+      itemNum: 7,
+      itemSize: 0,
+      toppings: [
+        { toppingId: 3, toppingSize: 1 },
+        { toppingId: 6, toppingSize: 0 },
+      ],
+    },
+  ],
+  status: 2,
+  orderDate: "2021-5-28",
+};
 
 export const OrderHistory = () => {
+  //@material-uiの使用
   const classes = useStyles();
+  //itemとtoppingの情報を取得してくる
   const items = useSelector((state) => state.items);
   const toppings = useSelector((state) => state.toppings);
   const dispatch = useDispatch();
+
   useEffect(() => {
-    db.collection("admin/HdPaXiBx3VTswieJGJlFxLYOs092/item")
-      .where("id", "==", "1")
-      .then((res) => {
-        console.log(res);
-      });
     dispatch(fetchitems());
     dispatch(fetchtoppings());
   }, []);
+  //現在ログインしているユーザが代入される
+  const user = useSelector((state) => state.user);
 
   return (
     <div align="center">
       <h2>注文履歴一覧</h2>
-      <button onClick={() => console.log(items)}>アイテム取得確認</button>
-      <button onClick={() => console.log(toppings)}>アイテム取得確認</button>
+      <button onClick={() => console.log(order)}>チェックぼたん1</button>
+      <button onClick={() => console.log(typeof items.length)}>
+        チェックぼたん2
+      </button>
       <TableContainer component={Paper}>
         <Table
           className={classes.table}
@@ -67,67 +87,70 @@ export const OrderHistory = () => {
           </TableHead>
           <TableBody>
             <TableRow>
-              <TableCell colSpan="5" align="center">
-                2021年5月27日(木)
+              <TableCell colSpan="4" align="center">
+                {order.orderDate}
+                <br />
+                {order.status === 2 && (
+                  <button onClick={() => console.log("stateを「9」にする")}>
+                    注文をキャンセルする
+                  </button>
+                )}
+                {order.status === 9 && <span>キャンセル済み</span>}
+                {order.status === 3 && <span>発送済み</span>}
               </TableCell>
             </TableRow>
-            {items.map((items) => (
-              <TableRow key={items.id}>
-                <TableCell component="th" scope="items" align="center">
-                  <img src={items.img} height="120" />
-                  <br />
-                  {items.name}
-                </TableCell>
-                <TableCell align="center">{items.lprice}</TableCell>
-                <TableCell align="center">{items.mprice}</TableCell>
-                <TableCell align="center">{items.lprice}</TableCell>
-              </TableRow>
-            ))}
-            <TableRow>
-              <TableCell colSpan="5" align="center">
-                <button>注文をキャンセルする</button>
-              </TableCell>
-            </TableRow>
+            {order.itemInfo.map((item, index) =>
+              items.map(
+                (it) =>
+                  it.id === item.itemId && (
+                    <TableRow key={index}>
+                      <TableCell component="th" scope="items" align="center">
+                        <img src={it.img} height="120" alt="カレー" />
+                        <br />
+                        {it.name}
+                      </TableCell>
+                      {item.itemSize == 0 ? (
+                        <TableCell align="center">
+                          {it.mprice}円(Mサイズ)/{item.itemNum}個
+                        </TableCell>
+                      ) : (
+                        <TableCell align="center">
+                          {items.lprice}円(Lサイズ)/{item.itemNum}個
+                        </TableCell>
+                      )}
+                      <TableCell align="center">
+                        {item.toppings ? (
+                          <div>
+                            {item.toppings.map((topping, index) =>
+                              toppings.map(
+                                (top) =>
+                                  topping.toppingId === top.id && (
+                                    <div key={index}>
+                                      <span>{top.name}:</span>
+                                      {topping.toppingSize === 0 ? (
+                                        <span>{top.mprice}円</span>
+                                      ) : (
+                                        <span>{top.lprice}円</span>
+                                      )}
+                                    </div>
+                                  )
+                              )
+                            )}
+                          </div>
+                        ) : (
+                          <div>なし</div>
+                        )}
+                      </TableCell>
+                      <TableCell>合計00</TableCell>
+                    </TableRow>
+                  )
+              )
+            )}
+            ;
           </TableBody>
         </Table>
       </TableContainer>
-      {/* <table border="1">
-        <thead>
-          <tr>
-            <th>商品名</th>
-            <th>サイズ・価格・個数</th>
-            <th>トッピング名・価格</th>
-            <th>合計</th>
-            <th>-</th>
-          </tr>
-          <tr>
-            <th colSpan="5">2021年5月16日(月)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <img src="/img/1.jpg" height="120" />
-              <p>なんとかカレー</p>
-            </td>
-            <td>M・800円・１個</td>
-            <td>オニオン・200円</td>
-            <td>1,000円</td>
-            <td rowSpan="2">
-              <button>キャンセル</button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <img src="/img/1.jpg" height="120" />
-              <p>なんとかカレー</p>
-            </td>
-            <td>M・800円・１個</td>
-            <td>オニオン・200円</td>
-            <td>1,000円</td>
-          </tr>
-        </tbody>
-      </table> */}
+
       <Link to="/">
         <button>トップ画面に戻る</button>
       </Link>
