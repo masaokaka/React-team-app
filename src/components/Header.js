@@ -1,7 +1,8 @@
 import React from "react";
-import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom"
-import { sidenav } from "../actions";
+import { auth } from "../firebase/index";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { sidenav, logout } from "../actions";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -28,9 +29,15 @@ const useStyles = makeStyles((theme) => ({
 
 export const Header = () => {
   const classes = useStyles();
+  const user = useSelector(state => state.user);
   const dispatch = useDispatch();
   const history = useHistory();
-  
+
+  const doLogout = () => {
+    auth.signOut().then(() => {
+      history.push('/')
+    })
+  };
 
   return (
     <div className={classes.root}>
@@ -49,14 +56,11 @@ export const Header = () => {
             <img src="/img/header_logo.png" alt="ロゴ" />
           </Typography>
           <div>
-            <span>ようこそ 〇〇 さん</span>
+            {user && <span>ようこそ{user.email}さん</span>}
             <Button variant="contained" onClick={() => history.push("/admin")}>
               管理画面
             </Button>
-            <Button
-              variant="contained"
-              onClick={() => history.push("/cart")}
-            >
+            <Button variant="contained" onClick={() => history.push("/cart")}>
               カート
             </Button>
             <Button
@@ -65,7 +69,9 @@ export const Header = () => {
             >
               注文履歴
             </Button>
-            <Button variant="contained">ログアウト</Button>
+            <Button variant="contained" onClick={doLogout}>
+              ログアウト
+            </Button>
             <Button variant="contained" onClick={() => history.push("/login")}>
               ログイン
             </Button>
