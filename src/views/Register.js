@@ -204,11 +204,6 @@ export const Register = () => {
     }).catch(()=> setAddress('取得に失敗しました'))
   }
 
-  
-
-
-
-  
 
   return (
     
