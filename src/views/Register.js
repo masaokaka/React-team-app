@@ -86,10 +86,10 @@ export const Register = () => {
            setEmailFlag(false)
         }else if(!Check.match(Validate)){
           setZipError('郵便番号はXXX-XXXXの形式で入力して下さい')
-          setEmailFlag(false)
+          setZipFlag(false)
         }else { 
           setZipError('')
-          setEmailFlag(true)
+          setZipFlag(true)
         }
         
       }
@@ -99,10 +99,10 @@ export const Register = () => {
         setAddress(e.target.value)
           if(Check === ''){
             setAddressError('住所を入力して下さい');
-            setEmailFlag(false)
+            setAddressFlag(false)
           }else {
             setAddressError('');
-            setEmailFlag(true)
+            setAddressFlag(true)
           }
       }
 
@@ -112,29 +112,29 @@ export const Register = () => {
         setTell(e.target.value)
         if(Check === ''){
            setTellError('電話番号を入力して下さい')
-           setEmailFlag(false)
+           setTellFlag(false)
         }else if(!Check.match(Validate)){
           setTellError('電話番号はXXX-XXXX-XXXXの形式で入力して下さい')
-          setEmailFlag(false)
+          setTellFlag(false)
         }else { 
           setTellError('')
-          setEmailFlag(true)
+          setTellFlag(true)
         }
       }
 
       const ClearPassword = (e) => {
         const Check = e.target.value
-        const Validate = /^[a-zA-Z0-9!#$%&()*+,.:;=?@\[\]^_{}-]+$/
+        const Validate = /^[a-zA-Z0-9!#$%&()*+,.:;=?@[\]^_{}-]+$/
         setPassword(e.target.value)
         if(Check === ''){
            setPasswordError('パスワードを入力して下さい')
-           setEmailFlag(false)
+           setPasswordFlag(false)
         }else if(!Check.match(Validate)){
           setPasswordError('パスワードは半角英数字と記号「!@#$%^&*()_+-=[]{};:?,.」のみです')
           setEmailFlag(false)
         }else { 
           setPasswordError('')
-          setEmailFlag(true)
+          setPasswordFlag(true)
         }
       }
 
@@ -142,21 +142,21 @@ export const Register = () => {
         setConfirm(e.target.value)
         const Check = e.target.value
         const passwordValue = document.getElementById('password').value
-        const Validate = /^[a-zA-Z0-9!#$%&()*+,.:;=?@\[\]^_{}-]+$/
+        const Validate = /^[a-zA-Z0-9!#$%&()*+,.:;=?@[\]^_{}-]+$/
 
 
         if(Check === ''){
            setConfirmError('確認用パスワードを入力して下さい')
-           setEmailFlag(false)
+           setConfirmFlag(false)
         }else if(!Check.match(Validate)){
           setConfirmError('確認用パスワードは半角英数字と記号「!@#$%^&*()_+-=[]{};:?,.」のみです')
-          setEmailFlag(false)
+          setConfirmFlag(false)
         }else if(Check !== passwordValue) {
             setConfirmError('パスワードが一致しません')
-            setEmailFlag(false)
+            setConfirmFlag(false)
         }else { 
           setConfirmError('')
-          setEmailFlag(true)
+          setConfirmFlag(true)
         }
       }
 
@@ -194,12 +194,10 @@ export const Register = () => {
   
   const searchAddress = () => {
     const zipValue = document.getElementById('zip').value
-    let addressValue = document.getElementById('address').value
     //不正な値の場合処理をはじく
     axios.get(`https://api.zipaddress.net/?zipcode=${zipValue}`)
     .then(res => {
       setAddress(res.data.data.fullAddress)
-      addressValue = address
       setAddressError('')
     }).catch(()=> setAddress('取得に失敗しました'))
   }
