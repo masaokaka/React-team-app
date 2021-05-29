@@ -89,7 +89,7 @@ const[calcPrice,setCalcPrice] = useState(0)
         </div>
       </nav>
 
-      <form action="cart_list.html">
+      
         <div class="row">
           <div class="col-xs-offset-2 col-xs-8">
 
@@ -202,7 +202,6 @@ const[calcPrice,setCalcPrice] = useState(0)
             </div>
           </div>
         </div>
-		    </form>
 	    </div>
     </React.Fragment>
   );
