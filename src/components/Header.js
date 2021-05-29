@@ -63,7 +63,7 @@ export const Header = () => {
             {user && user.uid === ADMIN_ID   &&
               <Button
                 variant="contained"
-                onClick={() => history.push("/admin")}
+                onClick={() => history.push(`/admin/${ADMIN_ID}`)}
               >
                 管理画面
               </Button>

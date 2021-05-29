@@ -44,7 +44,7 @@ function App() {
             <Route path="/cart" exact component={Cart} />
             <Route path="/ordercomp" exact component={OrderComp} />
             <Route path="/ordercomp" exact component={OrderHistory} />
-            <Route path="/admin" exact component={Admin} />
+            <Route path="/admin/:adminId" exact component={Admin} />
           </Switch>
         </Container>
         <Footer />
