@@ -25,7 +25,7 @@ export const AddItemForm = () => {
             img: img
 				}
         let newitems = [...items, item]
-			dispatch(additem(newitems,user.uid))
+			dispatch(additem(newitems))
 			setId("");
       setName("");
       setText("");

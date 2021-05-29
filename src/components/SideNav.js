@@ -9,7 +9,7 @@ import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import MailIcon from "@material-ui/icons/Mail";
+import HomeIcon from "@material-ui/icons/Home";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import HistoryIcon from "@material-ui/icons/History";
 import AdminIcon from "@material-ui/icons/SupervisorAccount";
@@ -48,7 +48,7 @@ const SideNavContent = () => {
   const handleLink = (path) => history.push(path);
   const dispatch = useDispatch();
   const menu = [
-    { text: "ホーム", icon: <MailIcon />, link: "/" },
+    { text: "ホーム", icon: <HomeIcon />, link: "/" },
     { text: "カート", icon: <ShoppingCartIcon />, link: "/cart" },
     { text: "購入履歴", icon: <HistoryIcon />, link: "/orderhistory" },
     { text: "管理画面", icon: <AdminIcon />, link: "/admin" },

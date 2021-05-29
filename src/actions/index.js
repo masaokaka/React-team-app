@@ -1,4 +1,5 @@
 import { db } from "../firebase/index";
+import { ADMIN_ID,ITEMS_TABLE_ID,TOPPINGS_TABLE_ID } from "../admin/index";
 // サイドナビ
 export const SIDENAV = "sidenav";
 // ログイン/ログアウト
@@ -16,7 +17,7 @@ export const FETCHCART = "fetchcart";
 export const UPDATECART = "updatecart";
 export const DELETECART = "deletecart";
 export const UNSETCART = "unsetcart";
-export const FETCHCARTNOLOGIN = "fetchcart";
+export const FETCHCARTNOUSER = "fetchcartnouser";
 
 export const sidenav = (onClose) => ({
   type: SIDENAV,
@@ -36,7 +37,8 @@ export const unsetuser = () => ({
 
 //管理者dbから商品情報をとってくる処理ーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
 export const fetchitems = () => (dispatch) => {
-  db.collection("admin/HdPaXiBx3VTswieJGJlFxLYOs092/item")
+  console.log("fetchitems");
+  db.collection(`admin/${ADMIN_ID}/item`)
     .get()
     .then((snapShot) => {
       snapShot.forEach((doc) => {
@@ -48,9 +50,9 @@ export const fetchitems = () => (dispatch) => {
     });
 };
 ///管理者dbへの商品情報追加処理
-export const additem = (newitems, uid) => (dispatch) => {
-  db.collection(`admin/${uid}/item`)
-    .doc("NZHyDjbIod0bUOEyaEW0")
+export const additem = (newitems) => (dispatch) => {
+  db.collection(`admin/${ADMIN_ID}/item`)
+    .doc(ITEMS_TABLE_ID)
     .update({ itemData: newitems })
     .then(() => {
       dispatch({
@@ -62,21 +64,21 @@ export const additem = (newitems, uid) => (dispatch) => {
 
 //管理者dbからトッピング情報をとってくる処理ーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
 export const fetchtoppings = () => (dispatch) => {
-  db.collection("admin/HdPaXiBx3VTswieJGJlFxLYOs092/topping")
-  .get()
-  .then((snapShot) => {
-    snapShot.forEach((doc) => {
-      dispatch({
-        type: ADDTOPPINGS,
-        toppingData: doc.data().toppingData, //配列
+  db.collection(`admin/${ADMIN_ID}/topping`)
+    .get()
+    .then((snapShot) => {
+      snapShot.forEach((doc) => {
+        dispatch({
+          type: ADDTOPPINGS,
+          toppingData: doc.data().toppingData, //配列
+        });
       });
     });
-  });
 };
 //管理者dbへのトッピング情報追加処理
 export const addtopping = (newtoppings) => (dispatch) => {
-  db.collection("admin/HdPaXiBx3VTswieJGJlFxLYOs092/topping")
-    .doc("Jc8Ne4Bnwxjd286jYN50")
+  db.collection(`admin/${ADMIN_ID}/topping`)
+    .doc(TOPPINGS_TABLE_ID)
     .update({ toppingData: newtoppings })
     .then(() => {
       dispatch({
@@ -88,44 +90,53 @@ export const addtopping = (newtoppings) => (dispatch) => {
 
 //カートの商品を取得するーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
 export const fetchcart = (uid) => (dispatch) => {
-  if (uid !== null) {
-    db.collection(`users/${uid}/orders`)
-      .get()
-      .then((snapShot) => {
-        snapShot.forEach((doc) => {
-          if (doc.data().status === 0) {
-            dispatch({
-              type: FETCHCART,
-              cartInfo: doc.data(), //オブジェクト
-              id: doc.id,
-            });
-          }
-        });
+  db.collection(`users/${uid}/orders`)
+    .get()
+    .then((snapShot) => {
+      snapShot.forEach((doc) => {
+        if (doc.data().status === 0) {
+          dispatch({
+            type: FETCHCART,
+            cartInfo: doc.data(), //オブジェクト
+            id: doc.id,
+          });
+        }
       });
+    });
+};
+export const fetchcartnouser = (cartInfo) => (dispatch) => {
+  if (cartInfo !== null) {
+    dispatch({
+      type: FETCHCARTNOUSER,
+      cartInfo: cartInfo,
+    });
   } else {
-    dispatch({type:FETCHCARTNOLOGIN})
+    dispatch({
+      type: FETCHCARTNOUSER,
+      cartInfo: null,
+    });
   }
 };
 
 //カートに商品を追加する処理ーーーーーーーーーーーーーーーーーーーーーーーーーーー
-export const updatecart = (itemInfo, uid, cartId) => (dispatch) => {
+export const updatecart = (cartInfo, uid) => (dispatch) => {
   //ログインチェック
   if (uid) {
     db.collection(`users/${uid}/orders`)
-      .doc(cartId)
+      .doc(cartInfo.id)
       .update({
-        itemInfo: itemInfo,
+        itemInfo: cartInfo.itemInfo,
       })
       .then(() => {
         dispatch({
           type: UPDATECART,
-          itemInfo: itemInfo,
+          cartInfo: cartInfo,
         });
       });
   } else {
     dispatch({
       type: UPDATECART,
-      itemInfo: itemInfo, //itemInfo配列を渡してやる
+      cartInfo: cartInfo, //itemInfo配列を渡してやる
     });
   }
 };
@@ -137,37 +148,38 @@ export const createcart = (cartInfo, uid) => (dispatch) => {
     db.collection(`users/${uid}/orders`)
       .add(cartInfo)
       .then((doc) => {
+        cartInfo.id = doc.id;
         dispatch({
-          type: CREATECART,
+          type: UPDATECART,
           cartInfo: cartInfo, //オブジェクト
-          id: doc.id,
         });
       });
   } else {
+    cartInfo.id = null;
     dispatch({
-      type: CREATECART,
+      type: UPDATECART,
       cartInfo: cartInfo, //オブジェクト
-      id: null,
     });
   }
 };
 
-//アイテムの削除ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
-export const deletecart = (itemInfo, uid, cartId) => (dispatch) => {
+//カートから商品を削除する処理ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+export const deletecart = (cartInfo, uid) => (dispatch) => {
   if (uid) {
+    console.log(cartInfo);
     db.collection(`users/${uid}/orders`)
-      .doc(cartId)
-      .update({ itemInfo: itemInfo })
+      .doc(cartInfo.id)
+      .update({ itemInfo: cartInfo.itemInfo })
       .then(() => {
         dispatch({
           type: UPDATECART,
-          itemInfo: itemInfo,
+          cartInfo: cartInfo,
         });
       });
   } else {
     dispatch({
       type: UPDATECART,
-      itemInfo: itemInfo,
+      cartInfo: cartInfo,
     });
   }
 };

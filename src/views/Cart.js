@@ -2,7 +2,7 @@ import React,{ useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Order } from "../components/cart/Order.js";
 import Button from "@material-ui/core/Button";
-import { fetchitems, fetchtoppings, fetchcart,　deletecart } from "../actions";
+import { fetchitems, fetchtoppings, fetchcart,　deletecart,fetchcartnouser } from "../actions";
 import {
   Table,
   TableBody,
@@ -25,20 +25,29 @@ export const Cart = () => {
   useEffect(() => {
     dispatch(fetchitems());
     dispatch(fetchtoppings());
-    if (user!==null) {
-      dispatch(fetchcart(user.uid))      
-    }else{
-      dispatch(fetchcart())
+  }, [])
+
+  useEffect(()=>{
+    if (user) {
+      dispatch(fetchcart(user.uid))
+    } else {
+      if (cartInfo !== null) {
+        dispatch(fetchcartnouser(cartInfo))
+      } else {
+        dispatch(fetchcartnouser(null))
+      }
     }
-  }, []);
+  }, [user]);
 
   const deleteItem = (index) => {
     if (cartInfo) {
       cartInfo.itemInfo.splice(index, 1)
+      let newCartInfo = JSON.stringify(cartInfo)
+      newCartInfo = JSON.parse(newCartInfo)
       if (user) {
-        dispatch(deletecart(cartInfo.itemInfo, user.uid, cartInfo.id));
+        dispatch(deletecart(newCartInfo, user.uid));
       } else {
-        dispatch(deletecart(cartInfo.itemInfo, null, cartInfo.id));
+        dispatch(deletecart(newCartInfo, null));
       }
     }
   }

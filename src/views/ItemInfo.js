@@ -21,11 +21,11 @@ export const ItemInfo = () => {
   //仮データーーーーーーーーーーーーー
   //商品詳細から追加される予定の形
   const item = {
-    itemId: 18,
-    itemNum: 6,
+    itemId: 8,
+    itemNum: 4,
     itemSize: 1,
     toppings: [
-      { toppingId: 26, toppingSize: 0 },
+      { toppingId: 11, toppingSize: 0 },
       { toppingId: 17, toppingSize: 1 },
     ],
   };
@@ -48,16 +48,19 @@ export const ItemInfo = () => {
     }
     //カートにアイテムが入っていたら中身も一緒に渡す。
     if (cartInfo) {
-      dispatch(updatecart([...cartInfo.itemInfo, item], uid, cartInfo.id));
+      cartInfo.itemInfo = [...cartInfo.itemInfo, item]
+      let newCartInfo = JSON.stringify(cartInfo)
+      newCartInfo = JSON.parse(newCartInfo)
+      dispatch(updatecart(newCartInfo,uid));
       history.push("/cart");
       //入ってなかったら配列に格納して渡す。
     } else {
-      let cartInfo = {
+      let newCartInfo = {
         itemInfo: [item],
         status: 0, //カート(あとで定数に置き換える)
         userId: uid,
       };
-      dispatch(createcart(cartInfo, uid));
+      dispatch(createcart(newCartInfo, uid));
       history.push("/cart");
     }
   };
