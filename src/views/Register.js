@@ -191,7 +191,7 @@ export const Register = () => {
         
   }
   
-  //住所検索処理(エラー文の実装の余地あり)
+  
   const searchAddress = () => {
     const zipValue = document.getElementById('zip').value
     let addressValue = document.getElementById('address').value
@@ -239,12 +239,12 @@ export const Register = () => {
 
           <div style={{marginBottom: '1.5em'}}>
               <label>パスワード</label><p>{passwordError}</p>
-              <input id="password" name="password" type="text" value={password} onChange={(e) => ClearPassword(e)}/>
+              <input id="password" name="password" type='password' value={password} onChange={(e) => ClearPassword(e)}/>
           </div>
 
           <div style={{marginBottom: '1.5em'}}>
               <label>確認用パスワード</label><p>{confirmError}</p>
-              <input type="text" value={confirm} onChange={(e) => ClearConfirm(e)}/>
+              <input type="password" value={confirm} onChange={(e) => ClearConfirm(e)}/>
           </div>
         </div>
 
