@@ -21,9 +21,9 @@ export const ItemInfo = () => {
   //仮データーーーーーーーーーーーーー
   //商品詳細から追加される予定の形
   const item = {
-    itemId: 8,
-    itemNum: 4,
-    itemSize: 1,
+    itemId: 16,
+    itemNum: 1,
+    itemSize: 0,
     toppings: [
       { toppingId: 11, toppingSize: 0 },
       { toppingId: 17, toppingSize: 1 },

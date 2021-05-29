@@ -1,8 +1,14 @@
-import React,{ useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Order } from "../components/cart/Order.js";
-import Button from "@material-ui/core/Button";
-import { fetchitems, fetchtoppings, fetchcart,　deletecart,fetchcartnouser } from "../actions";
+import { Order } from "../components/cart/Order";
+import { SumPrice } from "../components/cart/SumPrice";
+import { DeleteButton } from "../components/cart/DeleteButton";
+import {
+  fetchitems,
+  fetchtoppings,
+  fetchcart,
+  fetchcartnouser,
+} from "../actions";
 import {
   Table,
   TableBody,
@@ -11,8 +17,8 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Grid,
 } from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
 
 export const Cart = () => {
   const [show, setShow] = useState(false);
@@ -25,32 +31,20 @@ export const Cart = () => {
   useEffect(() => {
     dispatch(fetchitems());
     dispatch(fetchtoppings());
-  }, [])
+  }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     if (user) {
-      dispatch(fetchcart(user.uid))
+      dispatch(fetchcart(user.uid));
     } else {
       if (cartInfo !== null) {
-        dispatch(fetchcartnouser(cartInfo))
+        dispatch(fetchcartnouser(cartInfo));
       } else {
-        dispatch(fetchcartnouser(null))
+        dispatch(fetchcartnouser(null));
       }
     }
   }, [user]);
 
-  const deleteItem = (index) => {
-    if (cartInfo) {
-      cartInfo.itemInfo.splice(index, 1)
-      let newCartInfo = JSON.stringify(cartInfo)
-      newCartInfo = JSON.parse(newCartInfo)
-      if (user) {
-        dispatch(deletecart(newCartInfo, user.uid));
-      } else {
-        dispatch(deletecart(newCartInfo, null));
-      }
-    }
-  }
   return (
     <div>
       <h1>ショッピングカート</h1>
@@ -64,6 +58,7 @@ export const Cart = () => {
                     <TableCell align="center"></TableCell>
                     <TableCell align="center">商品名</TableCell>
                     <TableCell align="center">価格(税抜)</TableCell>
+                    <TableCell align="center">個数</TableCell>
                     <TableCell align="center">トッピング：価格(税抜)</TableCell>
                     <TableCell align="center"></TableCell>
                   </TableRow>
@@ -88,13 +83,14 @@ export const Cart = () => {
                             {/* 価格 */}
                             {item.itemSize === 0 ? (
                               <TableCell align="center">
-                                {it.mprice}円(Mサイズ)
+                                {it.mprice.toLocaleString()}円(Mサイズ)
                               </TableCell>
                             ) : (
                               <TableCell align="center">
-                                {it.lprice}円(Lサイズ)
+                                {it.lprice.toLocaleString()}円(Lサイズ)
                               </TableCell>
                             )}
+                            <TableCell>{item.itemNum}個</TableCell>
                             {/* トッピング */}
                             <TableCell align="center">
                               {item.toppings ? (
@@ -120,11 +116,7 @@ export const Cart = () => {
                               )}
                             </TableCell>
                             {/* 削除ボタン */}
-                            <TableCell>
-                              <Button variant="contained" color="secondary" onClick={() => deleteItem(index)}>
-                                削除<DeleteIcon />
-                              </Button>
-                            </TableCell>
+                            <DeleteButton cartInfo={cartInfo} user={user} index={ index }/>
                           </TableRow>
                         )
                     )
@@ -132,12 +124,10 @@ export const Cart = () => {
                 </TableBody>
               </Table>
             </TableContainer>
-            <h3>合計金額(税込)：</h3>
-            <h3>内消費税：</h3>
-            <Button variant="contained" onClick={() => setShow(true)}>
-              注文に進む
-          </Button>
-            {show && <Order />}
+            <Grid container alignItems="center" justify="center" spacing={0}>
+              <SumPrice cartInfo={cartInfo} toppings={toppings} items={items} user={user} setShow={setShow}/>
+            </Grid>
+              {show && <Order />}
           </React.Fragment>
         ) : (
           <h4>カートに商品がありません</h4>
@@ -147,4 +137,4 @@ export const Cart = () => {
       )}
     </div>
   );
-};;
+};

@@ -37,7 +37,6 @@ export const unsetuser = () => ({
 
 //管理者dbから商品情報をとってくる処理ーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
 export const fetchitems = () => (dispatch) => {
-  console.log("fetchitems");
   db.collection(`admin/${ADMIN_ID}/item`)
     .get()
     .then((snapShot) => {
@@ -166,7 +165,6 @@ export const createcart = (cartInfo, uid) => (dispatch) => {
 //カートから商品を削除する処理ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
 export const deletecart = (cartInfo, uid) => (dispatch) => {
   if (uid) {
-    console.log(cartInfo);
     db.collection(`users/${uid}/orders`)
       .doc(cartInfo.id)
       .update({ itemInfo: cartInfo.itemInfo })

@@ -6,10 +6,12 @@ import { ADMIN_ID } from '../admin/index'
 
 export const Admin = () => {
   const history = useHistory()
-  const {adminId} = useParams()
+  const { adminId } = useParams()
+  
   //マウント時にユーザーがアドミンではなかった場合にはアクセス拒否
   useEffect(() => {
-    if (adminId !== ADMIN_ID) {
+    let decoded = decodeURI(adminId)
+    if (decoded !== ADMIN_ID) {
       history.push("/")
     }
   }, [])
