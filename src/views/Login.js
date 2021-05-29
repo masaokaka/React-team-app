@@ -27,8 +27,11 @@ export const Login = () => {
             .then((snapShot) => {
               //そもそもorderにdoc自体が存在するかどうかをチェック
               if (snapShot.empty === false) {
+                let cartExist = false;
                 snapShot.forEach((doc) => {
+                  //statusがカート状態のものがあった場合
                   if (doc.data().status === 0) {
+                    cartExist = true;
                     let newCartInfo = JSON.parse(JSON.stringify(doc.data()));
                     newCartInfo.id = doc.id;
                     newCartInfo.itemInfo = [
@@ -38,6 +41,15 @@ export const Login = () => {
                     dispatch(updatecart(newCartInfo, user.user.uid));
                   }
                 });
+                //statusがカート状態のものがなかった場合
+                if (cartExist === false) {
+                  let newCartInfo = {
+                    itemInfo: [...itemInfo],
+                    status: 0,
+                    userId: user.user.uid,
+                  };
+                  dispatch(createcart(newCartInfo, user.user.uid));
+                }
                 //doc自体が存在しなかった時はdbにdocを作る。
               } else if (snapShot.empty === true) {
                 let newCartInfo = {
