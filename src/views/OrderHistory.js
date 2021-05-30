@@ -56,14 +56,41 @@ const orders = [
         toppings: [{ toppingId: 3, toppingSize: 1 }],
       },
     ],
-    status: 2,
+    status: 3,
     orderDate: "2021-5-20",
   },
   {
     itemInfo: [
       {
         id: "",
-        itemId: 9,
+        itemId: 3,
+        itemNum: 3,
+        itemSize: 0,
+        toppings: [{ toppingId: 3, toppingSize: 1 }],
+      },
+    ],
+    status: 9,
+    orderDate: "2021-5-20",
+  },
+  {
+    itemInfo: [
+      {
+        id: "",
+        itemId: 3,
+        itemNum: 3,
+        itemSize: 0,
+        toppings: [{ toppingId: 3, toppingSize: 1 }],
+      },
+      {
+        id: "",
+        itemId: 3,
+        itemNum: 3,
+        itemSize: 0,
+        toppings: [{ toppingId: 3, toppingSize: 1 }],
+      },
+      {
+        id: "",
+        itemId: 3,
         itemNum: 3,
         itemSize: 0,
         toppings: [{ toppingId: 3, toppingSize: 1 }],
@@ -76,7 +103,7 @@ const orders = [
 
 export const OrderHistory = () => {
   //@material-uiの使用
-  const classes = useStyles();
+  /*   const classes = useStyles(); */
   const items = useSelector((state) => state.items);
   const toppings = useSelector((state) => state.toppings);
   const dispatch = useDispatch();
@@ -85,6 +112,13 @@ export const OrderHistory = () => {
     dispatch(fetchitems());
     dispatch(fetchtoppings());
   }, []);
+
+  /*   firestoreのstatusを変更する処理
+const statusChange=()=>
+db.collection(ここにitemInfoのなかみのstatusを指定).update(
+    "stataus": 9
+  }
+}); */
 
   //現在ログインしているユーザが代入される
   const user = useSelector((state) => state.user);
@@ -95,40 +129,36 @@ export const OrderHistory = () => {
 
       {user !== null && (
         <TableContainer component={Paper}>
-          <Table
-            className={classes.table}
-            size="small"
-            aria-label="a dense table"
-          >
+          <Table>
             <TableHead>
               <TableRow>
-                <TableCell align="center">商品名</TableCell>
-                <TableCell align="center">サイズ・価格・個数</TableCell>
-                <TableCell align="center">トッピング名・価格</TableCell>
-                <TableCell align="center">合計</TableCell>
+                <TableCell align="center">注文日</TableCell>
+                <TableCell align="center">
+                  商品詳細(商品名、サイズ、個数)
+                </TableCell>
               </TableRow>
             </TableHead>
 
             <TableBody>
-              {orders.map(
-                (order, index) =>
-                  (
-                    <TableRow key={index}>
-                      <TableCell colSpan="5" align="center">
-                        注文日：{order.orderDate}
-                        <br />
-                        {order.status === 1 ||
-                          (order.status === 2 && (
-                            <button onClick={() => console.log(order.itemInfo)}>
-                              注文をキャンセルする
-                            </button>
-                          ))}
-                        {order.status === 9 && <span>キャンセル済み</span>}
-                        {order.status === 3 && <span>発送済み</span>}
-                      </TableCell>
-                    </TableRow>
-                  ) &&
-                  order.itemInfo.map((item, index) =>
+              {orders.map((order, index) => (
+                <TableRow key={index}>
+                  <TableCell align="center">
+                    注文日：{order.orderDate}
+                    <br />
+                    <div>
+                      {order.status === 1 ||
+                        (order.status === 2 && (
+                          <button onClick={() => console.log(order.itemInfo)}>
+                            注文をキャンセルする
+                          </button>
+                        ))}
+                      {order.status === 9 && <span>キャンセル済み</span>}
+                      {order.status === 3 && <span>発送済み</span>}
+                      <br />
+                      合計金額
+                    </div>
+                  </TableCell>
+                  {order.itemInfo.map((item, index) =>
                     items.map(
                       (it) =>
                         it.id === item.itemId && (
@@ -174,12 +204,13 @@ export const OrderHistory = () => {
                                 <div>なし</div>
                               )}
                             </TableCell>
-                            <TableCell>合計</TableCell>
+                            <TableCell>小計</TableCell>
                           </TableRow>
                         )
                     )
-                  )
-              )}
+                  )}
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
