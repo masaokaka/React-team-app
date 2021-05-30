@@ -7,7 +7,7 @@ import { db } from "../../firebase/index";
 import { order } from "../../actions";
 
 export const Order = (props) => {
-  //【バリデージョン】
+  //バリデージョン
   const [nameError, setNameError] = useState("");
   const [nameFlag, setNameFlag] = useState(true);
   const [emailError, setEmailError] = useState("");
@@ -24,8 +24,9 @@ export const Order = (props) => {
   const [timeFlag, setTimeFlag] = useState(true);
   const [cardSelectError, setcardSelectError] = useState("");
   const [cardSelectFlag, setcrdSelectFlag] = useState(true);
+  const [creditShowFlag, setcreditShowFlag] = useState(false);
 
-  ////////////firestoreからデータ取得///
+  //firestoreからデータ取得
   const [userdata, setUserdata] = useState({}); //ユーザー情報をオブジェクトの形にして表示
   const dispatch = useDispatch();
   const history = useHistory();
@@ -39,16 +40,14 @@ export const Order = (props) => {
         setUserdata(userobj);
         setcardSelectError("支払方法を選択して下さい");
         setCreditcardflag(false);
-        //setTimeSelectError("配達時間を選択して下さい");
-        //settimeSelectFlag(false);
         setCreditcardError("クレジットカード番号を入力して下さい");
         setCreditcardflag(false);
         setTimeError("配達日時を入力して下さい");
         setTimeFlag(false);
       });
-  }, []); //ユーザ情報をマウント時に表示できるように、第二引数に[]を指定
+  }, []); //ユーザ情報をマウント時に表示
 
-  //【入力内容の更新処理】
+  //入力内容の更新処理
   const checkname = (e) => {
     const Check = e.target.value;
     setUserdata({ ...userdata, name: e.target.value });
@@ -120,14 +119,13 @@ export const Order = (props) => {
     }
   };
 
-  let today = new Date(); //カレンダーで今日より前の日付を選べないようにする
+  let today = new Date(); //日付選択で今日より前の日付を選べないようにする
   let thisYear = today.getFullYear();
   let thisMonth = ("00" + (today.getMonth() + 1)).slice(-2);
   let thisDate = ("00" + today.getDate()).slice(-2);
   today = `${thisYear}-${thisMonth}-${thisDate}T00:00`;
 
   const checkdate = (e) => {
-    //////////////////////////////////////////
     const Check = e.target.value;
     setUserdata({ ...userdata, date: e.target.value });
     if (Check === "") {
@@ -139,13 +137,9 @@ export const Order = (props) => {
     }
 
     //今から3時間以内が選択されたらエラーメッセージ
-
     let clickday = new Date();
     let nowTimestamp = clickday.getTime();
     nowTimestamp = Math.floor(nowTimestamp / 1000);
-
-    let thisHour = clickday.getHours();
-    let thisMinutes = clickday.getMinutes();
 
     const checkyear = Check.slice(0, 4); //選択時間hourを取得
     const numCheckyear = Number(checkyear); //文字列を数字にする
@@ -178,16 +172,18 @@ export const Order = (props) => {
       setTimeError("");
       setTimeFlag(true);
     }
-  }; //////////////////////////////////////////////////////////////////////
+  };
   const setPaymentCash = (e) => {
     setUserdata({ ...userdata, payment: e.target.value, status: 1 });
     setcardSelectError("");
     setcrdSelectFlag(true);
+    setcreditShowFlag(false);
   };
   const setPaymentCredit = (e) => {
     setUserdata({ ...userdata, payment: e.target.value, status: 2 });
     setcardSelectError("");
     setcrdSelectFlag(true);
+    setcreditShowFlag(true);
   };
 
   const checkCard = (e) => {
@@ -223,8 +219,7 @@ export const Order = (props) => {
       .catch(() => setUserdata({ ...userdata, address: "取得に失敗しました" }));
   };
 
-  //【注文情報追加】注文情報をfirebaseに追加（add()）し、statusを１または２に更新（update()）する処理
-  //checkCardで取得したinputのvalueがcash（代引き）ならstatus=1,credit（クレカ）ならstatus=2
+  //checkCardで取得したinputのvalueがcash(代引き)ならstatus=1,credit(クレカ)ならstatus=2
   const confirmOrder = () => {
     if (
       nameFlag &&
@@ -237,7 +232,7 @@ export const Order = (props) => {
       cardSelectFlag
     ) {
       if (window.confirm("注文してもよろしいですか？")) {
-        userdata.orderDate = new Date()
+        userdata.orderDate = new Date();
         dispatch(order(userdata, props.user.uid, props.cartInfo.id));
         handleLink("/ordercomp");
       }
@@ -245,6 +240,7 @@ export const Order = (props) => {
       alert("入力内容にエラーがあります");
     }
   };
+
   return (
     <React.Fragment>
       <div>
@@ -324,10 +320,16 @@ export const Order = (props) => {
               クレジットカード決済
             </label>
             <p>{cardSelectError}</p>
-            <div>カード番号</div>
-            <input type="text" maxlength="16" onChange={(e) => checkCard(e)} />
+            <div style={{ display: creditShowFlag ? "" : "none" }}>
+              <div>カード番号</div>
+              <input
+                type="text"
+                maxlength="16"
+                onChange={(e) => checkCard(e)}
+              />
+              <p>{creditcardError}</p>
+            </div>
           </div>
-          <p>{creditcardError}</p>
           <Button variant="contained" type="button" onClick={confirmOrder}>
             この内容で注文する
           </Button>
