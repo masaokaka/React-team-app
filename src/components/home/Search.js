@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchitems } from "../../actions"
 import  Box  from '@material-ui/core/Box';
 import { TextField } from "@material-ui/core";
-
+import Button from '@material-ui/core/Button';
 
 export const Search = (props) => {
   
@@ -22,6 +22,7 @@ export const Search = (props) => {
     let array = []
     props.itemsData.forEach(item => {if(item.name.indexOf(keyword) >= 0){
       array.push(item)
+      console.log(array)
     }}) 
     if(keyword === ""){
       console.log(items)
@@ -48,14 +49,14 @@ export const Search = (props) => {
 					</Box>
 					<Box p={1.875} fontSize={14}>
 							<Box>
-                <Box mx="auto" mb={1.875} width="75%" >
-                  <label for="code" class="control-label col-sm-2" >商品名</label>
+                <Box mx="auto" width="75%" >
+                  <Box for="code" class="control-label col-sm-2" >商品名</Box>
                   <TextField label="キーワードを入力" variant="outlined" py={1.25} px={1.875} fullWidth type="text" value={keyword} name="code" id="code" class="form-control input-sm" onChange={(e) => setKeyword(e.target.value)} /><br />
                 </Box>
-                <Box mx="auto" width="100%">
-                {error && <p>{error}</p>}
-                  <button value="検索" class="btn btn-primary" onClick={searchKeyword} >検索</button>
-                  <button type="reset" value="クリア" class="btn btn-default" onClick={()=>setKeyword("")}>クリア</button>
+                <Box>{error && <Box  color="red">{error}</Box>}</Box>
+                <Box alignItems="center" justifyContent="center"  width="100%">
+                  <Button variant="contained" color="primary" value="検索" class="btn btn-primary" onClick={searchKeyword} >検索</Button>
+                  <Button variant="contained" type="reset" value="クリア" class="btn btn-default" onClick={()=>setKeyword("")}>クリア</Button>
                 </Box>
 							</Box>
 					</Box>
