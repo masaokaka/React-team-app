@@ -2,7 +2,7 @@ import { AddItemForm } from '../components/admin/AddItemForm'
 import { AddToppingForm }from '../components/admin/AddToppingForm'
 import React,{useEffect} from 'react'
 import { useParams,useHistory } from 'react-router-dom'
-import { ADMIN_ID } from '../admin/index'
+import { ADMIN_ID } from '../status/index'
 
 export const Admin = () => {
   const history = useHistory()

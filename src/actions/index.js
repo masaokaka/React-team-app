@@ -1,5 +1,5 @@
-import { db } from "../firebase/index";
-import { ADMIN_ID,ITEMS_TABLE_ID,TOPPINGS_TABLE_ID } from "../admin/index";
+import { db, FirebaseTimestamp } from "../firebase/index";
+import { ADMIN_ID, ITEMS_TABLE_ID, TOPPINGS_TABLE_ID } from "../status/index";
 // サイドナビ
 export const SIDENAV = "sidenav";
 // ログイン/ログアウト
@@ -18,6 +18,9 @@ export const UPDATECART = "updatecart";
 export const DELETECART = "deletecart";
 export const UNSETCART = "unsetcart";
 export const FETCHCARTNOUSER = "fetchcartnouser";
+
+//注文処理
+export const ORDER = "order";
 
 export const sidenav = (onClose) => ({
   type: SIDENAV,
@@ -186,3 +189,15 @@ export const deletecart = (cartInfo, uid) => (dispatch) => {
 export const unsetcart = () => ({
   type: UNSETCART,
 });
+
+//注文確定処理ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+export const order = (orderData, uid, cartId) => (dispatch) => {
+  db.collection(`users/${uid}/orders`)
+    .doc(cartId)
+    .update(orderData)
+    .then(() => {
+      dispatch({
+          type: UNSETCART,
+        });
+    });
+};

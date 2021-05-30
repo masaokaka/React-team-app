@@ -127,7 +127,7 @@ export const Cart = () => {
             <Grid container alignItems="center" justify="center" spacing={0}>
               <SumPrice cartInfo={cartInfo} toppings={toppings} items={items} user={user} setShow={setShow}/>
             </Grid>
-              {show && <Order />}
+            {show && <Order cartInfo={cartInfo} user={ user }/>}
           </React.Fragment>
         ) : (
           <h4>カートに商品がありません</h4>

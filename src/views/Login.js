@@ -61,8 +61,10 @@ export const Login = () => {
               }
             });
           localStorage.removeItem("itemInfo");
+          history.push("/cart");
+        } else {
+          history.push("/");
         }
-        history.push("/cart");
       });
     });
   };
