@@ -7,18 +7,27 @@ import {
   Link,
   useHistory,
 } from "react-router-dom";
-import { OrderComp } from "../../views/OrderComp";
+import axios from "axios";
+import Button from "@material-ui/core/Button";
 import { db } from "../../firebase/index";
 export const Order = () => {
-  //////////バリデーション
-  // const [ordername, setName] = useState("");
-  // const [orderemail, setEmail] = useState("");
-  // const [orderzip, setZip] = useState("");
-  // const [orderaddress, setAddress] = useState("");
-  // const [ordertel, setTel] = useState("");
-  // const [orderdate, setDate] = useState("");
-  // const [ordercredit, setCredit] = useState("");
-  // const [isError, setIsError] = useState(false); //falseならエラーなし、trueならエラー
+  //【バリデージョン】
+  const [nameError, setNameError] = useState("");
+  const [nameFlag, setNameFlag] = useState(true);
+  const [emailError, setEmailError] = useState("");
+  const [emailFlag, setEmailFlag] = useState(true);
+  const [zipError, setZipError] = useState("");
+  const [zipFlag, setZipFlag] = useState(true);
+  const [addressError, setAddressError] = useState("");
+  const [addressFlag, setAddressFlag] = useState(true);
+  const [tellError, setTellError] = useState("");
+  const [tellFlag, setTellFlag] = useState(true);
+  const [creditcardError, setCreditcardError] = useState("");
+  const [creditcardflag, setCreditcardflag] = useState(true);
+  const [timeError, setTimeError] = useState("");
+  const [timeFlag, setTimeFlag] = useState(true);
+  const [cardSelectError, setcardSelectError] = useState("");
+  const [cardSelectFlag, setcrdSelectFlag] = useState(true);
 
   ////////////firestoreからデータ取得///
   const [userdata, setUserdata] = useState({}); //ユーザー情報をオブジェクトの形にして表示
@@ -26,329 +35,335 @@ export const Order = () => {
   const history = useHistory();
   const handleLink = (path) => history.push(path);
 
-  // const checkName = (name) => {
-  //   setName(name.target.value); //入力値を取得
-  //   console.log(ordername); //stateに入力値が代入された
-  //   if (!ordername) {
-  //     setIsError(true);
-  //   } else {
-  //     setIsError(false);
-  //   }
-  // };
-
-  // const checkMail = (email) => {
-  //   //第二引数にコールバック？？？
-  //   setEmail(email.target.value);
-  //   console.log(orderemail);
-  //   if (!orderemail) {
-  //     setIsError(true);
-  //   } else {
-  //     setIsError(false);
-  //   }
-  // };
-  // const checkZip = (zip) => {
-  //   setZip(zip.target.value);
-  //   console.log(orderzip);
-  // };
-  // const checkAddress = (address) => {
-  //   setAddress(address.target.value);
-  //   console.log(orderaddress);
-  // };
-  // const checkTel = (tel) => {
-  //   setTel(tel.target.value);
-  //   console.log(ordertel);
-  // };
-  // const checkDate = (date) => {
-  //   setDate(date.target.value);
-  //   console.log(orderdate);
-  // };
-  // const checkCard = (credit) => {
-  //   setCredit(credit.target.value);
-  //   console.log(ordercredit);
-  // };
-
   useEffect(() => {
+    console.log("useEffect"); //mount時に呼ばれてる
     db.collection(`users/${user.uid}/userInfo`)
       .get()
       .then((res) => {
-        let userobj = res.docs[0].data(); //._delegate._document.data.partialValue.mapValue.fields
+        let userobj = res.docs[0].data(); //帰ってきたresのオブジェクトの中から登録情報を抽出
         console.log(userobj); //ユーザ情報をfirebaseから取得できた
-        //firebaseのユーザ情報をstateのオブジェクトに返しstateから情報を取得できた
         setUserdata(userobj);
+        setcardSelectError("支払方法を選択して下さい");
+        setCreditcardflag(false);
+        //setTimeSelectError("配達時間を選択して下さい");
+        //settimeSelectFlag(false);
+        setCreditcardError("クレジットカード番号を入力して下さい");
+        setCreditcardflag(false);
+        setTimeError("配達日時を入力して下さい");
+        setTimeFlag(false);
       });
-  }, []); //マウント時に表示できるようにする
-  ////////入力内容の更新処理
-  const newname = (e) => {
+  }, []); //ユーザ情報をマウント時に表示できるように、第二引数に[]を指定
+  console.log(userdata);
+  //firebaseのユーザ情報をstateのオブジェクトに返しstateから情報を取得できた
+
+  //【入力内容の更新処理】
+  const checkname = (e) => {
+    const Check = e.target.value;
     setUserdata({ ...userdata, name: e.target.value });
-    console.log(userdata.name);
+    if (Check === "") {
+      setNameError("名前を入力して下さい");
+      setNameFlag(false);
+    } else {
+      setNameError("");
+      setNameFlag(true);
+    }
   };
-  const newmail = (e) => {
+  const checkmail = (e) => {
+    const Check = e.target.value;
+    const Validate = /.+@.+/;
     setUserdata({ ...userdata, email: e.target.value });
-    console.log(userdata.email);
+    if (Check === "") {
+      setEmailError("メールアドレスを入力して下さい");
+      setEmailFlag(false);
+    } else if (!Check.match(Validate)) {
+      setEmailError("メールアドレスの形式が不正です");
+      setEmailFlag(false);
+    } else {
+      setEmailError("");
+      setEmailFlag(true);
+    }
   };
-  const newzip = (e) => {
+  const checkzip = (e) => {
+    const Check = e.target.value;
+    const Validate = /^\d{3}[-]\d{4}$/;
     setUserdata({ ...userdata, zip: e.target.value });
-    console.log(userdata.zip);
+    if (Check === "") {
+      setZipError("郵便番号を入力して下さい");
+      setZipFlag(false);
+    } else if (!Check.match(Validate)) {
+      setZipError("郵便番号はXXX-XXXXの形式で入力して下さい");
+      setZipFlag(false);
+    } else {
+      setZipError("");
+      setZipFlag(true);
+    }
   };
-  const newtel = (e) => {
+  const checktel = (e) => {
+    const Check = e.target.value;
+    const Validate = /\d{2,5}[-(]\d{1,4}[-)]\d{4}$/;
     setUserdata({ ...userdata, tel: e.target.value });
-    console.log(userdata.tel);
+    if (Check === "") {
+      setTellError("電話番号を入力して下さい");
+      setTellFlag(false);
+    } else if (!Check.match(Validate)) {
+      setTellError("電話番号はXXX-XXXX-XXXXの形式で入力して下さい");
+      setTellFlag(false);
+    } else {
+      setTellError("");
+      setTellFlag(true);
+    }
   };
-  const newaddress = (e) => {
+  const checkaddress = (e) => {
+    const Check = e.target.value;
     setUserdata({ ...userdata, address: e.target.value });
-    console.log(userdata.address);
-  };
-  const newdate = (e) => {
-    setUserdata({ ...userdata, date: e.target.value });
-  };
-  const setPaymentCash = (e) => {
-    setUserdata({ ...userdata, payment: e.target.value });
-  };
-  const setPaymentCredit = (e) => {
-    setUserdata({ ...userdata, payment: e.target.value });
+    if (Check === "") {
+      setAddressError("住所を入力して下さい");
+      setAddressFlag(false);
+    } else if (Check === "取得に失敗しました") {
+      setAddressError("正しい住所を入力して下さい");
+      setAddressFlag(false);
+    } else {
+      setAddressError("");
+      setAddressFlag(true);
+    }
   };
 
-  const time10 = (e) => {
-    setUserdata({ ...userdata, time: e.target.value });
+  let today = new Date(); //カレンダーで今日より前の日付を選べないようにする
+  let thisYear = today.getFullYear();
+  let thisMonth = ("00" + (today.getMonth() + 1)).slice(-2);
+  let thisDate = ("00" + today.getDate()).slice(-2);
+  today = `${thisYear}-${thisMonth}-${thisDate}T00:00`;
+  console.log(today); //今日をyyyy-mm-ddT00:00の書式に変換。
+
+  const checkdate = (e) => {
+    //////////////////////////////////////////
+    const Check = e.target.value;
+    setUserdata({ ...userdata, date: e.target.value });
+    if (Check === "") {
+      setTimeError("配達日時を入力して下さい");
+      setTimeFlag(false);
+    } else {
+      setTimeError("");
+      setTimeFlag(true);
+    }
+
+
+    //今から3時間以内が選択されたらエラーメッセージ
+
+    let clickday = new Date();
+    let nowTimestamp = clickday.getTime();
+    console.log(nowTimestamp); //現在時刻をユニックスタイムに直す
+    nowTimestamp = Math.floor(nowTimestamp / 1000);
+    console.log(nowTimestamp); //現在時刻をユニックスタイムに直す
+
+    console.log(Check);
+    // let selectTimestamp = Check.getTime();
+    // console.log(selectTimestamp);
+
+    let thisHour = clickday.getHours();
+    let thisMinutes = clickday.getMinutes();
+    console.log(thisHour); //現在時間hourを取得
+    console.log(thisMinutes); //現在時間minutesを取得
+
+    const checkyear = Check.slice(0, 4); //選択時間hourを取得
+    const numCheckyear = Number(checkyear); //文字列を数字にする
+    console.log(numCheckyear);
+
+    const checkmonth = Check.slice(5, 7); //選択時間hourを取得
+    const numCheckmonth = Number(checkmonth); //文字列を数字にする
+    console.log(numCheckmonth);
+
+    const checkday = Check.slice(8, 10); //選択時間hourを取得
+    const numCheckday = Number(checkday); //文字列を数字にする
+    console.log(numCheckday);
+
+    const checkhour = Check.slice(11, 13); //選択時間hourを取得
+    const numCheckhour = Number(checkhour); //文字列を数字にする
+    console.log(numCheckhour);
+
+    const checkMinutes = Check.slice(14, 16); //選択分minutesを取得
+    const numCheckminutes = Number(checkMinutes); //文字列を数字にする
+    console.log(numCheckminutes);
+
+    const selectedDay = new Date(
+      numCheckyear,
+      numCheckmonth - 1,
+      numCheckday,
+      numCheckhour - 3,//後々の条件式のために3時間分減らしている
+      numCheckminutes
+    );
+    console.log("selectedDay=" + selectedDay);
+
+    const selectedTimestamp = Math.floor(selectedDay / 1000);
+    console.log(nowTimestamp);
+    console.log(selectedTimestamp); //現在時刻をユニックスタイムに直す
+    if (nowTimestamp > selectedTimestamp) {
+      console.log("小さい");
+      setTimeError("今から3時間後の日時をご入力ください");
+      setTimeFlag(false);
+    } else {
+      console.log("大きい");
+      setTimeError("");
+      setTimeFlag(true);
+    }
+
+  }; //////////////////////////////////////////////////////////////////////
+  const setPaymentCash = (e) => {
+    setUserdata({ ...userdata, payment: e.target.value, status: 1 });
+    setcardSelectError("");
+    setcrdSelectFlag(true);
   };
-  const time11 = (e) => {
-    setUserdata({ ...userdata, time: e.target.value });
-  };
-  const time12 = (e) => {
-    setUserdata({ ...userdata, time: e.target.value });
-  };
-  const time13 = (e) => {
-    setUserdata({ ...userdata, time: e.target.value });
-  };
-  const time14 = (e) => {
-    setUserdata({ ...userdata, time: e.target.value });
-  };
-  const time15 = (e) => {
-    setUserdata({ ...userdata, time: e.target.value });
-  };
-  const time16 = (e) => {
-    setUserdata({ ...userdata, time: e.target.value });
-  };
-  const time17 = (e) => {
-    setUserdata({ ...userdata, time: e.target.value });
-  };
-  const time18 = (e) => {
-    setUserdata({ ...userdata, time: e.target.value });
+  const setPaymentCredit = (e) => {
+    setUserdata({ ...userdata, payment: e.target.value, status: 2 });
+    setcardSelectError("");
+    setcrdSelectFlag(true);
   };
 
   const checkCard = (e) => {
+    const Check = e.target.value;
+    const Validate = /\d[0-9]{13}/g;
     setUserdata({ ...userdata, creditcardNo: e.target.value });
+    setUserdata({ ...userdata, card: e.target.value });
+    if (Check === "") {
+      setCreditcardError("クレジットカード番号を入力して下さい");
+      setCreditcardflag(false);
+    } else if (!Check.match(Validate)) {
+      setCreditcardError(
+        "クレジットカード番号は14〜16桁の半角数字で入力してください"
+      );
+      setCreditcardflag(false);
+    } else {
+      setCreditcardError("");
+      setCreditcardflag(true);
+    }
   };
-
   console.log(userdata);
 
-  /////注文処理
-  const addOrder = () => {
-    console.log("注文完了");
-    //入力したお届け先情報をfirestoreのorderテーブルに追加したい
+  //【住所検索処理】(エラー文の実装の余地あり)
+  const searchAddress = () => {
+    const zipValue = userdata.zip;
+    let addressValue = userdata.address;
+    //不正な値の場合処理をはじく
+    axios
+      .get(`https://api.zipaddress.net/?zipcode=${zipValue}`)
+      .then((res) => {
+        setUserdata({ ...userdata, address: res.data.data.fullAddress });
+        addressValue = userdata.address;
+      })
+      .catch(() => setUserdata({ ...userdata, address: "取得に失敗しました" }));
   };
 
+  //【注文情報追加】注文情報をfirebaseに追加（add()）し、statusを１または２に更新（update()）する処理
+  //checkCardで取得したinputのvalueがcash（代引き）ならstatus=1,credit（クレカ）ならstatus=2
+  const addOrder = () => {
+    if (
+      nameFlag &&
+      emailFlag &&
+      zipFlag &&
+      addressFlag &&
+      tellFlag &&
+      timeFlag &&
+      creditcardflag &&
+      cardSelectFlag
+    ) {
+      alert("注文してもよろしいですか？");
+      console.log("注文はじめます");
+      db.collection(`users/Qk4xMuaeBuMccnx1gEb7fx207ah2/orders`)
+        .doc(`G0NhIs4r5Sy8UdRutDCc`)
+        .update(userdata); //orderテーブルにお届け先情報追加
+      handleLink("/ordercomp");
+    } else {
+      alert("入力内容にエラーがあります");
+    }
+  };
   return (
     <React.Fragment>
-      <Router>
-        <div>
-          <br />
-          注文確認画面です。
-          <form>
+      <div>
+        <br />
+        注文確認画面です。
+        <form>
+          <div>
+            <h3>お届け先情報</h3>
             <div>
-              <h3>お届け先情報</h3>
-              <table>
-                <tbody>
-                  <tr>
-                    <td>
-                      <div>お名前</div>
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        id="name"
-                        value={userdata.name}
-                        onChange={(e) => newname(e)}
-                      ></input>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div>メールアドレス</div>
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        id="mail"
-                        value={userdata.email}
-                        onChange={(e) => newmail(e)}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div>郵便番号</div>
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        value={userdata.zip}
-                        onChange={(e) => newzip(e)}
-                      ></input>
-                      &nbsp;&nbsp;
-                      <button>住所検索</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div>住所</div>
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        value={userdata.address}
-                        onChange={(e) => newaddress(e)}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div>電話番号</div>
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        value={userdata.tel}
-                        onChange={(e) => newtel(e)}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div>配達日時</div>
-                    </td>
-                    <td>
-                      <input type="date" onChange={(e) => newdate(e)} />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td>
-                      <input
-                        type="radio"
-                        name="time"
-                        velue="10"
-                        onChange={(e) => time10(e)}
-                      />
-                      10時
-                      <input
-                        type="radio"
-                        name="time"
-                        velue="11"
-                        onChange={(e) => time11(e)}
-                      />
-                      11時
-                      <input
-                        type="radio"
-                        name="time"
-                        velue="12"
-                        onChange={(e) => time12(e)}
-                      />
-                      12時
-                      <input
-                        type="radio"
-                        name="time"
-                        velue="13"
-                        onChange={(e) => time13(e)}
-                      />
-                      13時
-                      <input
-                        type="radio"
-                        name="time"
-                        velue="14"
-                        onChange={(e) => time14(e)}
-                      />
-                      14時
-                    </td>
-                    <td>
-                      <input
-                        type="radio"
-                        name="time"
-                        velue="15"
-                        onChange={(e) => time15(e)}
-                      />
-                      15時
-                      <input
-                        type="radio"
-                        name="time"
-                        velue="16"
-                        onChange={(e) => time16(e)}
-                      />
-                      16時
-                      <input
-                        type="radio"
-                        name="time"
-                        velue="17"
-                        onChange={(e) => time17(e)}
-                      />
-                      17時
-                      <input
-                        type="radio"
-                        name="time"
-                        velue="18"
-                        onChange={(e) => time18(e)}
-                      />
-                      18時
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div>支払方法</div>
-                    </td>
-                    <td>
-                      <label>
-                        <input
-                          type="radio"
-                          name="pay"
-                          velue="1"
-                          onChange={(e) => setPaymentCash(e)}
-                        ></input>
-                        代金引換
-                        <input
-                          type="radio"
-                          name="pay"
-                          velue="2"
-                          onChange={(e) => setPaymentCredit(e)}
-                        ></input>
-                        クレジットカード決済
-                      </label>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div>カード番号</div>
-                    </td>
-                    <td>
-                      <input type="text" onChange={(e) => checkCard(e)} />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <label>お名前</label>
             </div>
-            <Link to="/ordercomp">
-              <button
-                type="submit"
-                onClick={(addOrder, () => handleLink("../../views/OrderComp"))}
-              >
-                この内容で注文する
-              </button>
-            </Link>
-          </form>
-        </div>
-        {/* <Switch>
-        <Route path="/ordercomp" exact component={OrderComp} />
-        </Switch> */}
-      </Router>
+            <input
+              type="text"
+              id="name"
+              value={userdata.name}
+              onChange={(e) => checkname(e)}
+            ></input>
+            <p>{nameError}</p>
+            <div>メールアドレス</div>
+            <input
+              type="text"
+              id="mail"
+              value={userdata.email}
+              onChange={(e) => checkmail(e)}
+            />
+            <p>{emailError}</p>
+            <div>郵便番号</div>
+            <input
+              type="text"
+              value={userdata.zip}
+              onChange={(e) => checkzip(e)}
+            ></input>
+            <Button
+              variant="contained"
+              type="button"
+              onClick={() => searchAddress()}
+            >
+              住所検索
+            </Button>
+            <p>{zipError}</p>
+            <div>住所</div>
+            <input
+              type="text"
+              value={userdata.address}
+              onChange={(e) => checkaddress(e)}
+            />
+            <p>{addressError}</p>
+            <div>電話番号</div>
+            <input
+              type="text"
+              value={userdata.tel}
+              onChange={(e) => checktel(e)}
+            />
+            <p>{tellError}</p>
+            <div>配達日時</div>
+            <input
+              type="datetime-local"
+              min={today}
+              onChange={(e) => checkdate(e)}
+            />
+            <p>{timeError}</p>
+            <div>支払方法</div>
+            <label>
+              <input
+                type="radio"
+                name="pay"
+                value="cash"
+                onChange={(e) => setPaymentCash(e)}
+              ></input>
+              代金引換
+              <input
+                type="radio"
+                name="pay"
+                value="credit"
+                onChange={(e) => setPaymentCredit(e)}
+              ></input>
+              クレジットカード決済
+            </label>
+            <p>{cardSelectError}</p>
+            <div>カード番号</div>
+            <input type="text" maxlength="16" onChange={(e) => checkCard(e)} />
+          </div>
+          <p>{creditcardError}</p>
+          <Button variant="contained" type="button" onClick={addOrder}>
+            この内容で注文する
+          </Button>
+        </form>
+      </div>
     </React.Fragment>
   );
 };
