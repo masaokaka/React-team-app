@@ -2,7 +2,7 @@ import React,{useEffect} from "react";
 import {useDispatch} from "react-redux";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { auth } from './firebase/index'
-import {setuser,unsetuser} from './actions'
+import {setuser,unsetuser,unsetcart} from './actions'
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { SideNav } from "./components/SideNav";
@@ -26,6 +26,7 @@ function App() {
         dispatch(setuser(user))
       } else {
         dispatch(unsetuser())
+        dispatch(unsetcart())
       }
     })
   },[])
@@ -43,7 +44,7 @@ function App() {
             <Route path="/cart" exact component={Cart} />
             <Route path="/orderhistory" exact component={OrderHistory} />
             <Route path="/ordercomp" exact component={OrderHistory} />
-            <Route path="/admin" exact component={Admin} />
+            <Route path="/admin/:adminId" exact component={Admin} />
           </Switch>
         </Container>
         <Footer />

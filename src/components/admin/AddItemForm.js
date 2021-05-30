@@ -13,6 +13,7 @@ export const AddItemForm = () => {
     const [img, setImg] = useState()
     const dispatch = useDispatch()
 		const items = useSelector(state => state.items)
+		const user = useSelector(state => state.user)
 
     const doAddItem = () => {
         let item = {
