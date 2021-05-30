@@ -1,16 +1,12 @@
-import React, { Component, useState, useEffect } from "react";
-import { connect, useSelector } from "react-redux";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useHistory,
-} from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import axios from "axios";
 import Button from "@material-ui/core/Button";
 import { db } from "../../firebase/index";
-export const Order = () => {
+import { order } from "../../actions";
+
+export const Order = (props) => {
   //【バリデージョン】
   const [nameError, setNameError] = useState("");
   const [nameFlag, setNameFlag] = useState(true);
@@ -31,17 +27,15 @@ export const Order = () => {
 
   ////////////firestoreからデータ取得///
   const [userdata, setUserdata] = useState({}); //ユーザー情報をオブジェクトの形にして表示
-  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const history = useHistory();
   const handleLink = (path) => history.push(path);
 
   useEffect(() => {
-    console.log("useEffect"); //mount時に呼ばれてる
-    db.collection(`users/${user.uid}/userInfo`)
+    db.collection(`users/${props.user.uid}/userInfo`)
       .get()
       .then((res) => {
         let userobj = res.docs[0].data(); //帰ってきたresのオブジェクトの中から登録情報を抽出
-        console.log(userobj); //ユーザ情報をfirebaseから取得できた
         setUserdata(userobj);
         setcardSelectError("支払方法を選択して下さい");
         setCreditcardflag(false);
@@ -53,8 +47,6 @@ export const Order = () => {
         setTimeFlag(false);
       });
   }, []); //ユーザ情報をマウント時に表示できるように、第二引数に[]を指定
-  console.log(userdata);
-  //firebaseのユーザ情報をstateのオブジェクトに返しstateから情報を取得できた
 
   //【入力内容の更新処理】
   const checkname = (e) => {
@@ -133,7 +125,6 @@ export const Order = () => {
   let thisMonth = ("00" + (today.getMonth() + 1)).slice(-2);
   let thisDate = ("00" + today.getDate()).slice(-2);
   today = `${thisYear}-${thisMonth}-${thisDate}T00:00`;
-  console.log(today); //今日をyyyy-mm-ddT00:00の書式に変換。
 
   const checkdate = (e) => {
     //////////////////////////////////////////
@@ -147,66 +138,46 @@ export const Order = () => {
       setTimeFlag(true);
     }
 
-
     //今から3時間以内が選択されたらエラーメッセージ
 
     let clickday = new Date();
     let nowTimestamp = clickday.getTime();
-    console.log(nowTimestamp); //現在時刻をユニックスタイムに直す
     nowTimestamp = Math.floor(nowTimestamp / 1000);
-    console.log(nowTimestamp); //現在時刻をユニックスタイムに直す
-
-    console.log(Check);
-    // let selectTimestamp = Check.getTime();
-    // console.log(selectTimestamp);
 
     let thisHour = clickday.getHours();
     let thisMinutes = clickday.getMinutes();
-    console.log(thisHour); //現在時間hourを取得
-    console.log(thisMinutes); //現在時間minutesを取得
 
     const checkyear = Check.slice(0, 4); //選択時間hourを取得
     const numCheckyear = Number(checkyear); //文字列を数字にする
-    console.log(numCheckyear);
 
     const checkmonth = Check.slice(5, 7); //選択時間hourを取得
     const numCheckmonth = Number(checkmonth); //文字列を数字にする
-    console.log(numCheckmonth);
 
     const checkday = Check.slice(8, 10); //選択時間hourを取得
     const numCheckday = Number(checkday); //文字列を数字にする
-    console.log(numCheckday);
 
     const checkhour = Check.slice(11, 13); //選択時間hourを取得
     const numCheckhour = Number(checkhour); //文字列を数字にする
-    console.log(numCheckhour);
 
     const checkMinutes = Check.slice(14, 16); //選択分minutesを取得
     const numCheckminutes = Number(checkMinutes); //文字列を数字にする
-    console.log(numCheckminutes);
 
     const selectedDay = new Date(
       numCheckyear,
       numCheckmonth - 1,
       numCheckday,
-      numCheckhour - 3,//後々の条件式のために3時間分減らしている
+      numCheckhour - 3, //後々の条件式のために3時間分減らしている
       numCheckminutes
     );
-    console.log("selectedDay=" + selectedDay);
 
     const selectedTimestamp = Math.floor(selectedDay / 1000);
-    console.log(nowTimestamp);
-    console.log(selectedTimestamp); //現在時刻をユニックスタイムに直す
     if (nowTimestamp > selectedTimestamp) {
-      console.log("小さい");
       setTimeError("今から3時間後の日時をご入力ください");
       setTimeFlag(false);
     } else {
-      console.log("大きい");
       setTimeError("");
       setTimeFlag(true);
     }
-
   }; //////////////////////////////////////////////////////////////////////
   const setPaymentCash = (e) => {
     setUserdata({ ...userdata, payment: e.target.value, status: 1 });
@@ -237,7 +208,6 @@ export const Order = () => {
       setCreditcardflag(true);
     }
   };
-  console.log(userdata);
 
   //【住所検索処理】(エラー文の実装の余地あり)
   const searchAddress = () => {
@@ -255,7 +225,7 @@ export const Order = () => {
 
   //【注文情報追加】注文情報をfirebaseに追加（add()）し、statusを１または２に更新（update()）する処理
   //checkCardで取得したinputのvalueがcash（代引き）ならstatus=1,credit（クレカ）ならstatus=2
-  const addOrder = () => {
+  const confirmOrder = () => {
     if (
       nameFlag &&
       emailFlag &&
@@ -266,12 +236,11 @@ export const Order = () => {
       creditcardflag &&
       cardSelectFlag
     ) {
-      alert("注文してもよろしいですか？");
-      console.log("注文はじめます");
-      db.collection(`users/Qk4xMuaeBuMccnx1gEb7fx207ah2/orders`)
-        .doc(`G0NhIs4r5Sy8UdRutDCc`)
-        .update(userdata); //orderテーブルにお届け先情報追加
-      handleLink("/ordercomp");
+      if (window.confirm("注文してもよろしいですか？")) {
+        userdata.orderDate = new Date()
+        dispatch(order(userdata, props.user.uid, props.cartInfo.id));
+        handleLink("/ordercomp");
+      }
     } else {
       alert("入力内容にエラーがあります");
     }
@@ -359,7 +328,7 @@ export const Order = () => {
             <input type="text" maxlength="16" onChange={(e) => checkCard(e)} />
           </div>
           <p>{creditcardError}</p>
-          <Button variant="contained" type="button" onClick={addOrder}>
+          <Button variant="contained" type="button" onClick={confirmOrder}>
             この内容で注文する
           </Button>
         </form>
