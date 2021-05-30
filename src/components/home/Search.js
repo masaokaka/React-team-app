@@ -6,12 +6,12 @@ import { TextField } from "@material-ui/core";
 import Button from '@material-ui/core/Button';
 
 export const Search = (props) => {
-  
+
   const [keyword, setKeyword] = useState();
   const [error, setError] = useState('')
   const items = useSelector(state => state.items)
   const dispatch = useDispatch()
-  useEffect(() => { 
+  useEffect(() => {
     dispatch(fetchitems())
   }, [])
 
@@ -23,7 +23,7 @@ export const Search = (props) => {
     props.itemsData.forEach(item => {if(item.name.indexOf(keyword) >= 0){
       array.push(item)
       console.log(array)
-    }}) 
+    }})
     if(keyword === ""){
       console.log(items)
       props.setItemsData(items)
@@ -36,7 +36,7 @@ export const Search = (props) => {
       props.setItemsData(array)
       setError()
     }
-  }  
+  }
 
 
   return (
