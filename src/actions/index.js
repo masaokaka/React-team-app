@@ -11,9 +11,7 @@ export const FETCHITEMS = "fetchitems";
 //トッピングデータ
 export const FETCHTOPPINGS = "fetchtoppings";
 export const ADDTOPPINGS = "addtopping";
-<<<<<<< HEAD
-export const ADDORDER = "addorder";
-=======
+
 //カート
 export const CREATECART = "createcart";
 export const FETCHCART = "fetchcart";
@@ -24,7 +22,6 @@ export const FETCHCARTNOUSER = "fetchcartnouser";
 
 //注文処理
 export const ORDER = "order";
->>>>>>> develop
 
 export const sidenav = (onClose) => ({
   type: SIDENAV,
@@ -93,20 +90,6 @@ export const addtopping = (newtoppings) => (dispatch) => {
       });
     });
 };
-
-<<<<<<< HEAD
-//order引っ張ってくる
-export const fetchorder = () => (dispatch) => {
-  db.collection(`users/AjVF9msWNWOoqQNumnKJrzAyWwF3/orders`)
-    .get()
-    .then((snapShot) => {
-      snapShot.forEach((doc) => {
-        dispatch({
-          type: ADDORDER,
-          itemInfo: doc.data().itemInfo, //配列
-        });
-      });
-=======
 //カートの商品を取得するーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
 export const fetchcart = (uid) => (dispatch) => {
   db.collection(`users/${uid}/orders`)
@@ -214,8 +197,7 @@ export const order = (orderData, uid, cartId) => (dispatch) => {
     .update(orderData)
     .then(() => {
       dispatch({
-          type: UNSETCART,
-        });
->>>>>>> develop
+        type: UNSETCART,
+      });
     });
 };
