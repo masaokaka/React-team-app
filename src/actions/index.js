@@ -22,6 +22,9 @@ export const FETCHCARTNOUSER = "fetchcartnouser";
 //注文処理
 export const ORDER = "order";
 
+//ユーザー情報取得
+export const FETCHUSERINFO = "fetchuserinfo"
+
 export const sidenav = (onClose) => ({
   type: SIDENAV,
   onClose: onClose,
@@ -201,3 +204,8 @@ export const order = (orderData, uid, cartId) => (dispatch) => {
         });
     });
 };
+
+//ユーザー情報取得処理
+export const fetchuserinfo = () => (dispatch) => {
+  
+}

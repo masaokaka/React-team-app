@@ -51,7 +51,7 @@ const SideNavContent = () => {
     { text: "ホーム", icon: <HomeIcon />, link: "/" },
     { text: "カート", icon: <ShoppingCartIcon />, link: "/cart" },
     { text: "購入履歴", icon: <HistoryIcon />, link: "/orderhistory" },
-    { text: "管理画面", icon: <AdminIcon />, link: `/admin/${user.uid}` },
+    { text: "管理画面", icon: <AdminIcon />, link: "/admin" },
   ];
   const link = (link) => {
     dispatch(sidenav(false));
