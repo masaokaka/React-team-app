@@ -6,6 +6,7 @@ import { fetchitems, additem } from "../../actions";
 import { ADMIN_ID } from "../../status/index";
 import Input from "@material-ui/core/Input";
 
+
 export const AdminItems = () => {
   const [id, setId] = useState();
   const [name, setName] = useState();
@@ -17,13 +18,11 @@ export const AdminItems = () => {
   const items = useSelector((state) => state.items);
   const user = useSelector((state) => state.user);
   const history = useHistory();
+  
+  if (img) {
+    console.log(img.name)
+  }
 
-  //マウント時にユーザーがアドミンではなかった場合にはアクセス拒否
-  useEffect(() => {
-    if (user.uid !== ADMIN_ID) {
-      history.push("/");
-    }
-  }, []);
   const doAddItem = () => {
     let item = {
       id: parseInt(id),
@@ -33,8 +32,7 @@ export const AdminItems = () => {
       lprice: parseInt(lprice),
       img: img,
     };
-    let newitems = [...items, item];
-    dispatch(additem(newitems));
+    dispatch(additem(item,items));
     setId("");
     setName("");
     setText("");
@@ -73,8 +71,8 @@ export const AdminItems = () => {
           <Input type="number" onChange={(e) => setLprice(e.target.value)} />
         </div>
         <div>
-          画像パス:
-          <Input type="text" onChange={(e) => setImg(e.target.value)} />
+          画像:
+          <Input type="file" onChange={(e) => setImg(e.target.files[0])} />
         </div>
         <Button variant="contained" onClick={doAddItem}>
           登録

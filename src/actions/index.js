@@ -1,4 +1,4 @@
-import { db } from "../firebase/index";
+import { db, storage } from "../firebase/index";
 import { ADMIN_ID, ITEMS_TABLE_ID, TOPPINGS_TABLE_ID } from "../status/index";
 // サイドナビ
 export const SIDENAV = "sidenav";
@@ -23,7 +23,7 @@ export const FETCHCARTNOUSER = "fetchcartnouser";
 export const ORDER = "order";
 
 //ユーザー情報取得
-export const FETCHUSERINFO = "fetchuserinfo"
+export const FETCHUSERINFO = "fetchuserinfo";
 
 export const sidenav = (onClose) => ({
   type: SIDENAV,
@@ -55,17 +55,25 @@ export const fetchitems = () => (dispatch) => {
     });
 };
 ///管理者dbへの商品情報追加処理
-export const additem = (newitems) => (dispatch) => {
-  db.collection(`admin/${ADMIN_ID}/item`)
-    .doc(ITEMS_TABLE_ID)
-    .update({ itemData: newitems })
-    .then(() => {
-      dispatch({
-        type: ADDITEMS,
-        itemData: newitems,
+export const additem = (item,items) => (dispatch) => {
+  console.log(item.img)
+  let storageRef = storage.ref().child(`img/${item.img.name}`)
+  storageRef.put(item.img).then(() => {
+    storageRef.getDownloadURL().then((url) => {
+      item.img = url
+      let newitems = [...items,item]
+      db.collection(`admin/${ADMIN_ID}/item`)
+      .doc(ITEMS_TABLE_ID)
+      .update({ itemData: newitems })
+      .then(() => {
+        dispatch({
+          type: ADDITEMS,
+          itemData: newitems,
+        });
       });
-    });
-};
+    })
+  })
+}
 
 //管理者dbからトッピング情報をとってくる処理ーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
 export const fetchtoppings = () => (dispatch) => {
@@ -200,12 +208,19 @@ export const order = (orderData, uid, cartId) => (dispatch) => {
     .update(orderData)
     .then(() => {
       dispatch({
-          type: UNSETCART,
-        });
+        type: UNSETCART,
+      });
     });
 };
 
 //ユーザー情報取得処理
 export const fetchuserinfo = () => (dispatch) => {
-  
-}
+  db.collection("users")
+    .get()
+    .then((snapShot) => {
+      console.log(snapShot)
+      snapShot.forEach(doc => {
+        console.log(doc.id)
+      })
+    });
+};

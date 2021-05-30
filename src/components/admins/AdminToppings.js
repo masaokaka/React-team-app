@@ -16,13 +16,6 @@ export const AdminToppings = () => {
   const dispatch = useDispatch();
   const toppings = useSelector((state) => state.toppings);
 
-  //マウント時にユーザーがアドミンではなかった場合にはアクセス拒否
-  useEffect(() => {
-    if (user.uid !== ADMIN_ID) {
-      history.push("/");
-    }
-  }, []);
-
   const doAddTopping = () => {
     let topping = {
       id: parseInt(id),
