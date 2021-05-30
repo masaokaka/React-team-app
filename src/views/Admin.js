@@ -18,7 +18,7 @@ export const Admin = () => {
 
     return (
       <React.Fragment>
-        <AddItemForm/>
+        <AddItemForm />
         <AddToppingForm/>
       </React.Fragment>
     );

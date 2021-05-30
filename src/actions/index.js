@@ -1,4 +1,4 @@
-import { db, FirebaseTimestamp } from "../firebase/index";
+import { db } from "../firebase/index";
 import { ADMIN_ID, ITEMS_TABLE_ID, TOPPINGS_TABLE_ID } from "../status/index";
 // サイドナビ
 export const SIDENAV = "sidenav";
