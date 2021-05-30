@@ -19,6 +19,38 @@ export const ItemInfo = () => {
   const [itemRendering, setItemRendering] = useState('');
   const [toppingsRendering,setToppings] = useState([]);
   const [toppingFlag,setToppingFlag] = useState({});
+//カートに情報を送る
+  const addToCart = ()=> {
+    const item = {};
+    item.itemid = itemid
+    item.itmeNum = selectValue
+    item.size = sizeValue
+    item.toppings = []
+    let toppingObjKeys = Object.keys(calcToppingSize)
+    toppingObjKeys.forEach(key => {
+      if(calcToppingSize[key] !== 0){
+          const toppingWillAdd = {}
+        if(calcToppingSize[key] === 1){
+          toppings.forEach((topping) => {
+            if (topping.name === key){
+              toppingWillAdd.toppingId = topping.id
+              toppingWillAdd.toppingSize = 1
+            }
+          })
+        } else if(calcToppingSize[key] === 2){
+          toppings.forEach((topping) => {
+            if (topping.name === key){
+              toppingWillAdd.toppingId = topping.id
+              toppingWillAdd.toppingSize = 1
+            }
+          })
+        } 
+        item.toppings.push(toppingWillAdd)
+        console.log(toppingWillAdd)
+        console.log(item)
+      }
+    });
+  }
 
   useEffect(()=>{
       items.forEach(item => {
@@ -87,12 +119,12 @@ export const ItemInfo = () => {
 
   const [totalPrice,setTotalPrice] = useState(0)
   const [sizeValue,setSizeValue] = useState(1)
-  const setSize1 = () => {
-    setSizeValue(1)
+  const setSize0 = () => {
+    setSizeValue(0)
   }
 
-  const setSize2 = () => {
-    setSizeValue(2)
+  const setSize1 = () => {
+    setSizeValue(1)
   }
 const[calcPrice,setCalcPrice] = useState(0)
   useEffect(() => {
@@ -100,9 +132,9 @@ const[calcPrice,setCalcPrice] = useState(0)
   },[itemRendering])
 
   useEffect(()=>{
-    if(sizeValue === 1){
+    if(sizeValue === 0){
       setCalcPrice(itemRendering.mprice);
-    }else if (sizeValue === 2){
+    }else if (sizeValue === 1){
       setCalcPrice(itemRendering.lprice);
     }
   },[sizeValue])
@@ -122,6 +154,8 @@ const[calcPrice,setCalcPrice] = useState(0)
     let calculation = calcPrice * selectValue +(mCount * 200) + (lCount * 300); 
     setTotalPrice(calculation)
   },[selectValue,calcPrice,calcToppingSize])
+
+
 
 
   return (
@@ -176,11 +210,13 @@ const[calcPrice,setCalcPrice] = useState(0)
                     </div>
                     <div className="col-sm-12">
                       <label className="radio-inline">
-                        <input type="radio" name="responsibleCompany" checked={sizeValue === 1} onChange={(e) => {setSize1(e)}}/>
+                        <input type="radio" name="responsibleCompany" checked={sizeValue === 0} 
+                          onChange={(e) => {setSize0(e)}}/>
                         <span className="price">&nbsp;М&nbsp;</span>&nbsp;&nbsp;{itemRendering.mprice}(税抜)
                       </label>
                       <label className="radio-inline">
-                        <input type="radio" name="responsibleCompany" checked={sizeValue === 2} onChange={(e) => {setSize2(e)}}/>
+                        <input type="radio" name="responsibleCompany" checked={sizeValue === 1} 
+                          onChange={(e) => {setSize1(e)}}/>
                         <span className="price">&nbsp;Ｌ</span>&nbsp;&nbsp;{itemRendering.lprice}(税抜)
                       </label>
                     </div>
@@ -206,8 +242,10 @@ const[calcPrice,setCalcPrice] = useState(0)
                              <label className="checkbox-inline">
                                   <input name={toppingsRendering[index].name} type="checkbox"  onChange={(e) => {changeFlag(e)}}/>{topping.name}
                                   <span style={{display:toppingFlag[topping.name] ? 'block':'none'}}>
-                                    M<input type="radio" value='1' name={toppingsRendering[index].name} checked={calcToppingSize[toppingsRendering[index].name] === 1} onChange={(e) => {changeToppingSize(e)}}/>
-                                    L<input type="radio" value='2' name={toppingsRendering[index].name} checked={calcToppingSize[toppingsRendering[index].name] === 2} onChange={(e) => {changeToppingSize(e)}}/>
+                                    M<input type="radio" value='1' name={toppingsRendering[index].name} 
+                                        checked={calcToppingSize[toppingsRendering[index].name] === 1} onChange={(e) => {changeToppingSize(e)}}/>
+                                    L<input type="radio" value='2' name={toppingsRendering[index].name} 
+                                        checked={calcToppingSize[toppingsRendering[index].name] === 2} onChange={(e) => {changeToppingSize(e)}}/>
                                   </span>
                              </label>
                           </div>
@@ -257,7 +295,7 @@ const[calcPrice,setCalcPrice] = useState(0)
               <div className="col-xs-offset-2 col-xs-3">
                 <div className="form-group">
                   <p>
-                    <input className="form-control btn btn-warning btn-block" type="submit" value="カートに入れる"/>
+                      <button className="form-control btn btn-warning btn-block" onClick={() => addToCart()}>ボタン</button>
                   </p>
 
                 </div>
