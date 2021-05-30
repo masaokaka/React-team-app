@@ -7,6 +7,7 @@ export const ADDITEMS = "additem";
 export const FETCHITEMS = "fetchitems";
 export const FETCHTOPPINGS = "fetchtoppings";
 export const ADDTOPPINGS = "addtopping";
+export const ADDORDER = "addorder";
 
 export const sidenav = (onClose) => ({
   type: SIDENAV,
@@ -21,7 +22,7 @@ export const setuser = (user) => ({
 
 //ログアウト
 export const unsetuser = () => ({
-  type: UNSETUSER
+  type: UNSETUSER,
 });
 
 //管理者dbから商品情報をとってくる処理ーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
@@ -72,6 +73,20 @@ export const addtopping = (newtoppings) => (dispatch) => {
       dispatch({
         type: ADDTOPPINGS,
         toppingData: newtoppings,
+      });
+    });
+};
+
+//order引っ張ってくる
+export const fetchorder = () => (dispatch) => {
+  db.collection(`users/AjVF9msWNWOoqQNumnKJrzAyWwF3/orders`)
+    .get()
+    .then((snapShot) => {
+      snapShot.forEach((doc) => {
+        dispatch({
+          type: ADDORDER,
+          itemInfo: doc.data().itemInfo, //配列
+        });
       });
     });
 };

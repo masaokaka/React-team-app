@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { db } from "../firebase";
 import React from "react";
@@ -22,7 +22,7 @@ const useStyles = makeStyles({
 });
 
 //仮データ
-const orders = [
+/* const orders = [
   {
     itemInfo: [
       {
@@ -58,48 +58,8 @@ const orders = [
     ],
     status: 3,
     orderDate: "2021-5-20",
-  },
-  {
-    itemInfo: [
-      {
-        id: "",
-        itemId: 3,
-        itemNum: 3,
-        itemSize: 0,
-        toppings: [{ toppingId: 3, toppingSize: 1 }],
-      },
-    ],
-    status: 9,
-    orderDate: "2021-5-20",
-  },
-  {
-    itemInfo: [
-      {
-        id: "",
-        itemId: 3,
-        itemNum: 3,
-        itemSize: 0,
-        toppings: [{ toppingId: 3, toppingSize: 1 }],
-      },
-      {
-        id: "",
-        itemId: 3,
-        itemNum: 3,
-        itemSize: 0,
-        toppings: [{ toppingId: 3, toppingSize: 1 }],
-      },
-      {
-        id: "",
-        itemId: 3,
-        itemNum: 3,
-        itemSize: 0,
-        toppings: [{ toppingId: 3, toppingSize: 1 }],
-      },
-    ],
-    status: 2,
-    orderDate: "2021-5-20",
-  },
-];
+  }
+]; */
 
 export const OrderHistory = () => {
   //@material-uiの使用
@@ -107,18 +67,22 @@ export const OrderHistory = () => {
   const items = useSelector((state) => state.items);
   const toppings = useSelector((state) => state.toppings);
   const dispatch = useDispatch();
+  const [orders, setOrders] = useState([]);
 
   useEffect(() => {
+    db.collection(`users/AjVF9msWNWOoqQNumnKJrzAyWwF3/orders`)
+      .get()
+      .then((snapShot) => {
+        snapShot.forEach((doc) => {
+          if (doc.status !== 0) {
+            setOrders(doc.date());
+          }
+          console.log(doc.data().itemInfo);
+        });
+      });
     dispatch(fetchitems());
     dispatch(fetchtoppings());
   }, []);
-
-  /*   firestoreのstatusを変更する処理
-const statusChange=()=>
-db.collection(ここにitemInfoのなかみのstatusを指定).update(
-    "stataus": 9
-  }
-}); */
 
   //現在ログインしているユーザが代入される
   const user = useSelector((state) => state.user);
@@ -126,8 +90,8 @@ db.collection(ここにitemInfoのなかみのstatusを指定).update(
   return (
     <div align="center">
       <h2>注文履歴一覧</h2>
-
-      {user !== null && (
+      <button onClick={() => console.log(items)}>取れてるか確認</button>
+      {/* {user !== null && (
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -217,7 +181,7 @@ db.collection(ここにitemInfoのなかみのstatusを指定).update(
       )}
 
       {user === null && <h3>注文履歴がありません</h3>}
-
+ */}
       <Link to="/">
         <button>トップ画面に戻る</button>
       </Link>
