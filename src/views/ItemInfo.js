@@ -3,9 +3,19 @@ import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import { fetchitems, fetchtoppings } from '../actions'
+import { createcart, fetchcart, updatecart } from "../actions";
+import {useHistory} from 'react-router-dom'
 // import { BrowserRouter as Router} from "react-router-dom";
 
 export const ItemInfo = () => {
+  const user = useSelector((state) => state.user);
+  const cartInfo = useSelector((state) => state.cartinfo); //オブジェクト
+  const history = useHistory();
+  useEffect(() => {
+    if (user) {
+      dispatch(fetchcart(user.uid));
+    }
+  }, [user])
   //ここで商品情報を読み込んでおく必要あり
   const dispatch = useDispatch()
   useEffect(() => { 
@@ -19,38 +29,6 @@ export const ItemInfo = () => {
   const [itemRendering, setItemRendering] = useState('');
   const [toppingsRendering,setToppings] = useState([]);
   const [toppingFlag,setToppingFlag] = useState({});
-//カートに情報を送る
-  const addToCart = ()=> {
-    const item = {};
-    item.itemid = itemid
-    item.itmeNum = selectValue
-    item.size = sizeValue
-    item.toppings = []
-    let toppingObjKeys = Object.keys(calcToppingSize)
-    toppingObjKeys.forEach(key => {
-      if(calcToppingSize[key] !== 0){
-          const toppingWillAdd = {}
-        if(calcToppingSize[key] === 1){
-          toppings.forEach((topping) => {
-            if (topping.name === key){
-              toppingWillAdd.toppingId = topping.id
-              toppingWillAdd.toppingSize = 1
-            }
-          })
-        } else if(calcToppingSize[key] === 2){
-          toppings.forEach((topping) => {
-            if (topping.name === key){
-              toppingWillAdd.toppingId = topping.id
-              toppingWillAdd.toppingSize = 1
-            }
-          })
-        } 
-        item.toppings.push(toppingWillAdd)
-        console.log(toppingWillAdd)
-        console.log(item)
-      }
-    });
-  }
 
   useEffect(()=>{
       items.forEach(item => {
@@ -118,7 +96,7 @@ export const ItemInfo = () => {
   }
 
   const [totalPrice,setTotalPrice] = useState(0)
-  const [sizeValue,setSizeValue] = useState(1)
+  const [sizeValue,setSizeValue] = useState(0)
   const setSize0 = () => {
     setSizeValue(0)
   }
@@ -155,35 +133,74 @@ const[calcPrice,setCalcPrice] = useState(0)
     setTotalPrice(calculation)
   },[selectValue,calcPrice,calcToppingSize])
 
+  //ランダム文字生成
+  const getUniqueStr = () => {
+    return (
+      new Date().getTime().toString(16) +
+      Math.floor(1000 * Math.random()).toString(16)
+    );
+  };
 
-
+  //カートにアイテムを追加する処理
+  const doAddCart = () => {
+    //カートに送るデータの準備
+    const item = {};
+    item.itemId = parseInt(itemid)
+    item.itmeNum = selectValue
+    item.size = sizeValue
+    item.toppings = []
+    let toppingObjKeys = Object.keys(calcToppingSize)
+    toppingObjKeys.forEach(key => {
+              if(calcToppingSize[key] !== 0){
+                  const toppingWillAdd = {}
+                if(calcToppingSize[key] === 1){
+                  toppings.forEach((topping) => {
+                    if (topping.name === key){
+                      toppingWillAdd.toppingId = topping.id
+                      toppingWillAdd.toppingSize = 0
+                    }
+                  })
+                } else if(calcToppingSize[key] === 2){
+                  toppings.forEach((topping) => {
+                    if (topping.name === key){
+                      toppingWillAdd.toppingId = topping.id
+                      toppingWillAdd.toppingSize = 1
+                    }
+                  })
+                } 
+                item.toppings.push(toppingWillAdd)
+              }
+    });
+    item.id = getUniqueStr();
+    //ログイン確認してログインしていたらuidを渡す
+    let uid;
+    if (user) {
+      uid = user.uid;
+    } else {
+      uid = null;
+    }
+    //カートにアイテムが入っていたら中身も一緒に渡す。
+    if (cartInfo) {
+      cartInfo.itemInfo = [...cartInfo.itemInfo, item]
+      let newCartInfo = JSON.stringify(cartInfo)
+      newCartInfo = JSON.parse(newCartInfo)
+      dispatch(updatecart(newCartInfo,uid));
+      history.push("/cart");
+      //入ってなかったら配列に格納して渡す。
+    } else {
+      let newCartInfo = {
+        itemInfo: [item],
+        status: 0, //カート(あとで定数に置き換える)
+        userId: uid,
+      };
+      dispatch(createcart(newCartInfo, uid));
+      console.log(newCartInfo)
+      history.push("/cart");
+    }
+  };
 
   return (
-    <React.Fragment>
       <div className="container">
-        {/* <nav class="navbar navbar-default">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-              <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="item_list_pizza.html">
-              <img alt="main log" src="../static/img_pizza/header_logo.png" height="35" />
-            </a>
-          </div>
-
-          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <p class="navbar-text navbar-right">
-              <a href="cart_list.html" class="navbar-link">ショッピングカート</a>&nbsp;&nbsp;
-              <a href="order_history.html" class="navbar-link">注文履歴</a>&nbsp;&nbsp;
-              <a href="login.html" class="navbar-link">ログイン</a>&nbsp;&nbsp;
-              <a href="item_list_pizza.html" class="navbar-link">ログアウト</a>
-            </p>
-          </div>
-        </div>
-      </nav> */}
-
-      
         <div className="row">
           <div className="col-xs-offset-2 col-xs-8">
 
@@ -295,15 +312,30 @@ const[calcPrice,setCalcPrice] = useState(0)
               <div className="col-xs-offset-2 col-xs-3">
                 <div className="form-group">
                   <p>
-                      <button className="form-control btn btn-warning btn-block" onClick={() => addToCart()}>ボタン</button>
+                      <button className="form-control btn btn-warning btn-block" onClick={() => doAddCart()}>ボタン</button>
                   </p>
-
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 	    </div>
-    </React.Fragment>
-  );
-};
+
+      <div>
+      {cartInfo !== null ? (
+        cartInfo.itemInfo.length !== 0 && (
+          <div>
+            {cartInfo.itemInfo.map((item, index) => (
+              <div key={index}>
+                <p>id:{item.itemId}</p>
+                <p>個数：{item.itemNum}</p>
+              </div>
+            ))}
+          </div>
+        )
+      ) : (
+        <div>アイテムないよ</div>
+      )}
+    </div>
+    </div>
+    </div>
+  )
+}
