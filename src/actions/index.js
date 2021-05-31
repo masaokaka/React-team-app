@@ -219,7 +219,6 @@ export const fetchuserinfo = () => (dispatch) => {
   db.collection("users")
     .get()
     .then((snapShot) => {
-      console.log(snapShot)
       snapShot.forEach(doc => {
         console.log(doc.id)
       })
