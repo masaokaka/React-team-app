@@ -158,6 +158,7 @@ export const createcart = (cartInfo, uid) => (dispatch) => {
       });
   } else {
     cartInfo.id = null;
+    console.log(cartInfo)
     dispatch({
       type: UPDATECART,
       cartInfo: cartInfo, //オブジェクト
