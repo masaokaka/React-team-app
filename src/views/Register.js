@@ -8,7 +8,8 @@ import {TextField,
         Button, 
         Container,
         makeStyles,
-        Grid
+        Grid,
+        Paper
         } from "@material-ui/core"
 
 const useStyles = makeStyles((theme) => ({
@@ -18,6 +19,9 @@ const useStyles = makeStyles((theme) => ({
       width:400, 
     },
   },
+  paper: {
+    textAlign:'center',
+  }
 })) 
 
 export const Register = () => {
@@ -224,45 +228,57 @@ export const Register = () => {
   };
 
   return (
-    <Container maxWidth="sm">
           <form  className={classes.root} autoComplete='off'>
-          
-          <div>
-            <div>
-              <div style={{marginBottom: '1.5em'}}>
-                  <TextField label='名前' name='name' value={name} onChange={(e) => ClearName(e)} helperText={nameError}/>
-              </div>
+              <Grid container spacing={1} justify='center'>
+                  <Grid item xs sx={{mx:'auto'}}>
+                      <div>
+                          <TextField label='名前' name='name' value={name} onChange={(e) => ClearName(e)} helperText={nameError}/>
+                      </div>
+                  </Grid>
+                    
+                  <Grid item xs>
+                      <div>
+                        <TextField label='メールアドレス' name="email" value={email} onChange={(e) => ClearEmail(e)} helperText={emailError}/>
+                      </div>
+                  </Grid>
 
-              <div style={{marginBottom: '1.5em'}}>
-                  <TextField label='メールアドレス' name="email" value={email} onChange={(e) => ClearEmail(e)} helperText={emailError}/>
-              </div>
-              
-              
-              <div style={{marginBottom: '1.5em'}}>
-                  <TextField label='郵便番号' id='zip' name="zip" value={zip} onChange={(e) => ClearZip(e)} helperText={zipError}/>
-              </div>
-              <Button variant='contained' color='secondary' onClick={() => searchAddress()}>住所検索</Button>
+                  <Grid item xs>
+                      <div>
+                          <TextField label='郵便番号' id='zip' name="zip" value={zip} onChange={(e) => ClearZip(e)} helperText={zipError}/>
+                      </div>
+                      <Button variant='contained' color='secondary' onClick={() => searchAddress()}>住所検索</Button> 
+                  </Grid>  
+                    
+                    
+                  <Grid item xs>
+                      <div>
+                        <TextField label='住所' name="address" value={address} onChange={(e) => ClearAddress(e)} helperText={addressError}/>
+                      </div>
+                  </Grid>  
 
-              <div style={{marginBottom: '1.5em'}}>
-                  <TextField label='住所' name="address" value={address} onChange={(e) => ClearAddress(e)} helperText={addressError}/>
-              </div>
+                  <Grid item xs>
+                      <div>
+                          <TextField label='電話番号' name="tel" value={tell} onChange={(e) => ClearTell(e)} helperText={tellError}/>
+                      </div>
+                  </Grid>
 
-              <div style={{marginBottom: '1.5em'}}>
-                  <TextField label='電話番号' name="tel" value={tell} onChange={(e) => ClearTell(e)} helperText={tellError}/>
-              </div>
+                  <Grid item xs>
+                      <div>
+                            <TextField label='パスワード' id="password" type='password' name="password" value={password} onChange={(e) => ClearPassword(e)} helperText={passwordError}/>
+                      </div>
+                  </Grid>
 
-              <div style={{marginBottom: '1.5em'}}>
-                  <TextField label='パスワード' id="password" type='password' name="password" value={password} onChange={(e) => ClearPassword(e)} helperText={passwordError}/>
-              </div>
+                  <Grid item xs>
+                      <div>
+                        <TextField label='確認用パスワード' type='password' value={confirm} onChange={(e) => ClearConfirm(e)} helperText={confirmError}/>
+                      </div>
+                   </Grid>
 
-              <div style={{marginBottom: '1.5em'}}>
-                  <TextField label='確認用パスワード' type='password' value={confirm} onChange={(e) => ClearConfirm(e)} helperText={confirmError}/>
-              </div>
-            </div>
-              <Button variant='contained' color='secondary' onClick={(e) => handleRegist(e)}>登録</Button>
-              <Button variant='contained' color='secondary' onClick={()=>clearText()}>クリア</Button>
-        </div>
+                  <Grid item xs> 
+                      <Button variant='contained' color='secondary' onClick={(e) => handleRegist(e)}>登録</Button>
+                      <Button variant='contained' color='secondary' onClick={()=>clearText()}>クリア</Button>
+                  </Grid>
+              </Grid>  
       </form>
-    </Container>    
   )
 };
