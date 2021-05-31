@@ -122,7 +122,7 @@ export const Register = () => {
         }
       }
 
-      const ClearPassword = (e) => {
+       const ClearPassword = (e) => {
         const Check = e.target.value
         const Validate = /^[a-zA-Z0-9!#$%&()*+,.:;=?@[\]^_{}-]+$/
         setPassword(e.target.value)
@@ -251,3 +251,4 @@ export const Register = () => {
     </div>
   )
 };
+

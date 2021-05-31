@@ -317,25 +317,8 @@ const[calcPrice,setCalcPrice] = useState(0)
                 </div>
               </div>
             </div>
-	    </div>
-
-      <div>
-      {cartInfo !== null ? (
-        cartInfo.itemInfo.length !== 0 && (
-          <div>
-            {cartInfo.itemInfo.map((item, index) => (
-              <div key={index}>
-                <p>id:{item.itemId}</p>
-                <p>個数：{item.itemNum}</p>
-              </div>
-            ))}
-          </div>
-        )
-      ) : (
-        <div>アイテムないよ</div>
-      )}
-    </div>
-    </div>
+	      </div>
+      </div>
     </div>
   )
 }
