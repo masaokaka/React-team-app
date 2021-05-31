@@ -56,7 +56,10 @@ export const OrderHistory = () => {
         });
     }
   };
-
+  let date = new Date();
+  let orderTime = date.getTime();
+  let date2 = new Date(orderTime)
+  console.log(date2);
   return (
     <div align="center">
       <h2>注文履歴一覧</h2>
@@ -75,7 +78,7 @@ export const OrderHistory = () => {
                   <TableCell align="center">
                     注文日：{order.date}
                     <br />
-                    小計：
+                    合計金額(税抜)：{order.totalPrice.toLocaleString()}円
                     <br />
                     <div>
                       {order.status === 1 && (
@@ -125,7 +128,7 @@ export const OrderHistory = () => {
                               </TableCell>
                             )}
                             <TableCell align="center">
-                              {item.toppings.length!==0 ? (
+                              {item.toppings.length !== 0 ? (
                                 <div>
                                   {item.toppings.map((topping, index) =>
                                     toppings.map(
