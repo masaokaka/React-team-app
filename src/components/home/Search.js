@@ -7,36 +7,43 @@ import Button from "@material-ui/core/Button";
 import FormLabel from "@material-ui/core/FormLabel";
 
 export const Search = (props) => {
-  const [keyword, setKeyword] = useState();
+  const [keyword, setKeyword] = useState('');
   const [error, setError] = useState("");
+  const [resultCount, setResultCount] = useState();
   const items = useSelector((state) => state.items);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchitems());
   }, []);
 
+  useEffect(() => {
+    setResultCount(items.length)
+  },[items])
+
   const searchKeyword = () => {
-    console.log(items);
     let array = [...items];
-    props.array.forEach((item) => {
+    const resultBox = [];
+    array.forEach((item) => {
       if (item.name.indexOf(keyword) >= 0) {
-        array.push(item);
-        console.log(array);
+        resultBox.push(item);
       }
     });
-    if (keyword === "") {
-      console.log(items);
-      props.setItemsData(items);
-      setError();
-    } else if (array.length === 0) {
+    if (resultBox.length === 0) {
       setError("※該当する商品はありません");
-      props.setItemsData(array);
+      // props.setItemsData(array);
     } else {
-      console.log(items);
-      props.setItemsData(array);
+      props.setItemsData(resultBox);
+      setResultCount(resultBox.length)
       setError();
     }
   };
+
+    const clearText = ()=> {
+      setKeyword("");
+      props.setItemsData(items);
+      setResultCount(items.length)
+      setError();
+    }
 
   return (
     <React.Fragment>
@@ -83,7 +90,7 @@ export const Search = (props) => {
                         variant="contained"
                         value="クリア"
                         className="btn btn-default"
-                        onClick={() => setKeyword("")}
+                        onClick={() => clearText()}
                       >
                         クリア
                       </Button>
@@ -95,6 +102,7 @@ export const Search = (props) => {
           </Box>
         </Box>
       </Box>
+      <p>{resultCount}件の表示</p>
     </React.Fragment>
   );
 };
