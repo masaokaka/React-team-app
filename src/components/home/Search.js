@@ -74,10 +74,11 @@ export const Search = (props) => {
                 <Box>{error && <Box color="red">{error}</Box>}</Box>
                 <Box mx="auto" width="50%">
                   <Grid container justify="center">
-                    <Grid items xs={3} justify="center">
+                    <Grid container xs={3} justify="center">
                       <Button
                         variant="contained"
                         color="primary"
+                        size="medium"
                         value="検索"
                         className="btn btn-primary"
                         onClick={searchKeyword}
@@ -85,10 +86,11 @@ export const Search = (props) => {
                         検索
                       </Button>
                     </Grid>
-                    <Grid items xs={3} justify="center">
+                    <Grid container xs={3} justify="center">
                       <Button
                         variant="contained"
                         value="クリア"
+                        size="medium"
                         className="btn btn-default"
                         onClick={() => clearText()}
                       >

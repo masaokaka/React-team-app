@@ -1,5 +1,6 @@
 import { db } from "../firebase/index";
-import { ADMIN_ID, ITEMS_TABLE_ID, TOPPINGS_TABLE_ID } from "../status/index";
+import { ADMIN_ID, ITEMS_TABLE_ID, TOPPINGS_TABLE_ID, USERS_TABLE_ID } from "../status/index";
+import firebase from 'firebase'
 // サイドナビ
 export const SIDENAV = "sidenav";
 // ログイン/ログアウト
@@ -205,6 +206,14 @@ export const order = (orderData, uid, cartId) => (dispatch) => {
         });
     });
 };
+
+//管理者画面へのユーザー情報登録処理ーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+export const adduserinfo = (userinfo) => {
+  db.collection(`admin/${ADMIN_ID}/user`).doc(USERS_TABLE_ID)
+    .update({
+      users:firebase.firestore.FieldValue.arrayUnion(userinfo)
+    })
+}
 
 //ユーザー情報取得処理
 export const fetchuserinfo = () => (dispatch) => {
