@@ -7,7 +7,7 @@ import Button from "@material-ui/core/Button";
 import FormLabel from "@material-ui/core/FormLabel";
 
 export const Search = (props) => {
-  const [keyword, setKeyword] = useState('');
+  const [keyword, setKeyword] = useState("");
   const [error, setError] = useState("");
   const [resultCount, setResultCount] = useState();
   const items = useSelector((state) => state.items);
@@ -17,8 +17,8 @@ export const Search = (props) => {
   }, []);
 
   useEffect(() => {
-    setResultCount(items.length)
-  },[items])
+    setResultCount(items.length);
+  }, [items]);
 
   const searchKeyword = () => {
     let array = [...items];
@@ -33,17 +33,17 @@ export const Search = (props) => {
       // props.setItemsData(array);
     } else {
       props.setItemsData(resultBox);
-      setResultCount(resultBox.length)
+      setResultCount(resultBox.length);
       setError();
     }
   };
 
-    const clearText = ()=> {
-      setKeyword("");
-      props.setItemsData(items);
-      setResultCount(items.length)
-      setError();
-    }
+  const clearText = () => {
+    setKeyword("");
+    props.setItemsData(items);
+    setResultCount(items.length);
+    setError();
+  };
 
   return (
     <React.Fragment>
@@ -74,7 +74,7 @@ export const Search = (props) => {
                 <Box>{error && <Box color="red">{error}</Box>}</Box>
                 <Box mx="auto" width="50%">
                   <Grid container justify="center">
-                    <Grid container xs={3} justify="center">
+                    <Grid xs={3}>
                       <Button
                         variant="contained"
                         color="primary"
@@ -86,7 +86,7 @@ export const Search = (props) => {
                         検索
                       </Button>
                     </Grid>
-                    <Grid container xs={3} justify="center">
+                    <Grid xs={3}>
                       <Button
                         variant="contained"
                         value="クリア"
