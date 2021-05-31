@@ -1,4 +1,3 @@
-
 import { useHistory } from 'react-router-dom';
 import { auth , db } from '../firebase/index';
 import axios from 'axios';
@@ -10,18 +9,14 @@ import {TextField,
         Grid
         } from "@material-ui/core"
 
-
 const useStyles = makeStyles((theme) => ({
   root: {
     '& .MuiTextField-root': {
       margin: theme.spacing(1),
       width:400, 
-
     },
   },
 })) 
-
-
 
 export const Register = () => {
   const classes = useStyles()
@@ -189,37 +184,37 @@ export const Register = () => {
         listElements.forEach((item) => {
           if(item.name){
           valueList[item.name] = item.value;
-          }
-        })
-        const email = valueList.email
-        const password = valueList.password
-        let uid = '';
-        auth.createUserWithEmailAndPassword(email, password)
-        .then(() =>{
-          let user = auth.currentUser;
-          if (user != null){
-            uid = user.uid
-          }
-        }).then(() => {
-          db.collection(`users/${uid}/userInfo`)
-          .add(valueList)
-        })
-        handleLink('/')
         }
-        
-  }
-  
-  
-  const searchAddress = () => {
-    const zipValue = document.getElementById('zip').value
-    //不正な値の場合処理をはじく
-    axios.get(`https://api.zipaddress.net/?zipcode=${zipValue}`)
-    .then(res => {
-      setAddress(res.data.data.fullAddress)
-      setAddressError('')
-    }).catch(()=> setAddress('取得に失敗しました'))
-  }
+      });
+      const email = valueList.email;
+      const password = valueList.password;
+      let uid = "";
+      auth
+        .createUserWithEmailAndPassword(email, password)
+        .then(() => {
+          let user = auth.currentUser;
+          if (user != null) {
+            uid = user.uid;
+          }
+        })
+        .then(() => {
+          db.collection(`users/${uid}/userInfo`).add(valueList);
+        });
+      handleLink("/");
+    }
+  };
 
+  const searchAddress = () => {
+    const zipValue = document.getElementById("zip").value;
+    //不正な値の場合処理をはじく
+    axios
+      .get(`https://api.zipaddress.net/?zipcode=${zipValue}`)
+      .then((res) => {
+        setAddress(res.data.data.fullAddress);
+        setAddressError("");
+      })
+      .catch(() => setAddress("取得に失敗しました"));
+  };
 
   return (
     <Container maxWidth="sm">
@@ -261,8 +256,6 @@ export const Register = () => {
               <Button variant='contained' color='secondary' onClick={()=>clearText()}>クリア</Button>
         </div>
       </form>
-    </Container>
-        
+    </Container>    
   )
 };
-
