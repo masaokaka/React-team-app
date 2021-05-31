@@ -3,10 +3,28 @@ import { useHistory } from 'react-router-dom';
 import { auth , db } from '../firebase/index';
 import axios from 'axios';
 import { useState } from 'react';
+import {TextField,
+        Button, 
+        Container,
+        makeStyles,
+        Grid
+        } from "@material-ui/core"
+
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    '& .MuiTextField-root': {
+      margin: theme.spacing(1),
+      width:400, 
+
+    },
+  },
+})) 
 
 
 
 export const Register = () => {
+  const classes = useStyles()
   const [name,setName]= useState([])
   const [nameError,setNameError]= useState('')
   const [nameFlag,setNameFlag] = useState(true)
@@ -204,51 +222,47 @@ export const Register = () => {
 
 
   return (
-    
-
-    <div>
-        <div>
-          <div style={{marginBottom: '1.5em'}}>
-              <label>名前</label><p>{nameError}</p>
-              <input name='name' type="text" value={name} onChange={(e) => ClearName(e)}/>
-          </div>
-
-          <div style={{marginBottom: '1.5em'}}>
-              <label>メールアドレス</label><p>{emailError}</p>
-              <input name="email" type="text" value={email} onChange={(e) => ClearEmail(e)}/>
-          </div>
+    <Container maxWidth="sm">
+          <form  className={classes.root} autoComplete='off'>
           
+          <div>
+            <div>
+              <div style={{marginBottom: '1.5em'}}>
+                  <TextField label='名前' name='name' value={name} onChange={(e) => ClearName(e)} helperText={nameError}/>
+              </div>
 
-          <div style={{marginBottom: '1.5em'}}>
-              <button type="button" onClick={() => searchAddress()}>住所検索</button>
-              <label>郵便番号</label><p>{zipError}</p>
-              <input id='zip' name="zip" type="text" value={zip} onChange={(e) => ClearZip(e)}/>
-          </div>
+              <div style={{marginBottom: '1.5em'}}>
+                  <TextField label='メールアドレス' name="email" value={email} onChange={(e) => ClearEmail(e)} helperText={emailError}/>
+              </div>
+              
+              
+              <div style={{marginBottom: '1.5em'}}>
+                  <TextField label='郵便番号' id='zip' name="zip" value={zip} onChange={(e) => ClearZip(e)} helperText={zipError}/>
+              </div>
+              <Button variant='contained' color='secondary' onClick={() => searchAddress()}>住所検索</Button>
 
-          <div style={{marginBottom: '1.5em'}}>
-              <label >住所</label><p>{addressError}</p>
-              <input id="address" name="address" type="text"  value={address} onChange={(e) => ClearAddress(e)}/>
-          </div>
+              <div style={{marginBottom: '1.5em'}}>
+                  <TextField label='住所' name="address" value={address} onChange={(e) => ClearAddress(e)} helperText={addressError}/>
+              </div>
 
-          <div style={{marginBottom: '1.5em'}}>
-              <label >電話番号</label><p>{tellError}</p>
-              <input name="tel" type="text" maxLength='13' value={tell} onChange={(e) => ClearTell(e)}/>
-          </div>
+              <div style={{marginBottom: '1.5em'}}>
+                  <TextField label='電話番号' name="tel" value={tell} onChange={(e) => ClearTell(e)} helperText={tellError}/>
+              </div>
 
-          <div style={{marginBottom: '1.5em'}}>
-              <label>パスワード</label><p>{passwordError}</p>
-              <input id="password" name="password" type='password' value={password} onChange={(e) => ClearPassword(e)}/>
-          </div>
+              <div style={{marginBottom: '1.5em'}}>
+                  <TextField label='パスワード' id="password" type='password' name="password" value={password} onChange={(e) => ClearPassword(e)} helperText={passwordError}/>
+              </div>
 
-          <div style={{marginBottom: '1.5em'}}>
-              <label>確認用パスワード</label><p>{confirmError}</p>
-              <input type="password" value={confirm} onChange={(e) => ClearConfirm(e)}/>
-          </div>
+              <div style={{marginBottom: '1.5em'}}>
+                  <TextField label='確認用パスワード' type='password' value={confirm} onChange={(e) => ClearConfirm(e)} helperText={confirmError}/>
+              </div>
+            </div>
+              <Button variant='contained' color='secondary' onClick={(e) => handleRegist(e)}>登録</Button>
+              <Button variant='contained' color='secondary' onClick={()=>clearText()}>クリア</Button>
         </div>
-
-          <button type="button" onClick={(e) => handleRegist(e)}>登録</button>
-          <button type="button" onClick={()=>clearText()}>クリア</button>
-    </div>
+      </form>
+    </Container>
+        
   )
 };
 
