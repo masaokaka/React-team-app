@@ -74,7 +74,7 @@ export const Search = (props) => {
                 <Box>{error && <Box color="red">{error}</Box>}</Box>
                 <Box mx="auto" width="50%">
                   <Grid container justify="center">
-                    <Grid xs={3}>
+                    <Grid item xs={3}>
                       <Button
                         variant="contained"
                         color="primary"
@@ -86,7 +86,7 @@ export const Search = (props) => {
                         検索
                       </Button>
                     </Grid>
-                    <Grid xs={3}>
+                    <Grid item xs={3}>
                       <Button
                         variant="contained"
                         value="クリア"
