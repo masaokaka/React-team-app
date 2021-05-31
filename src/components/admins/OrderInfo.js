@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
-import { db } from "../firebase";
+import { db } from "../../firebase/index";
 import React from "react";
 import {
   Table,
@@ -12,48 +10,29 @@ import {
   Paper,
   Button,
 } from "@material-ui/core";
-import { useSelector, useDispatch } from "react-redux";
-import { fetchitems, fetchtoppings, fetchorder, updateorder } from "../actions";
+import { useDispatch } from "react-redux";
+import {
+  updateorder,
+} from "../../actions";
 
-export const OrderHistory = () => {
-  const user = useSelector((state) => state.user);
-  const items = useSelector((state) => state.items);
-  const toppings = useSelector((state) => state.toppings);
-  const orderInfo = useSelector((state) => state.orderinfo);
+export const OrderInfo = (props) => {
   const dispatch = useDispatch();
-  const history = useHistory();
-
-  /* const [orders, setOrders] = useState([...orderInfo]); */
-
-  useEffect(() => {
-    dispatch(fetchitems());
-    dispatch(fetchtoppings());
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      dispatch(fetchorder(user.uid));
-    }
-  }, [user]);
-
   const statechange = (index, orderId) => {
     if (window.confirm("キャンセルしてもよろしいですか？")) {
-      let orders = [...orderInfo];
+      let orders = [...props.orderInfo];
       orders[index].status = 9;
-      db.collection(`users/${user.uid}/orders`)
+      db.collection(`users/${props.userId}/orders`)
         .doc(orderId)
         .update({ status: 9 })
         .then(() => {
-          console.log(orders[index]);
           dispatch(updateorder(orders));
-          console.log("動いた");
         });
     }
   };
   return (
     <div align="center">
       <h2>注文履歴一覧</h2>
-      {orderInfo.length !== 0 && (
+      {props.orderInfo.length !== 0 && (
         <TableContainer component={Paper}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
@@ -73,7 +52,7 @@ export const OrderHistory = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {orderInfo.map((order, index) => (
+              {props.orderInfo.map((order, index) => (
                 <TableRow key={index}>
                   <TableCell align="center" colSpan={2}>
                     {order.orderDate}
@@ -121,7 +100,7 @@ export const OrderHistory = () => {
                     <TableCell align="center"></TableCell>
                   </TableRow>
                   {order.itemInfo.map((item, index) =>
-                    items.map(
+                    props.items.map(
                       (it) =>
                         it.id === item.itemId && (
                           <TableRow key={index} colSpan={6}>
@@ -134,9 +113,7 @@ export const OrderHistory = () => {
                               <div>
                                 <img src={it.img} height="120" alt="カレー" />
                               </div>
-                              <div>
-                              {it.name}
-                              </div>
+                              <div>{it.name}</div>
                             </TableCell>
                             {item.itemSize == 0 ? (
                               <TableCell align="center" colSpan={2}>
@@ -155,7 +132,7 @@ export const OrderHistory = () => {
                               {item.toppings.length !== 0 ? (
                                 <div>
                                   {item.toppings.map((topping, index) =>
-                                    toppings.map(
+                                    props.toppings.map(
                                       (top) =>
                                         topping.toppingId === top.id && (
                                           <div key={index}>
@@ -184,8 +161,7 @@ export const OrderHistory = () => {
           </Table>
         </TableContainer>
       )}
-      {orderInfo.length === 0 && <h3>注文履歴がありません</h3>}
-      <Button variant="contained" onClick={()=>history.push('/')}>トップ画面に戻る</Button>
+      {props.orderInfo.length === 0 && <h3>注文履歴がありません</h3>}
     </div>
   );
 };

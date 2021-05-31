@@ -7,6 +7,7 @@ import { toppings } from "./toppings";
 import { user } from "./user";
 import { cartinfo } from "./cartinfo";
 import { orderinfo } from "./orderinfo";
+import { userinfo } from "./userinfo";
 
 export default combineReducers({
   sidenav,
@@ -15,4 +16,5 @@ export default combineReducers({
   user,
   cartinfo,
   orderinfo,
+  userinfo
 }); //複数あれば,でくぎる

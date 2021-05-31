@@ -207,8 +207,8 @@ export const Register = () => {
         })
         .then(() => {
           db.collection(`users/${uid}/userInfo`).add(valueList);
-          //管理者DBに登録情報を保存する処理
           console.log(valueList)
+          //管理者DBに登録情報を保存する処理
           // dispatch(adduserinfo(valueList));
         });
       handleLink("/");

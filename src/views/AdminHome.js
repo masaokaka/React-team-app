@@ -13,6 +13,7 @@ import { AdminItems } from "../components/admins/AdminItems";
 import { AdminUsers } from "../components/admins/AdminUsers";
 import { AdminUserEdit } from "../components/admins/AdminUserEdit";
 import { AdminToppings } from "../components/admins/AdminToppings";
+import {Container} from "@material-ui/core"
 
 export const AdminHome = () => {
   const user = useSelector((state) => state.user);
@@ -40,23 +41,23 @@ export const AdminHome = () => {
             <Link to={`${match.url}/toppings`}>トッピング情報</Link>
           </div>
           <Switch>
-            <Route
-              path={`${match.path}/users`}
-              component={AdminUsers}
-            ></Route>
-            <Route
-              path={`${match.path}/edit/:userid`}
-              component={AdminUserEdit}
-            ></Route>
-            <Route
-              path={`${match.path}/items`}
-              exact
-              component={AdminItems}
-            ></Route>
-            <Route
-              path={`${match.path}/toppings`}
-              component={AdminToppings}
-            ></Route>
+              <Route
+                path={`${match.path}/users`}
+                component={AdminUsers}
+              ></Route>
+              <Route
+                path={`${match.path}/edit/:userid`}
+                component={AdminUserEdit}
+              ></Route>
+              <Route
+                path={`${match.path}/items`}
+                exact
+                component={AdminItems}
+              ></Route>
+              <Route
+                path={`${match.path}/toppings`}
+                component={AdminToppings}
+              ></Route>
           </Switch>
         </div>
       </Router>

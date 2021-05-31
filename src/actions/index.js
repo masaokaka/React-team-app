@@ -1,6 +1,11 @@
-import { db,storage } from "../firebase/index";
-import { ADMIN_ID, ITEMS_TABLE_ID, TOPPINGS_TABLE_ID, USERS_TABLE_ID } from "../status/index";
-import firebase from 'firebase'
+import { db, storage } from "../firebase/index";
+import {
+  ADMIN_ID,
+  ITEMS_TABLE_ID,
+  TOPPINGS_TABLE_ID,
+  USERS_TABLE_ID,
+} from "../status/index";
+import firebase from "firebase";
 
 // サイドナビ
 export const SIDENAV = "sidenav";
@@ -62,25 +67,25 @@ export const fetchitems = () => (dispatch) => {
     });
 };
 ///管理者dbへの商品情報追加処理
-export const additem = (item,items) => (dispatch) => {
-  console.log(item.img)
-  let storageRef = storage.ref().child(`img/${item.img.name}`)
+export const additem = (item, items) => (dispatch) => {
+  console.log(item.img);
+  let storageRef = storage.ref().child(`img/${item.img.name}`);
   storageRef.put(item.img).then(() => {
     storageRef.getDownloadURL().then((url) => {
-      item.img = url
-      let newitems = [...items,item]
+      item.img = url;
+      let newitems = [...items, item];
       db.collection(`admin/${ADMIN_ID}/item`)
-      .doc(ITEMS_TABLE_ID)
-      .update({ itemData: newitems })
-      .then(() => {
-        dispatch({
-          type: ADDITEMS,
-          itemData: newitems,
+        .doc(ITEMS_TABLE_ID)
+        .update({ itemData: newitems })
+        .then(() => {
+          dispatch({
+            type: ADDITEMS,
+            itemData: newitems,
+          });
         });
-      });
-    })
-  })
-}
+    });
+  });
+};
 
 //管理者dbからトッピング情報をとってくる処理ーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
 export const fetchtoppings = () => (dispatch) => {
@@ -175,7 +180,7 @@ export const createcart = (cartInfo, uid) => (dispatch) => {
       });
   } else {
     cartInfo.id = null;
-    console.log(cartInfo)
+    console.log(cartInfo);
     dispatch({
       type: UPDATECART,
       cartInfo: cartInfo, //オブジェクト
@@ -222,46 +227,49 @@ export const order = (orderData, uid, cartId) => (dispatch) => {
 
 //管理者画面へのユーザー情報登録処理ーーーーーーーーーーーーーーーーーーーーーーーーーーーー
 export const adduserinfo = (userinfo) => {
-  db.collection(`admin/${ADMIN_ID}/user`).doc(USERS_TABLE_ID)
+  db.collection(`admin/${ADMIN_ID}/user`)
+    .doc(USERS_TABLE_ID)
     .update({
-      users:firebase.firestore.FieldValue.arrayUnion(userinfo)
-    })
-}
-
+      users: firebase.firestore.FieldValue.arrayUnion(userinfo),
+    });
+};
 
 //注文履歴の取得ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
 export const fetchorder = (uid) => (dispatch) => {
   let orders = [];
-  db.collection(`users/${uid}/orders`)
-  .get()
-  .then((snapShot) => {
-    snapShot.forEach((doc) => {
-      if (doc.data().status !== 0) {
-        let order = doc.data();
-        order.id = doc.id;
-        orders.push(order);
-      }
-    });
+  console.log(uid)
+  db.collection(`users/${uid}/orders`).get()
+    .then((snapShot) => {
+      snapShot.forEach((doc) => {
+        if (doc.data().status !== 0) {
+          let order = doc.data();
+          order.id = doc.id;
+        }
+      });
+      orders.push(orders);
       dispatch({
         type: FETCHORDER,
         orderInfo: orders,
       });
     });
-  };
-  
-  //order更新
-  export const updateorder = (orders) => ({
-    type: UPDATEORDER,
-    orders: orders,
-  });
+};
 
-  //ユーザー情報取得処理
-  export const fetchuserinfo = () => (dispatch) => {
-    db.collection("users")
-      .get()
-      .then((snapShot) => {
-        snapShot.forEach(doc => {
-          console.log(doc.id)
-        })
+//order更新
+export const updateorder = (orders) => ({
+  type: UPDATEORDER,
+  orders: orders,
+});
+
+//ユーザー情報取得処理
+export const fetchuserinfo = () => (dispatch) => {
+  db.collection(`admin/${ADMIN_ID}/user`)
+    .get()
+    .then((snapShot) => {
+      snapShot.forEach((doc) => {
+        dispatch({
+          type: FETCHUSERINFO,
+          userInfo: doc.data().users,
+        });
       });
-  };
+    });
+};

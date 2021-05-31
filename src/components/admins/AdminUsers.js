@@ -23,16 +23,17 @@ export const AdminUsers = () => {
 
   useEffect(() => {
     dispatch(fetchuserinfo());
-  }, []);
+  }, [user]);
 
   return (
     <React.Fragment>
-      {userInfo ? (
+      {userInfo.length!==0 ? (
         <TableContainer>
           <h2>ユーザー情報</h2>
           <Table>
             <TableHead>
               <TableRow>
+                <TableCell>No</TableCell>
                 <TableCell>ユーザーID</TableCell>
                 <TableCell>名前</TableCell>
                 <TableCell>メールアドレス</TableCell>
@@ -40,13 +41,14 @@ export const AdminUsers = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {userInfo.map((user) => (
-                <TableRow>
-                  <TableCell>{user.uid}</TableCell>
+              {userInfo.map((user,index) => (
+                <TableRow key={index}>
+                  <TableCell>{index +1}</TableCell>
+                  <TableCell>{user.userId}</TableCell>
                   <TableCell>{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>
-                    <Button onClick={() => history.push(`/admin/edit/${user.uid}`)}>
+                    <Button onClick={() => history.push(`/admin/edit/${user.userId}`)}>
                       <CreateIcon />
                     </Button>
                   </TableCell>
