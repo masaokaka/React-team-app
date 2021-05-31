@@ -2,12 +2,22 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
-import Button from "@material-ui/core/Button";
+import {
+  Button,
+  Grid,
+  TextField,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  FormControl,
+  FormHelperText,
+  Box,
+} from "@material-ui/core";
 import { db } from "../../firebase/index";
 import { order } from "../../actions";
 
 export const Order = (props) => {
-  //【バリデージョン】
+  //バリデージョン
   const [nameError, setNameError] = useState("");
   const [nameFlag, setNameFlag] = useState(true);
   const [emailError, setEmailError] = useState("");
@@ -24,9 +34,21 @@ export const Order = (props) => {
   const [timeFlag, setTimeFlag] = useState(true);
   const [cardSelectError, setcardSelectError] = useState("");
   const [cardSelectFlag, setcrdSelectFlag] = useState(true);
+  const [creditShowFlag, setcreditShowFlag] = useState(false);
 
-  ////////////firestoreからデータ取得///
-  const [userdata, setUserdata] = useState({}); //ユーザー情報をオブジェクトの形にして表示
+  //firestoreからデータ取得
+  const [userdata, setUserdata] = useState({
+    name: "",
+    address: "",
+    email: "",
+    card: "",
+    date: "",
+    oderDate: "",
+    payment: "",
+    status: "",
+    tel: "",
+    zip: "",
+  }); //ユーザー情報をオブジェクトの形にして表示
   const dispatch = useDispatch();
   const history = useHistory();
   const handleLink = (path) => history.push(path);
@@ -39,16 +61,14 @@ export const Order = (props) => {
         setUserdata(userobj);
         setcardSelectError("支払方法を選択して下さい");
         setCreditcardflag(false);
-        //setTimeSelectError("配達時間を選択して下さい");
-        //settimeSelectFlag(false);
         setCreditcardError("クレジットカード番号を入力して下さい");
         setCreditcardflag(false);
         setTimeError("配達日時を入力して下さい");
         setTimeFlag(false);
       });
-  }, []); //ユーザ情報をマウント時に表示できるように、第二引数に[]を指定
+  }, []); //ユーザ情報をマウント時に表示
 
-  //【入力内容の更新処理】
+  //入力内容の更新処理
   const checkname = (e) => {
     const Check = e.target.value;
     setUserdata({ ...userdata, name: e.target.value });
@@ -120,14 +140,13 @@ export const Order = (props) => {
     }
   };
 
-  let today = new Date(); //カレンダーで今日より前の日付を選べないようにする
+  let today = new Date(); //日付選択で今日より前の日付を選べないようにする
   let thisYear = today.getFullYear();
   let thisMonth = ("00" + (today.getMonth() + 1)).slice(-2);
   let thisDate = ("00" + today.getDate()).slice(-2);
   today = `${thisYear}-${thisMonth}-${thisDate}T00:00`;
 
   const checkdate = (e) => {
-    //////////////////////////////////////////
     const Check = e.target.value;
     setUserdata({ ...userdata, date: e.target.value });
     if (Check === "") {
@@ -139,13 +158,9 @@ export const Order = (props) => {
     }
 
     //今から3時間以内が選択されたらエラーメッセージ
-
     let clickday = new Date();
     let nowTimestamp = clickday.getTime();
     nowTimestamp = Math.floor(nowTimestamp / 1000);
-
-    let thisHour = clickday.getHours();
-    let thisMinutes = clickday.getMinutes();
 
     const checkyear = Check.slice(0, 4); //選択時間hourを取得
     const numCheckyear = Number(checkyear); //文字列を数字にする
@@ -178,16 +193,18 @@ export const Order = (props) => {
       setTimeError("");
       setTimeFlag(true);
     }
-  }; //////////////////////////////////////////////////////////////////////
+  };
   const setPaymentCash = (e) => {
     setUserdata({ ...userdata, payment: e.target.value, status: 1 });
     setcardSelectError("");
     setcrdSelectFlag(true);
+    setcreditShowFlag(false);
   };
   const setPaymentCredit = (e) => {
     setUserdata({ ...userdata, payment: e.target.value, status: 2 });
     setcardSelectError("");
     setcrdSelectFlag(true);
+    setcreditShowFlag(true);
   };
 
   const checkCard = (e) => {
@@ -223,8 +240,7 @@ export const Order = (props) => {
       .catch(() => setUserdata({ ...userdata, address: "取得に失敗しました" }));
   };
 
-  //【注文情報追加】注文情報をfirebaseに追加（add()）し、statusを１または２に更新（update()）する処理
-  //checkCardで取得したinputのvalueがcash（代引き）ならstatus=1,credit（クレカ）ならstatus=2
+  //checkCardで取得したinputのvalueがcash(代引き)ならstatus=1,credit(クレカ)ならstatus=2
   const confirmOrder = () => {
     if (
       nameFlag &&
@@ -237,11 +253,7 @@ export const Order = (props) => {
       cardSelectFlag
     ) {
       if (window.confirm("注文してもよろしいですか？")) {
-        let date = new Date();
-        let orderDate = date.getDate
-        let orderTime = date.getTime
-        userdata.orderDate = orderDate + orderTime 
-        userdata.totalPrice = props.totalPrice
+        userdata.orderDate = new Date();
         dispatch(order(userdata, props.user.uid, props.cartInfo.id));
         handleLink("/ordercomp");
       }
@@ -249,94 +261,114 @@ export const Order = (props) => {
       alert("入力内容にエラーがあります");
     }
   };
+
   return (
     <React.Fragment>
-      <div>
+      <Grid container alignItems="center" justify="center" spacing={0}>
         <br />
-        注文確認画面です。
-        <form>
+        <div>
+          <Box fontSize="h4.fontSize" textAlign="center">
+            お届け先情報
+          </Box>
           <div>
-            <h3>お届け先情報</h3>
-            <div>
-              <label>お名前</label>
-            </div>
-            <input
-              type="text"
-              id="name"
-              value={userdata.name}
-              onChange={(e) => checkname(e)}
-            ></input>
-            <p>{nameError}</p>
-            <div>メールアドレス</div>
-            <input
-              type="text"
-              id="mail"
-              value={userdata.email}
-              onChange={(e) => checkmail(e)}
-            />
-            <p>{emailError}</p>
-            <div>郵便番号</div>
-            <input
-              type="text"
-              value={userdata.zip}
-              onChange={(e) => checkzip(e)}
-            ></input>
-            <Button
-              variant="contained"
-              type="button"
-              onClick={() => searchAddress()}
-            >
-              住所検索
-            </Button>
-            <p>{zipError}</p>
-            <div>住所</div>
-            <input
-              type="text"
-              value={userdata.address}
-              onChange={(e) => checkaddress(e)}
-            />
-            <p>{addressError}</p>
-            <div>電話番号</div>
-            <input
-              type="text"
-              value={userdata.tel}
-              onChange={(e) => checktel(e)}
-            />
-            <p>{tellError}</p>
-            <div>配達日時</div>
-            <input
-              type="datetime-local"
-              min={today}
-              onChange={(e) => checkdate(e)}
-            />
-            <p>{timeError}</p>
-            <div>支払方法</div>
-            <label>
-              <input
-                type="radio"
+            <label>お名前</label>
+          </div>
+          <TextField
+            type="text"
+            id="name"
+            variant="outlined"
+            value={userdata.name}
+            onChange={(e) => checkname(e)}
+            helperText={nameError}
+          />
+          <div>メールアドレス</div>
+          <TextField
+            type="text"
+            id="mail"
+            variant="outlined"
+            value={userdata.email}
+            onChange={(e) => checkmail(e)}
+            helperText={emailError}
+          />
+          <div>郵便番号</div>
+          <TextField
+            type="text"
+            variant="outlined"
+            value={userdata.zip}
+            onChange={(e) => checkzip(e)}
+            helperText={zipError}
+          />
+          <Button
+            variant="contained"
+            type="button"
+            onClick={() => searchAddress()}
+          >
+            住所検索
+          </Button>
+          <div>住所</div>
+          <TextField
+            type="text"
+            value={userdata.address}
+            onChange={(e) => checkaddress(e)}
+            helperText={addressError}
+            variant="outlined"
+          />
+          <div>電話番号</div>
+          <TextField
+            type="text"
+            variant="outlined"
+            value={userdata.tel}
+            onChange={(e) => checktel(e)}
+            helperText={tellError}
+          />
+          <div>配達日時</div>
+          <TextField
+            type="datetime-local"
+            variant="outlined"
+            onChange={(e) => checkdate(e)}
+            helperText={timeError}
+          />
+          <div>支払方法</div>
+          <FormControl>
+            <RadioGroup>
+              <FormControlLabel
+                control={<Radio />}
                 name="pay"
                 value="cash"
+                label="代金引換"
+                labelPlacement="end"
                 onChange={(e) => setPaymentCash(e)}
-              ></input>
-              代金引換
-              <input
-                type="radio"
+              />
+              <FormControlLabel
+                control={<Radio />}
                 name="pay"
                 value="credit"
+                label="クレジットカード決済"
+                labelPlacement="end"
                 onChange={(e) => setPaymentCredit(e)}
-              ></input>
-              クレジットカード決済
-            </label>
-            <p>{cardSelectError}</p>
+              />
+            </RadioGroup>
+          </FormControl>
+          <FormHelperText>{cardSelectError}</FormHelperText>
+          {userdata.status===2&&
+            <div>
             <div>カード番号</div>
-            <input type="text" maxlength="16" onChange={(e) => checkCard(e)} />
-          </div>
-          <p>{creditcardError}</p>
+            <TextField
+              type="text"
+              variant="outlined"
+              onChange={(e) => checkCard(e)}
+              helperText={creditcardError}
+              inputProps={{
+                maxLength: 16,
+              }}    
+            />
+             </div>
+              }
           <Button variant="contained" type="button" onClick={confirmOrder}>
             この内容で注文する
           </Button>
-        </form>
-      </div>
+        </div>
+      </Grid>
     </React.Fragment>
   );
 };
