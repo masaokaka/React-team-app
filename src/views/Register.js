@@ -1,7 +1,9 @@
-import { useHistory } from 'react-router-dom';
-import { auth , db } from '../firebase/index';
-import axios from 'axios';
-import { useState } from 'react';
+import { useHistory } from "react-router-dom";
+import { auth, db } from "../firebase/index";
+import axios from "axios";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { adduserinfo } from "../actions";
 import {TextField,
         Button, 
         Container,
@@ -48,7 +50,8 @@ export const Register = () => {
   const [confirmError,setConfirmError]= useState('')
   const [confirmFlag,setConfirmFlag] = useState(true)
   const history = useHistory();
-  const handleLink = path => history.push(path)
+  const handleLink = (path) => history.push(path);
+  const dispatch = useDispatch();
 
     //クリアボタン処理
       const clearText = () => {
@@ -200,11 +203,15 @@ export const Register = () => {
         .then(() => {
           let user = auth.currentUser;
           if (user != null) {
-            uid = user.uid;
+            uid = user.uid
+            valueList.userId = user.uid;
           }
         })
         .then(() => {
           db.collection(`users/${uid}/userInfo`).add(valueList);
+          //管理者DBに登録情報を保存する処理
+          console.log(valueList)
+          // dispatch(adduserinfo(valueList));
         });
       handleLink("/");
     }
