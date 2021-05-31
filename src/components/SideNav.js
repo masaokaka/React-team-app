@@ -42,7 +42,9 @@ export const SideNav = () => {
 };
 
 const SideNavContent = () => {
-  const user = useSelector((state) => state.user?state.user:{uid:"no_admin"});
+  const user = useSelector((state) =>
+    state.user ? state.user : { uid: "no_admin" }
+  );
   const classes = useStyles();
   const history = useHistory();
   const handleLink = (path) => history.push(path);
@@ -50,8 +52,16 @@ const SideNavContent = () => {
   const menu = [
     { text: "ホーム", icon: <HomeIcon />, link: "/" },
     { text: "カート", icon: <ShoppingCartIcon />, link: "/cart" },
-    { text: "購入履歴", icon: <HistoryIcon />, link: "/orderhistory" },
-    { text: "管理画面", icon: <AdminIcon />, link: `/admin/${user.uid}` },
+    {
+      text: "購入履歴",
+      icon: <HistoryIcon />,
+      link: "/orderhistory",
+    },
+    {
+      text: "管理画面",
+      icon: <AdminIcon />,
+      link: "/admin/users",
+    },
   ];
   const link = (link) => {
     dispatch(sidenav(false));

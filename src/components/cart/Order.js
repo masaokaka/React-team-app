@@ -237,7 +237,11 @@ export const Order = (props) => {
       cardSelectFlag
     ) {
       if (window.confirm("注文してもよろしいですか？")) {
-        userdata.orderDate = new Date()
+        let date = new Date();
+        let orderDate = date.getDate
+        let orderTime = date.getTime
+        userdata.orderDate = orderDate + orderTime 
+        userdata.totalPrice = props.totalPrice
         dispatch(order(userdata, props.user.uid, props.cartInfo.id));
         handleLink("/ordercomp");
       }
