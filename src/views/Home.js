@@ -2,6 +2,7 @@ import React, { useEffect,useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchitems } from '../actions'
 import { Search } from "../components/home/Search";
+import { Slider } from "../components/home/SwiperComponent";
 import { Item } from "../components/home/Item";
 import  Box  from '@material-ui/core/Box';
 
