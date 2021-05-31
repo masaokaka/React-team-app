@@ -57,6 +57,11 @@ const SideNavContent = () => {
       icon: <HistoryIcon />,
       link: "/orderhistory",
     },
+    {
+      text: "管理画面",
+      icon: <AdminIcon />,
+      link: "/admin/users",
+    },
   ];
   const link = (link) => {
     dispatch(sidenav(false));
