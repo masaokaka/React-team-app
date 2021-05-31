@@ -1,4 +1,3 @@
-import { FormatListNumberedRtlOutlined } from "@material-ui/icons";
 import { FETCHORDER, UPDATEORDER } from "../actions";
 
 const initialState = [];

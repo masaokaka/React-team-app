@@ -29,6 +29,7 @@ export const OrderInfo = (props) => {
         });
     }
   };
+  console.log(props.orderInfo)
   return (
     <div align="center">
       <h2>注文履歴一覧</h2>

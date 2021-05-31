@@ -64,7 +64,6 @@ export const AdminUserEdit = () => {
               items={items}
               toppings={toppings}
               orderInfo={orderInfo}
-              
             />
           )}
         </div>
