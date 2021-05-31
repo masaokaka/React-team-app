@@ -2,7 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
-import Button from "@material-ui/core/Button";
+import {
+  Button,
+  Grid,
+  TextField,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  FormControl,
+  FormHelperText,
+  Box,
+} from "@material-ui/core";
 import { db } from "../../firebase/index";
 import { order } from "../../actions";
 
@@ -27,7 +37,18 @@ export const Order = (props) => {
   const [creditShowFlag, setcreditShowFlag] = useState(false);
 
   //firestoreからデータ取得
-  const [userdata, setUserdata] = useState({}); //ユーザー情報をオブジェクトの形にして表示
+  const [userdata, setUserdata] = useState({
+    name: "",
+    address: "",
+    email: "",
+    card: "",
+    date: "",
+    oderDate: "",
+    payment: "",
+    status: "",
+    tel: "",
+    zip: "",
+  }); //ユーザー情報をオブジェクトの形にして表示
   const dispatch = useDispatch();
   const history = useHistory();
   const handleLink = (path) => history.push(path);
@@ -243,98 +264,110 @@ export const Order = (props) => {
 
   return (
     <React.Fragment>
-      <div>
+      <Grid container alignItems="center" justify="center" spacing={0}>
         <br />
-        注文確認画面です。
-        <form>
+        {/* <FormControl> */}
+        <div>
+          <Box fontSize="h4.fontSize" textAlign="center">
+            お届け先情報
+          </Box>
           <div>
-            <h3>お届け先情報</h3>
-            <div>
-              <label>お名前</label>
-            </div>
-            <input
-              type="text"
-              id="name"
-              value={userdata.name}
-              onChange={(e) => checkname(e)}
-            ></input>
-            <p>{nameError}</p>
-            <div>メールアドレス</div>
-            <input
-              type="text"
-              id="mail"
-              value={userdata.email}
-              onChange={(e) => checkmail(e)}
-            />
-            <p>{emailError}</p>
-            <div>郵便番号</div>
-            <input
-              type="text"
-              value={userdata.zip}
-              onChange={(e) => checkzip(e)}
-            ></input>
-            <Button
-              variant="contained"
-              type="button"
-              onClick={() => searchAddress()}
-            >
-              住所検索
-            </Button>
-            <p>{zipError}</p>
-            <div>住所</div>
-            <input
-              type="text"
-              value={userdata.address}
-              onChange={(e) => checkaddress(e)}
-            />
-            <p>{addressError}</p>
-            <div>電話番号</div>
-            <input
-              type="text"
-              value={userdata.tel}
-              onChange={(e) => checktel(e)}
-            />
-            <p>{tellError}</p>
-            <div>配達日時</div>
-            <input
-              type="datetime-local"
-              min={today}
-              onChange={(e) => checkdate(e)}
-            />
-            <p>{timeError}</p>
-            <div>支払方法</div>
-            <label>
-              <input
-                type="radio"
+            <label>お名前</label>
+          </div>
+          <TextField
+            type="text"
+            id="name"
+            variant="outlined"
+            value={userdata.name}
+            onChange={(e) => checkname(e)}
+            helperText={nameError}
+          />
+          <div>メールアドレス</div>
+          <TextField
+            type="text"
+            id="mail"
+            variant="outlined"
+            value={userdata.email}
+            onChange={(e) => checkmail(e)}
+            helperText={emailError}
+          />
+          <div>郵便番号</div>
+          <TextField
+            type="text"
+            variant="outlined"
+            value={userdata.zip}
+            onChange={(e) => checkzip(e)}
+            helperText={zipError}
+          />
+          <Button
+            variant="contained"
+            type="button"
+            onClick={() => searchAddress()}
+          >
+            住所検索
+          </Button>
+          <div>住所</div>
+          <TextField
+            type="text"
+            value={userdata.address}
+            onChange={(e) => checkaddress(e)}
+            helperText={addressError}
+            variant="outlined"
+          />
+          <div>電話番号</div>
+          <TextField
+            type="text"
+            variant="outlined"
+            value={userdata.tel}
+            onChange={(e) => checktel(e)}
+            helperText={tellError}
+          />
+          <div>配達日時</div>
+          <TextField
+            type="datetime-local"
+            variant="outlined"
+            onChange={(e) => checkdate(e)}
+            helperText={timeError}
+          />
+          <div>支払方法</div>
+          <FormControl>
+          <RadioGroup>
+              <FormControlLabel
+                control={<Radio />}
                 name="pay"
                 value="cash"
+                label="代金引換"
+                labelPlacement="end"
                 onChange={(e) => setPaymentCash(e)}
-              ></input>
-              代金引換
-              <input
-                type="radio"
+              />
+              <FormControlLabel
+                control={<Radio />}
                 name="pay"
                 value="credit"
+                label="クレジットカード決済"
+                labelPlacement="end"
                 onChange={(e) => setPaymentCredit(e)}
-              ></input>
-              クレジットカード決済
-            </label>
-            <p>{cardSelectError}</p>
-            <div style={{ display: creditShowFlag ? "" : "none" }}>
-              <div>カード番号</div>
-              <input
-                type="text"
-                maxlength="16"
-                onChange={(e) => checkCard(e)}
+                helperText={cardSelectError}
               />
-              <p>{creditcardError}</p>
-            </div>
+          </RadioGroup>
+          </FormControl>
+          <FormHelperText>{cardSelectError}</FormHelperText>
+          <div style={{ display: creditShowFlag ? "" : "none" }}>
+            <div>カード番号</div>
+            <TextField
+              type="text"
+              variant="outlined"
+              onChange={(e) => checkCard(e)}
+              helperText={creditcardError}
+            />
           </div>
           <Button variant="contained" type="button" onClick={confirmOrder}>
             この内容で注文する
           </Button>
-        </form>
-      </div>
+        </div>
+
+        {/* </FormControl> */}
+      </Grid>
     </React.Fragment>
   );
 };
