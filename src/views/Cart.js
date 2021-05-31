@@ -22,6 +22,7 @@ import {
 
 export const Cart = () => {
   const [show, setShow] = useState(false);
+  const [total, setTotal] = useState(0);
   const items = useSelector((state) => state.items);
   const toppings = useSelector((state) => state.toppings);
   const cartInfo = useSelector((state) => state.cartinfo); //オブジェクト
@@ -125,9 +126,9 @@ export const Cart = () => {
               </Table>
             </TableContainer>
             <Grid container alignItems="center" justify="center" spacing={0}>
-              <SumPrice cartInfo={cartInfo} toppings={toppings} items={items} user={user} setShow={setShow}/>
+              <SumPrice cartInfo={cartInfo} toppings={toppings} items={items} user={user} setShow={setShow} setTotal={setTotal}/>
             </Grid>
-            {show && <Order cartInfo={cartInfo} user={ user }/>}
+            {show && <Order cartInfo={cartInfo} user={user} totalPrice={ total }/>}
           </React.Fragment>
         ) : (
           <h4>カートに商品がありません</h4>

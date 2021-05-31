@@ -238,6 +238,7 @@ export const Order = (props) => {
     ) {
       if (window.confirm("注文してもよろしいですか？")) {
         userdata.orderDate = new Date()
+        userdata.totalPrice = props.totalPrice
         dispatch(order(userdata, props.user.uid, props.cartInfo.id));
         handleLink("/ordercomp");
       }

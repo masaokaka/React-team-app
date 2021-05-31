@@ -34,6 +34,7 @@ export const SumPrice = (props) => {
         }
       });
       setTotalPrice(totalPrice);
+      props.setTotal(totalPrice);
     }
   }, [props.cartInfo]);
 
