@@ -34,6 +34,7 @@ export const SumPrice = (props) => {
         }
       });
       setTotalPrice(totalPrice);
+      props.setTotal(totalPrice);
     }
   }, [props.cartInfo]);
 
@@ -48,10 +49,10 @@ export const SumPrice = (props) => {
   return (
     <Grid container item cpacing={0} direction="column">
       <Grid container item justify="center">
-        <h3>合計金額(税込)：{(totalPrice * 1.1).toLocaleString()}円</h3>
+        <h3>合計金額(税込)：{Math.floor(totalPrice * 1.1).toLocaleString()}円</h3>
       </Grid>
       <Grid container item justify="center">
-        <h3>内消費税：{(totalPrice * 0.1).toLocaleString()}円</h3>
+        <h3>内消費税：{Math.floor(totalPrice * 0.1).toLocaleString()}円</h3>
       </Grid>
       <Grid container item justify="center">
         <Button variant="contained" onClick={proceedToOrder}>

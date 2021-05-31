@@ -350,7 +350,8 @@ export const Order = (props) => {
             </RadioGroup>
           </FormControl>
           <FormHelperText>{cardSelectError}</FormHelperText>
-          <div style={{ display: creditShowFlag ? "" : "none" }}>
+          {userdata.status===2&&
+            <div>
             <div>カード番号</div>
             <TextField
               type="text"
@@ -359,9 +360,10 @@ export const Order = (props) => {
               helperText={creditcardError}
               inputProps={{
                 maxLength: 16,
-              }}
+              }}    
             />
-          </div>
+             </div>
+              }
           <Button variant="contained" type="button" onClick={confirmOrder}>
             この内容で注文する
           </Button>

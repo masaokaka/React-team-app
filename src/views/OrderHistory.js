@@ -56,7 +56,10 @@ export const OrderHistory = () => {
         });
     }
   };
-
+  let date = new Date();
+  let orderTime = date.getTime();
+  let date2 = new Date(orderTime)
+  console.log(date2);
   return (
     <div align="center">
       <h2>注文履歴一覧</h2>
@@ -69,14 +72,13 @@ export const OrderHistory = () => {
                 <TableCell align="center">商品詳細</TableCell>
               </TableRow>
             </TableHead>
-
             <TableBody>
               {orderInfo.map((order, index) => (
                 <TableRow key={index}>
                   <TableCell align="center">
                     注文日：{order.date}
                     <br />
-                    小計：
+                    合計金額(税抜)：{order.totalPrice.toLocaleString()}円
                     <br />
                     <div>
                       {order.status === 1 && (
@@ -99,7 +101,7 @@ export const OrderHistory = () => {
                   </TableCell>
                   <TableRow>
                     <TableCell align="center">商品名</TableCell>
-                    <TableCell align="center">サイズ</TableCell>
+                    <TableCell align="center">価格(税抜)/個数</TableCell>
                     <TableCell align="center">トッピング</TableCell>
                   </TableRow>
                   {order.itemInfo.map((item, index) =>
@@ -122,11 +124,11 @@ export const OrderHistory = () => {
                               </TableCell>
                             ) : (
                               <TableCell align="center">
-                                {items.lprice}円(Lサイズ)/{item.itemNum}個
+                                {it.lprice}円(Lサイズ)/{item.itemNum}個
                               </TableCell>
                             )}
                             <TableCell align="center">
-                              {item.toppings ? (
+                              {item.toppings.length !== 0 ? (
                                 <div>
                                   {item.toppings.map((topping, index) =>
                                     toppings.map(
