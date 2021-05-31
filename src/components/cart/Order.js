@@ -347,7 +347,6 @@ export const Order = (props) => {
                 label="クレジットカード決済"
                 labelPlacement="end"
                 onChange={(e) => setPaymentCredit(e)}
-                helperText={cardSelectError}
               />
           </RadioGroup>
           </FormControl>
@@ -359,6 +358,9 @@ export const Order = (props) => {
               variant="outlined"
               onChange={(e) => checkCard(e)}
               helperText={creditcardError}
+              inputProps={{
+                maxLength: 16
+              }}
             />
           </div>
           <Button variant="contained" type="button" onClick={confirmOrder}>
