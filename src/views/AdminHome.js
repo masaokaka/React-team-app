@@ -5,7 +5,8 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
+    Link,
+  useRouteMatch
 } from "react-router-dom";
 import { ADMIN_ID } from "../status/index";
 import { AdminItems } from "../components/admins/AdminItems";
@@ -16,6 +17,7 @@ import { AdminToppings } from "../components/admins/AdminToppings";
 export const AdminHome = () => {
   const user = useSelector((state) => state.user);
   const history = useHistory();
+  const match = useRouteMatch();
   //マウント時にユーザーがアドミンではなかった場合にはアクセス拒否
   useEffect(() => {
     if (user) {
@@ -32,17 +34,23 @@ export const AdminHome = () => {
       <Router>
         <div>
           <div>
-            <Link to={`/admin`}>ユーザー情報</Link>
-            <Link to={`/admin/items`}>アイテム情報</Link>
-            <Link to={`/admin/toppings`}>トッピング情報</Link>
+            <Link to={`${match.url}`}>ユーザー情報</Link>
+            <Link to={`${match.url}/items`}>アイテム情報</Link>
+            <Link to={`${match.url}/toppings`}>トッピング情報</Link>
           </div>
           <Switch>
-            <Route path={`/admin`} exact component={AdminUsers}></Route>
-            <Route path={`/admin/edit/:userid`} exact component={AdminUserEdit}></Route>
-            <Route path={`/admin/items`} exact component={AdminItems}></Route>
+            <Route path={`${match.path}`} exact component={AdminUsers}></Route>
             <Route
-              path={`/admin/toppings`}
+              path={`${match.path}/edit/:userid`}
+              component={AdminUserEdit}
+            ></Route>
+            <Route
+              path={`${match.path}/items`}
               exact
+              component={AdminItems}
+            ></Route>
+            <Route
+              path={`${match.path}/toppings`}
               component={AdminToppings}
             ></Route>
           </Switch>
