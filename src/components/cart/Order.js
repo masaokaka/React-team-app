@@ -266,7 +266,6 @@ export const Order = (props) => {
     <React.Fragment>
       <Grid container alignItems="center" justify="center" spacing={0}>
         <br />
-        {/* <FormControl> */}
         <div>
           <Box fontSize="h4.fontSize" textAlign="center">
             お届け先情報
@@ -331,7 +330,7 @@ export const Order = (props) => {
           />
           <div>支払方法</div>
           <FormControl>
-          <RadioGroup>
+            <RadioGroup>
               <FormControlLabel
                 control={<Radio />}
                 name="pay"
@@ -348,7 +347,7 @@ export const Order = (props) => {
                 labelPlacement="end"
                 onChange={(e) => setPaymentCredit(e)}
               />
-          </RadioGroup>
+            </RadioGroup>
           </FormControl>
           <FormHelperText>{cardSelectError}</FormHelperText>
           <div style={{ display: creditShowFlag ? "" : "none" }}>
@@ -359,7 +358,7 @@ export const Order = (props) => {
               onChange={(e) => checkCard(e)}
               helperText={creditcardError}
               inputProps={{
-                maxLength: 16
+                maxLength: 16,
               }}
             />
           </div>
@@ -367,8 +366,6 @@ export const Order = (props) => {
             この内容で注文する
           </Button>
         </div>
-
-        {/* </FormControl> */}
       </Grid>
     </React.Fragment>
   );
