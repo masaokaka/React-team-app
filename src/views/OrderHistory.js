@@ -95,9 +95,6 @@ export const OrderHistory = () => {
                       {order.status === 3 && (
                         <span style={{ color: "blue" }}>発送済み</span>
                       )}
-                      <button onClick={() => console.log(order.id)}>
-                        order.idって何入ってるの
-                      </button>
                     </div>
                   </TableCell>
                   <TableRow>
