@@ -69,7 +69,6 @@ export const OrderHistory = () => {
                 <TableCell align="center">商品詳細</TableCell>
               </TableRow>
             </TableHead>
-
             <TableBody>
               {orderInfo.map((order, index) => (
                 <TableRow key={index}>
@@ -99,7 +98,7 @@ export const OrderHistory = () => {
                   </TableCell>
                   <TableRow>
                     <TableCell align="center">商品名</TableCell>
-                    <TableCell align="center">サイズ</TableCell>
+                    <TableCell align="center">価格(税抜)/個数</TableCell>
                     <TableCell align="center">トッピング</TableCell>
                   </TableRow>
                   {order.itemInfo.map((item, index) =>
@@ -122,11 +121,11 @@ export const OrderHistory = () => {
                               </TableCell>
                             ) : (
                               <TableCell align="center">
-                                {items.lprice}円(Lサイズ)/{item.itemNum}個
+                                {it.lprice}円(Lサイズ)/{item.itemNum}個
                               </TableCell>
                             )}
                             <TableCell align="center">
-                              {item.toppings ? (
+                              {item.toppings.length!==0 ? (
                                 <div>
                                   {item.toppings.map((topping, index) =>
                                     toppings.map(
