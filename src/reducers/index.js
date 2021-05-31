@@ -6,5 +6,13 @@ import { items } from "./items";
 import { toppings } from "./toppings";
 import { user } from "./user";
 import { cartinfo } from "./cartinfo";
+import { orderinfo } from "./orderinfo";
 
-export default combineReducers({ sidenav, items, toppings, user, cartinfo }); //複数あれば,でくぎる
+export default combineReducers({
+  sidenav,
+  items,
+  toppings,
+  user,
+  cartinfo,
+  orderinfo,
+}); //複数あれば,でくぎる

@@ -13,115 +13,98 @@ import {
   Paper,
 } from "@material-ui/core";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchitems, fetchtoppings } from "../actions";
+import { fetchitems, fetchtoppings, fetchorder, updateorder } from "../actions";
 
 const useStyles = makeStyles({
   table: {
-    minWidth: 650,
+    width: 1000,
   },
 });
 
-//仮データ
-/* const orders = [
-  {
-    itemInfo: [
-      {
-        id: "",
-        itemId: 2,
-        itemNum: 3,
-        itemSize: 0,
-        toppings: [
-          { toppingId: 3, toppingSize: 1 },
-          { toppingId: 6, toppingSize: 0 },
-        ],
-      },
-      {
-        id: "",
-        itemId: 6,
-        itemNum: 7,
-        itemSize: 0,
-        toppings: [{ toppingId: 3, toppingSize: 1 }],
-      },
-    ],
-    status: 2,
-    orderDate: "2021-5-28",
-  },
-  {
-    itemInfo: [
-      {
-        id: "",
-        itemId: 2,
-        itemNum: 3,
-        itemSize: 0,
-        toppings: [{ toppingId: 3, toppingSize: 1 }],
-      },
-    ],
-    status: 3,
-    orderDate: "2021-5-20",
-  }
-]; */
-
 export const OrderHistory = () => {
-  //@material-uiの使用
-  /*   const classes = useStyles(); */
+  const user = useSelector((state) => state.user);
   const items = useSelector((state) => state.items);
   const toppings = useSelector((state) => state.toppings);
+  const orderInfo = useSelector((state) => state.orderinfo);
   const dispatch = useDispatch();
-  const [orders, setOrders] = useState([]);
+  const classes = useStyles();
+
+  /* const [orders, setOrders] = useState([...orderInfo]); */
 
   useEffect(() => {
-    db.collection(`users/AjVF9msWNWOoqQNumnKJrzAyWwF3/orders`)
-      .get()
-      .then((snapShot) => {
-        snapShot.forEach((doc) => {
-          if (doc.status !== 0) {
-            setOrders(doc.date());
-          }
-          console.log(doc.data().itemInfo);
-        });
-      });
     dispatch(fetchitems());
     dispatch(fetchtoppings());
   }, []);
 
-  //現在ログインしているユーザが代入される
-  const user = useSelector((state) => state.user);
+  useEffect(() => {
+    if (user) {
+      dispatch(fetchorder(user.uid));
+    }
+  }, [user]);
+
+  const statechange = (index, orderId) => {
+    if (window.confirm("キャンセルしてもよろしいですか？")) {
+      let orders = [...orderInfo];
+      orders[index].status = 9;
+      db.collection(`users/${user.uid}/orders`)
+        .doc(orderId)
+        .update({ status: 9 })
+        .then(() => {
+          console.log(orders[index]);
+          dispatch(updateorder(orders));
+          console.log("動いた");
+        });
+    }
+  };
 
   return (
     <div align="center">
       <h2>注文履歴一覧</h2>
-      <button onClick={() => console.log(items)}>取れてるか確認</button>
-      {/* {user !== null && (
+      {orderInfo.length !== 0 && (
         <TableContainer component={Paper}>
-          <Table>
+          <Table className={classes.table}>
             <TableHead>
               <TableRow>
                 <TableCell align="center">注文日</TableCell>
-                <TableCell align="center">
-                  商品詳細(商品名、サイズ、個数)
-                </TableCell>
+                <TableCell align="center">商品詳細</TableCell>
               </TableRow>
             </TableHead>
 
             <TableBody>
-              {orders.map((order, index) => (
+              {orderInfo.map((order, index) => (
                 <TableRow key={index}>
                   <TableCell align="center">
-                    注文日：{order.orderDate}
+                    注文日：{order.date}
+                    <br />
+                    小計：
                     <br />
                     <div>
-                      {order.status === 1 ||
-                        (order.status === 2 && (
-                          <button onClick={() => console.log(order.itemInfo)}>
-                            注文をキャンセルする
-                          </button>
-                        ))}
-                      {order.status === 9 && <span>キャンセル済み</span>}
-                      {order.status === 3 && <span>発送済み</span>}
-                      <br />
-                      合計金額
+                      {order.status === 1 && (
+                        <button onClick={() => statechange(index, order.id)}>
+                          注文をキャンセルする
+                        </button>
+                      )}
+                      {order.status === 2 && (
+                        <button onClick={() => statechange(index, order.id)}>
+                          注文をキャンセルする
+                        </button>
+                      )}
+                      {order.status === 9 && (
+                        <span style={{ color: "red" }}>キャンセル済み</span>
+                      )}
+                      {order.status === 3 && (
+                        <span style={{ color: "blue" }}>発送済み</span>
+                      )}
+                      <button onClick={() => console.log(order.id)}>
+                        order.idって何入ってるの
+                      </button>
                     </div>
                   </TableCell>
+                  <TableRow>
+                    <TableCell align="center">商品名</TableCell>
+                    <TableCell align="center">サイズ</TableCell>
+                    <TableCell align="center">トッピング</TableCell>
+                  </TableRow>
                   {order.itemInfo.map((item, index) =>
                     items.map(
                       (it) =>
@@ -168,7 +151,6 @@ export const OrderHistory = () => {
                                 <div>なし</div>
                               )}
                             </TableCell>
-                            <TableCell>小計</TableCell>
                           </TableRow>
                         )
                     )
@@ -180,8 +162,7 @@ export const OrderHistory = () => {
         </TableContainer>
       )}
 
-      {user === null && <h3>注文履歴がありません</h3>}
- */}
+      {orderInfo.length === 0 && <h3>注文履歴がありません</h3>}
       <Link to="/">
         <button>トップ画面に戻る</button>
       </Link>

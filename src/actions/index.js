@@ -23,6 +23,10 @@ export const FETCHCARTNOUSER = "fetchcartnouser";
 //注文処理
 export const ORDER = "order";
 
+//注文履歴
+export const FETCHORDER = "fetchorder";
+export const UPDATEORDER = "updateorder";
+
 export const sidenav = (onClose) => ({
   type: SIDENAV,
   onClose: onClose,
@@ -201,3 +205,29 @@ export const order = (orderData, uid, cartId) => (dispatch) => {
       });
     });
 };
+
+//注文履歴の取得ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+export const fetchorder = (uid) => (dispatch) => {
+  let orders = [];
+  db.collection(`users/${uid}/orders`)
+    .get()
+    .then((snapShot) => {
+      snapShot.forEach((doc) => {
+        if (doc.data().status !== 0) {
+          let order = doc.data();
+          order.id = doc.id;
+          orders.push(order);
+        }
+      });
+      dispatch({
+        type: FETCHORDER,
+        orderInfo: orders,
+      });
+    });
+};
+
+//order更新
+export const updateorder = (orders) => ({
+  type: UPDATEORDER,
+  orders: orders,
+});
