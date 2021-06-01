@@ -7,10 +7,10 @@ import { fetchcart, updatecart, createcart } from "../actions";
 import { db } from "../firebase/index";
 
 export const Login = () => {
-  const [email,setEmail]= useState([])
+  const [email,setEmail]= useState('')
   const [emailError,setEmailError]= useState('')
   const [emailFlag,setEmailFlag] = useState(true)
-  const [password,setPassword]= useState([])
+  const [password,setPassword]= useState('')
   const [passwordError,setPasswordError]= useState('')
   const [passwordFlag,setPasswordFlag] = useState(true)
   const [errorText,setErrorText] = useState('');
@@ -53,6 +53,7 @@ export const Login = () => {
 
   const doLogin = () => {
     if(emailFlag && passwordFlag){
+      if(email !== '' && password !== '' ){
         //ローカルストレージにアイテムがあった時
         let itemInfo = JSON.parse(localStorage.getItem("itemInfo"));
         //ログイン処理
@@ -103,8 +104,11 @@ export const Login = () => {
             } else {
               history.push("/");
             }
-          }).catch(() => setErrorText('ログインに失敗しました'))
+          }).catch(() => alert('メールアドレスかパスワード、またはその両方がが間違っています'))
         }); 
+      }
+    }else {
+      alert('入力に誤りがあります');
     }
   };
   return (

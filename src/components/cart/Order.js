@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import {
   Button,
@@ -36,6 +37,8 @@ export const Order = (props) => {
   const [cardSelectError, setcardSelectError] = useState("");
   const [cardSelectFlag, setcardSelectFlag] = useState(false);
   const [creditShowFlag, setcreditShowFlag] = useState(false);
+  const items = useSelector((state) => state.items);
+  const toppings = useSelector(state => state.toppings);
 
   //firestoreからデータ取得
   const [userdata, setUserdata] = useState({
@@ -271,14 +274,36 @@ export const Order = (props) => {
   };
 
 
-  //メール送信の関数
+  //メール送信の処理
 
+
+ 
   const sendEmail = () => {
-    const EmailAddress = 'jpophikomaro@gmail.com'
-    console.log(userdata)
+    let itemInfoForEmailBox =[]
+    let toppingsBox =[]
+    let orderInfoBox =[]
+    props.cartInfo.itemInfo.forEach(iteminfo => {
+      console.log(iteminfo) 
+      iteminfo.toppings.forEach(topping => {
+        toppings.forEach((toppingData)=>{
+          if(topping.toppingId === toppingData.id){
+            toppingsBox.push(`${toppingData.name}${topping.toppingSize === 0 ? '(M)':'(L)'}`)
+          }
+        })
+      })
+      items.forEach(item => {
+        if(item.id === iteminfo.itemId){
+          console.log(item)
+          orderInfoBox.push(`・【${item.name} ${iteminfo.itemSize === 0 ? '(M)':'(L)'}】,【（トッピング）：${toppingsBox.join()}】数量:${iteminfo.itemNum}<br>`)
+        }
+      });
+    })
+    console.log(itemInfoForEmailBox)
+    const EmailAddress = userdata.email
     const nameForEmail = userdata.name
-    const addressForEmail = userdata.name
+    const addressForEmail = userdata.address
     const telForEmail = userdata.tel
+    
     let paymentForEmail = ''
     let totalPriceForEmail = ''
     if (userdata.payment === 'cash'){
@@ -286,17 +311,18 @@ export const Order = (props) => {
       totalPriceForEmail = userdata.totalPrice
     }else if (userdata.payment === 'credit'){
       paymentForEmail = 'クレジットカード決済'
+      totalPriceForEmail = userdata.totalPrice
     }
-    const EmailText = `
-    ${nameForEmail}様今回はラクラクカレーをご利用頂き誠にありがとうございました。
-    ご注文が確定致しましたので下記の内容をご確認下さい\n
-    ［ご注文者様］${nameForEmail}様\n
-    ［お届け先住所］${addressForEmail}\n
-    ［連絡先］${telForEmail}\n
-    ［お支払方法］${paymentForEmail}\n
-    ［合計金額］${totalPriceForEmail ? totalPriceForEmail:'お支払い済'}`
-
-    
+    const EmailText = `${nameForEmail}様<br>
+    今回はラクラクカレーをご利用頂き誠にありがとうございました。<br>
+    ご注文が確定致しましたので下記の内容をご確認下さい<br>
+    【ご注文者様】${nameForEmail}様
+    <br>【ご注文商品】
+    <br>${orderInfoBox.join()}
+    <br>【お届け先】${addressForEmail}
+    <br>【お電話番号】${telForEmail}
+    <br>【お支払方法】${paymentForEmail}
+    <br>【合計金額】${totalPriceForEmail * 1.1}円（税込み）`
     window.Email.send({
       Host : "smtp.elasticemail.com",
       Username : "okawara0618.info@gmail.com",
@@ -306,7 +332,7 @@ export const Order = (props) => {
       Subject : "購入確認メール",
       Body : `${EmailText}`
   }).then(
-    message => alert(message)
+    message => alert('ご注文確認メールを送信しました')
   )
   }
 
@@ -317,7 +343,7 @@ export const Order = (props) => {
       if (window.confirm("注文してもよろしいですか？")) {
         userdata.orderDate = parseInt(new Date() / 1000);
         userdata.totalPrice = props.totalPrice;
-        dispatch(order(userdata, props.user.uid, props.cartInfo.id));
+        // dispatch(order(userdata, props.user.uid, props.cartInfo.id));
         sendEmail()
         handleLink("/ordercomp");
       }
