@@ -129,7 +129,7 @@ const[calcPrice,setCalcPrice] = useState(0)
             lCount += 1;
           }
         })
-    let calculation = calcPrice * selectValue +(mCount * 200) + (lCount * 300); 
+    let calculation = calcPrice * selectValue + selectValue * ((mCount * 200) + (lCount * 300)); 
     setTotalPrice(calculation)
   },[selectValue,calcPrice,calcToppingSize])
 
@@ -188,7 +188,6 @@ const[calcPrice,setCalcPrice] = useState(0)
       history.push("/cart");
       //入ってなかったら配列に格納して渡す。
     } else {
-      console.log(item)
       let newCartInfo = {
         itemInfo: [item],
         status: 0, //カート(あとで定数に置き換える)
