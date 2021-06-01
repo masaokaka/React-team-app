@@ -34,6 +34,7 @@ export const Search = (props) => {
     });
     if (resultBox.length === 0) {
       setError("※該当する商品はありません");
+      props.setItemsData([])
       // props.setItemsData(array);
     } else {
       props.setItemsData(resultBox);

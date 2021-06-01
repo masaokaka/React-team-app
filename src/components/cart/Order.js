@@ -279,19 +279,22 @@ export const Order = (props) => {
     const nameForEmail = userdata.name
     const addressForEmail = userdata.name
     const telForEmail = userdata.tel
-    
+    let paymentForEmail = ''
+    let totalPriceForEmail = ''
     if (userdata.payment === 'cash'){
-      const paymentForEmail = '代金引換'
-      const totalPriceForEmail = userdata.totalPrice
+      paymentForEmail = '代金引換'
+      totalPriceForEmail = userdata.totalPrice
     }else if (userdata.payment === 'credit'){
-      const paymentForEmail = 'クレジットカード決済'
-      const totalPriceForEmail = '入金済み'
+      paymentForEmail = 'クレジットカード決済'
     }
     const EmailText = `
-    ${nameForEmail}様今回はラクラクカレーをご利用頂き誠にありがとうございました。/n
+    ${nameForEmail}様今回はラクラクカレーをご利用頂き誠にありがとうございました。'/n'
     ご注文が確定致しましたので下記の内容をご確認下さい\n
-    ［ご注文者］${nameForEmail}様\n
-    ［］`
+    ［ご注文者様］${nameForEmail}様\n
+    ［お届け先住所］${addressForEmail}\n
+    ［連絡先］${telForEmail}\n
+    ［お支払方法］${paymentForEmail}\n
+    ［合計金額］${totalPriceForEmail ? totalPriceForEmail:'お支払い済'}`
 
     
     window.Email.send({
@@ -301,7 +304,7 @@ export const Order = (props) => {
       To : `${EmailAddress}`,
       From : "okawara0618.info@gmail.com",
       Subject : "購入確認メール",
-      Body : "And this is the body"
+      Body : `${EmailText}`
   }).then(
     message => alert(message)
   )
