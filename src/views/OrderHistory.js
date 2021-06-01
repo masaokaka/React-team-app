@@ -15,6 +15,13 @@ import {
 } from "@material-ui/core";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchitems, fetchtoppings, fetchorder, updateorder } from "../actions";
+import {
+  ORDER_STATUS_PAID,
+  ORDER_STATUS_UNPAID,
+  ORDER_STATUS_UNDELIVERIED,
+  ORDER_STATUS_DELIVERIED,
+  ORDER_STATUS_CANCELED,
+} from "../status/index";
 
 export const OrderHistory = () => {
   const user = useSelector((state) => state.user);
@@ -23,8 +30,6 @@ export const OrderHistory = () => {
   const orderInfo = useSelector((state) => state.orderinfo);
   const dispatch = useDispatch();
   const history = useHistory();
-
-  /* const [orders, setOrders] = useState([...orderInfo]); */
 
   useEffect(() => {
     dispatch(fetchitems());
@@ -40,12 +45,11 @@ export const OrderHistory = () => {
   const statechange = (index, orderId) => {
     if (window.confirm("キャンセルしてもよろしいですか？")) {
       let orders = [...orderInfo];
-      orders[index].status = 9;
+      orders[index].status = ORDER_STATUS_CANCELED;
       db.collection(`users/${user.uid}/orders`)
         .doc(orderId)
-        .update({ status: 9 })
+        .update({ status: ORDER_STATUS_CANCELED })
         .then(() => {
-          console.log(orders[index]);
           dispatch(updateorder(orders));
         });
     }
@@ -82,32 +86,49 @@ export const OrderHistory = () => {
                     <h3>{order.totalPrice.toLocaleString()}円</h3>
                   </TableCell>
                   <TableCell colSpan={2} align="center">
-                    {order.status === 1 && (
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={() => statechange(index, order.id)}
-                      >
-                        注文キャンセル
-                      </Button>
+                    {order.status === ORDER_STATUS_UNPAID && (
+                      <div>
+                        <h3 style={{ color: "red" }}>未入金</h3>
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          onClick={() => statechange(index, order.id)}
+                        >
+                          注文キャンセル
+                        </Button>
+                      </div>
                     )}
-                    {order.status === 2 && (
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={() => statechange(index, order.id)}
-                      >
-                        注文キャンセル
-                      </Button>
+                    {order.status === ORDER_STATUS_PAID && (
+                      <div>
+                        <h3 style={{ color: "orange" }}>入金済み</h3>
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          onClick={() => statechange(index, order.id)}
+                        >
+                          注文キャンセル
+                        </Button>
+                      </div>
                     )}
-                    {order.status === 9 && (
-                      <h3 style={{ color: "red" }}>キャンセル済み</h3>
+                    {order.status === ORDER_STATUS_UNDELIVERIED && (
+                      <div>
+                        <h3 style={{ color: "orange" }}>発送前</h3>
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          onClick={() => statechange(index, order.id)}
+                        >
+                          注文キャンセル
+                        </Button>
+                      </div>
                     )}
-                    {order.status === 3 && (
-                      <h3 style={{ color: "blue" }}>発送済み</h3>
+                    {order.status === ORDER_STATUS_DELIVERIED && (
+                      <h3 style={{ color: "gray" }}>発送済み</h3>
+                    )}
+                    {order.status === ORDER_STATUS_CANCELED && (
+                      <h3 style={{ color: "gray" }}>キャンセル済み</h3>
                     )}
                   </TableCell>
-
                   <TableRow>
                     <TableCell align="center" colSpan={2}>
                       商品名

@@ -9,7 +9,7 @@ export const orderinfo = (state = initialState, action) => {
       return action.orderInfo;
     case UPDATEORDER:
       action.orderInfo.sort((a, b) => b.orderDate - a.orderDate);
-      return action.orders;
+      return action.orderInfo;
     default:
       return state;
   }

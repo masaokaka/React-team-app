@@ -1,5 +1,5 @@
 import { db } from "../../firebase/index";
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -9,35 +9,55 @@ import {
   TableRow,
   Paper,
   Button,
+  MenuItem,
+  Select,
 } from "@material-ui/core";
 import { useDispatch } from "react-redux";
 import { updateorder } from "../../actions";
 import { timestampToDate } from "../../status/functions";
+import {
+  ORDER_STATUS_PAID,
+  ORDER_STATUS_UNPAID,
+  ORDER_STATUS_UNDELIVERIED,
+  ORDER_STATUS_DELIVERIED,
+  ORDER_STATUS_CANCELED,
+} from "../../status/index";
 
 export const OrderInfo = (props) => {
   const dispatch = useDispatch();
+  const [orderInfo, setOrderInfo] = useState([...props.orderInfo]); //コピー作成
 
-  const statechange = (index, orderId) => {
+  const doStatusChange = (index, orderId) => {
     if (
       window.confirm(
         `ユーザー(${props.userId})のステータスを変更しますがよろしいですか？`
       )
     ) {
-      let orders = [...props.orderInfo];
-      orders[index].status = 9;
+      let newStatus = orderInfo[index].status;
       db.collection(`users/${props.userId}/orders`)
         .doc(orderId)
-        .update({ status: 9 })
+        .update({ status: newStatus })
         .then(() => {
-          dispatch(updateorder(orders));
+          dispatch(updateorder(orderInfo));
         });
     }
   };
-  console.log(props.orderInfo);
+
+  const changeStatus = (status, orderId) => {
+    orderInfo.forEach((order) => {
+      if (order.id === orderId) {
+        order.status = status;
+      }
+    });
+    console.log(orderInfo)
+    //ディープコピーでレンダリングを発動させている
+    setOrderInfo([...orderInfo]);
+  };
+
   return (
     <div align="center">
       <h2>注文履歴一覧</h2>
-      {props.orderInfo.length !== 0 && (
+      {orderInfo.length !== 0 && (
         <TableContainer component={Paper}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
@@ -57,7 +77,7 @@ export const OrderInfo = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {props.orderInfo.map((order, index) => (
+              {orderInfo.map((order, index) => (
                 <TableRow key={index}>
                   <TableCell align="center" colSpan={2}>
                     {timestampToDate(order.orderDate)}
@@ -66,32 +86,31 @@ export const OrderInfo = (props) => {
                     <h3>{order.totalPrice.toLocaleString()}円</h3>
                   </TableCell>
                   <TableCell colSpan={2} align="center">
-                    {order.status === 1 && (
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={() => statechange(index, order.id)}
-                      >
-                        注文キャンセル
-                      </Button>
-                    )}
-                    {order.status === 2 && (
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={() => statechange(index, order.id)}
-                      >
-                        注文キャンセル
-                      </Button>
-                    )}
-                    {order.status === 9 && (
-                      <h3 style={{ color: "red" }}>キャンセル済み</h3>
-                    )}
-                    {order.status === 3 && (
-                      <h3 style={{ color: "blue" }}>発送済み</h3>
-                    )}
+                    <Select
+                      id={order.id}
+                      value={order.status}
+                      onChange={(e) => changeStatus(e.target.value, order.id)}
+                    >
+                      <MenuItem value={ORDER_STATUS_UNPAID}>未入金</MenuItem>
+                      <MenuItem value={ORDER_STATUS_PAID}>入金済み</MenuItem>
+                      <MenuItem value={ORDER_STATUS_UNDELIVERIED}>
+                        発送前
+                      </MenuItem>
+                      <MenuItem value={ORDER_STATUS_DELIVERIED}>
+                        発送済み
+                      </MenuItem>
+                      <MenuItem value={ORDER_STATUS_CANCELED}>
+                        キャンセル
+                      </MenuItem>
+                    </Select>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => doStatusChange(index, order.id)}
+                    >
+                      変更
+                    </Button>
                   </TableCell>
-
                   <TableRow>
                     <TableCell align="center" colSpan={2}>
                       商品名

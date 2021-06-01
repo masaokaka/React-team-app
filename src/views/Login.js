@@ -22,7 +22,6 @@ export const Login = () => {
   useEffect(() => {
     return () => {
       if (localStorage) {
-        console.log("アンマウント")
         localStorage.removeItem("itemInfo");
       }
     };
