@@ -250,6 +250,21 @@ export const Order = (props) => {
     return `${year}-${month}-${date} ${hour}:${minute}`;
   };
 
+
+  //メール送信の関数
+
+  const sendEmail = () => {
+    Email.send({
+      Host : "smtp.elasticemail.com",
+      Username : "okawara0618.info@gmail.com",
+      Password : "14621B1362D6BFA0C786DF4C0118F9737D5A",
+      To : 'takumi.okawara@rakus-partners.co.jp',
+      From : "okawara0618.info@gmail.com",
+      Subject : "This is the subject",
+      Body : "And this is the body"
+  })
+  }
+
   //checkCardで取得したinputのvalueがcash(代引き)ならstatus=1,credit(クレカ)ならstatus=2
   const confirmOrder = () => {
     if (
@@ -266,6 +281,7 @@ export const Order = (props) => {
         userdata.orderDate = getNowDate();
         userdata.totalPrice = props.totalPrice
         dispatch(order(userdata, props.user.uid, props.cartInfo.id));
+        sendEmail()
         handleLink("/ordercomp");
       }
     } else {
