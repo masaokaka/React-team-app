@@ -37,14 +37,14 @@ function App() {
         <SideNav />
         <Container>
           <Switch>
-            <Route path="/" exact component={Home} />
             <Route path="/iteminfo/:itemid" exact component={ItemInfo} />
             <Route path="/register" exact component={Register} />
             <Route path="/login" exact component={Login} />
             <Route path="/cart" exact component={Cart} />
-            <Route path="/ordercomp" exact component={OrderComp} />
+            <Route path="/ordercomp/:token" exact component={OrderComp} />
             <Route path="/orderhistory" exact component={OrderHistory} />
             <Route path="/admin" component={AdminHome} />
+            <Route path="/" component={Home} />
           </Switch>
         </Container>
         <Footer />

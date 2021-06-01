@@ -24,7 +24,7 @@ export const AdminUsers = () => {
   useEffect(() => {
     dispatch(fetchuserinfo());
   }, [user]);
-  console.log(userInfo)
+  
   return (
     <React.Fragment>
       {userInfo.length!==0 ? (
@@ -48,7 +48,7 @@ export const AdminUsers = () => {
                   <TableCell>{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>
-                    <Button onClick={() => history.push(`/admin/edit/${user.userId}`)}>
+                    <Button onClick={() => history.push(`/admin/users/${user.userId}`)}>
                       <CreateIcon />
                     </Button>
                   </TableCell>

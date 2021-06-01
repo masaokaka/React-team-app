@@ -15,7 +15,7 @@ import {
 } from "@material-ui/core";
 import { db } from "../../firebase/index";
 import { order } from "../../actions";
-import { ORDER_STATUS_PAID, ORDER_STATUS_UNPAID } from "../../status/index";
+import { ORDER_STATUS_PAID, ORDER_STATUS_UNPAID,TOKEN_CHECK } from "../../status/index";
 
 export const Order = (props) => {
   //バリデージョン
@@ -318,8 +318,12 @@ export const Order = (props) => {
         userdata.orderDate = parseInt(new Date() / 1000);
         userdata.totalPrice = props.totalPrice;
         dispatch(order(userdata, props.user.uid, props.cartInfo.id));
+<<<<<<< HEAD
         sendEmail()
         handleLink("/ordercomp");
+=======
+        handleLink(`/ordercomp/${TOKEN_CHECK}`);
+>>>>>>> develop
       }
     } else {
       alert("入力内容にエラーがあります");

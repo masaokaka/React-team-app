@@ -1,11 +1,5 @@
 import { db, storage } from "../firebase/index";
-import {
-  ADMIN_ID,
-  ITEMS_TABLE_ID,
-  TOPPINGS_TABLE_ID,
-  USERS_TABLE_ID,
-} from "../status/index";
-import firebase from "firebase";
+import { ADMIN_ID, ITEMS_TABLE_ID, TOPPINGS_TABLE_ID } from "../status/index";
 
 // サイドナビ
 export const SIDENAV = "sidenav";
@@ -225,35 +219,34 @@ export const order = (orderData, uid, cartId) => (dispatch) => {
     });
 };
 
-//管理者画面へのユーザー情報登録処理ーーーーーーーーーーーーーーーーーーーーーーーーーーーー
-export const adduserinfo = (userinfo) => {
-  db.collection(`admin/${ADMIN_ID}/user`)
-    .doc(USERS_TABLE_ID)
-    .update({
-      users: firebase.firestore.FieldValue.arrayUnion(userinfo),
-    });
-};
-
 //注文履歴の取得ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
 export const fetchorder = (uid) => (dispatch) => {
   let orders = [];
-  db.collection(`users/${uid}/orders`)
-    .get()
-    .then((snapShot) => {
-      snapShot.forEach((doc) => {
-        if (doc.data().status !== 0) {
-          let order = doc.data();
-          order.id = doc.id;
-          orders.push(order);
+  if (uid) {
+    db.collection(`users/${uid}/orders`)
+      .get()
+      .then((snapShot) => {
+        snapShot.forEach((doc) => {
+          if (doc.data().status !== 0) {
+            let order = doc.data();
+            order.id = doc.id;
+            orders.push(order);
+          }
+        });
+        if (orders.length !== 0) {
+          dispatch({
+            type: FETCHORDER,
+            orderInfo: orders,
+          });
         }
       });
-      if (orders.length !== 0) {
-        dispatch({
-          type: FETCHORDER,
-          orderInfo: orders,
-        });
-      }
+  } else {
+    //アンマウント時の処理
+    dispatch({
+      type: FETCHORDER,
+      orderInfo: orders,
     });
+  }
 };
 
 //order更新

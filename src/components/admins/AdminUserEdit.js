@@ -27,8 +27,9 @@ export const AdminUserEdit = () => {
 
   useEffect(() => {
     dispatch(fetchorder(userid));
-  }, []);
-
+    return () => dispatch(fetchorder(null));
+  },[]);
+console.log(orderInfo)
   return (
     <Container align="center">
       <h2>ユーザー情報詳細：{userid}</h2>
