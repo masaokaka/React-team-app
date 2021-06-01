@@ -7,7 +7,7 @@ import Button from "@material-ui/core/Button";
 import FormLabel from "@material-ui/core/FormLabel";
 
 export const Search = (props) => {
-  const [keyword, setKeyword] = useState('');
+  const [keyword, setKeyword] = useState("");
   const [error, setError] = useState("");
   const [resultCount, setResultCount] = useState();
   const items = useSelector((state) => state.items);
@@ -17,8 +17,8 @@ export const Search = (props) => {
   }, []);
 
   useEffect(() => {
-    setResultCount(items.length)
-  },[items])
+    setResultCount(items.length);
+  }, [items]);
 
   const searchKeyword = () => {
     let array = [...items];
@@ -33,17 +33,17 @@ export const Search = (props) => {
       // props.setItemsData(array);
     } else {
       props.setItemsData(resultBox);
-      setResultCount(resultBox.length)
+      setResultCount(resultBox.length);
       setError();
     }
   };
 
-    const clearText = ()=> {
-      setKeyword("");
-      props.setItemsData(items);
-      setResultCount(items.length)
-      setError();
-    }
+  const clearText = () => {
+    setKeyword("");
+    props.setItemsData(items);
+    setResultCount(items.length);
+    setError();
+  };
 
   return (
     <React.Fragment>

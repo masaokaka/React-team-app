@@ -94,7 +94,7 @@ export const Cart = () => {
                             <TableCell>{item.itemNum}個</TableCell>
                             {/* トッピング */}
                             <TableCell align="center">
-                              {item.toppings ? (
+                              {item.toppings.length!==0 ? (
                                 <div>
                                   {item.toppings.map((topping, index) =>
                                     toppings.map(

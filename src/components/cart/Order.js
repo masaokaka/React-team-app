@@ -239,6 +239,16 @@ export const Order = (props) => {
       })
       .catch(() => setUserdata({ ...userdata, address: "取得に失敗しました" }));
   };
+  //現在日時取得
+  const getNowDate = () => {
+    let day = new Date();
+    let year = day.getFullYear();
+    let month = day.getMonth() + 1;
+    let date = day.getDate();
+    let hour = day.getHours();
+    let minute = day.getMinutes();
+    return `${year}-${month}-${date} ${hour}:${minute}`;
+  };
 
   //checkCardで取得したinputのvalueがcash(代引き)ならstatus=1,credit(クレカ)ならstatus=2
   const confirmOrder = () => {
@@ -253,7 +263,8 @@ export const Order = (props) => {
       cardSelectFlag
     ) {
       if (window.confirm("注文してもよろしいですか？")) {
-        userdata.orderDate = new Date();
+        userdata.orderDate = getNowDate();
+        userdata.totalPrice = props.totalPrice
         dispatch(order(userdata, props.user.uid, props.cartInfo.id));
         handleLink("/ordercomp");
       }
@@ -350,20 +361,20 @@ export const Order = (props) => {
             </RadioGroup>
           </FormControl>
           <FormHelperText>{cardSelectError}</FormHelperText>
-          {userdata.status===2&&
+          {userdata.status === 2 && (
             <div>
-            <div>カード番号</div>
-            <TextField
-              type="text"
-              variant="outlined"
-              onChange={(e) => checkCard(e)}
-              helperText={creditcardError}
-              inputProps={{
-                maxLength: 16,
-              }}    
-            />
-             </div>
-              }
+              <div>カード番号</div>
+              <TextField
+                type="text"
+                variant="outlined"
+                onChange={(e) => checkCard(e)}
+                helperText={creditcardError}
+                inputProps={{
+                  maxLength: 16,
+                }}
+              />
+            </div>
+          )}
           <Button variant="contained" type="button" onClick={confirmOrder}>
             この内容で注文する
           </Button>
