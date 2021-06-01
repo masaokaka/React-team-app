@@ -13,6 +13,7 @@ import HomeIcon from "@material-ui/icons/Home";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import HistoryIcon from "@material-ui/icons/History";
 import AdminIcon from "@material-ui/icons/SupervisorAccount";
+import { ADMIN_ID } from "../status/index";
 
 const useStyles = makeStyles({
   list: {
@@ -42,25 +43,30 @@ export const SideNav = () => {
 };
 
 const SideNavContent = () => {
-  const user = useSelector((state) =>
-    state.user ? state.user : { uid: "no_admin" }
-  );
+  const user = useSelector((state) => state.user);
   const classes = useStyles();
   const history = useHistory();
   const handleLink = (path) => history.push(path);
   const dispatch = useDispatch();
+
   const menu = [
     { text: "ホーム", icon: <HomeIcon />, link: "/" },
     { text: "カート", icon: <ShoppingCartIcon />, link: "/cart" },
+  ];
+  const userMenu = [
+    ...menu,
     {
-      text: "購入履歴",
+      text: "注文履歴",
       icon: <HistoryIcon />,
       link: "/orderhistory",
     },
+  ];
+  const adminMenu = [
+    ...userMenu,
     {
       text: "管理画面",
       icon: <AdminIcon />,
-      link: "/admin/users",
+      link: "/admin",
     },
   ];
   const link = (link) => {
@@ -76,18 +82,44 @@ const SideNavContent = () => {
       </List>
       <Divider />
       <List>
-        {menu.map((item, index) => (
-          <ListItem
-            button
-            key={index}
-            onClick={() => {
-              link(item.link);
-            }}
-          >
-            <ListItemIcon>{item.icon}</ListItemIcon>
-            <ListItemText primary={item.text}></ListItemText>
-          </ListItem>
-        ))}
+        {user === null
+          ? menu.map((item, index) => (
+              <ListItem
+                button
+                key={index}
+                onClick={() => {
+                  link(item.link);
+                }}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.text}></ListItemText>
+              </ListItem>
+            ))
+          : user.uid === ADMIN_ID
+          ? adminMenu.map((item, index) => (
+              <ListItem
+                button
+                key={index}
+                onClick={() => {
+                  link(item.link);
+                }}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.text}></ListItemText>
+              </ListItem>
+            ))
+          : userMenu.map((item, index) => (
+              <ListItem
+                button
+                key={index}
+                onClick={() => {
+                  link(item.link);
+                }}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.text}></ListItemText>
+              </ListItem>
+            ))}
       </List>
     </div>
   );
