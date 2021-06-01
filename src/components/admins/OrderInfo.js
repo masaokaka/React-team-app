@@ -12,7 +12,7 @@ import {
 } from "@material-ui/core";
 import { useDispatch } from "react-redux";
 import { updateorder } from "../../actions";
-import {} from "../../status/index"
+import { timestampToDate } from "../../status/functions";
 
 export const OrderInfo = (props) => {
   const dispatch = useDispatch();
@@ -60,7 +60,7 @@ export const OrderInfo = (props) => {
               {props.orderInfo.map((order, index) => (
                 <TableRow key={index}>
                   <TableCell align="center" colSpan={2}>
-                    {order.orderDate}
+                    {timestampToDate(order.orderDate)}
                   </TableCell>
                   <TableCell colSpan={2} align="center">
                     <h3>{order.totalPrice.toLocaleString()}円</h3>

@@ -39,8 +39,6 @@ export const Order = (props) => {
   const [timeFlag, setTimeFlag] = useState(false);
   const [paymentFlag, setPaymentFlag] = useState(ORDER_STATUS_UNPAID); //支払い方法の判定用 1ならカード 2なら代引き
   const [creditShowFlag, setcreditShowFlag] = useState(false);
-
-  //firestoreからデータ取得
   const [userdata, setUserdata] = useState({
     name: "",
     address: "",
@@ -51,7 +49,8 @@ export const Order = (props) => {
     status: "",
     tel: "",
     zip: "",
-  }); //ユーザー情報をオブジェクトの形にして表示
+  });
+  
   const dispatch = useDispatch();
   const history = useHistory();
   const handleLink = (path) => history.push(path);
@@ -197,6 +196,7 @@ export const Order = (props) => {
     }
   };
 
+  //クレカのバリデーションーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
   const setPayment = (e) => {
     //カード払いがチェックされた時
     if (e.target.value == ORDER_STATUS_PAID) {
@@ -275,7 +275,12 @@ export const Order = (props) => {
     let check = checkInput();
     if (check) {
       if (window.confirm("注文してもよろしいですか？")) {
-        userdata.orderDate = parseInt(new Date() / 1000);
+        //とってきたデータそのままだとなぜかstatusがundefinedになるので入れ替えしている。
+        if (userdata.status === undefined) {
+          userdata.status = 1;
+        }
+        let now = new Date();
+        userdata.orderDate = now.getTime();
         userdata.totalPrice = props.totalPrice;
         dispatch(order(userdata, props.user.uid, props.cartInfo.id));
         handleLink(`/ordercomp/${TOKEN_CHECK}`);

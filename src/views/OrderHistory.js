@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { db } from "../firebase";
 import React from "react";
+import { timestampToDate } from "../status/functions";
 import {
   Table,
   TableBody,
@@ -35,13 +36,6 @@ export const OrderHistory = () => {
       dispatch(fetchorder(user.uid));
     }
   }, [user]);
-
-  const timestampToDate = (timestamp) => {
-    let dateTime = new Date(timestamp * 1000);
-    let date = dateTime.toLocaleDateString(); // => 2019/9/4
-    let time = dateTime.toLocaleTimeString("ja-JP"); // => 12:03:35
-    return date +' '+ time
-  };
 
   const statechange = (index, orderId) => {
     if (window.confirm("キャンセルしてもよろしいですか？")) {
