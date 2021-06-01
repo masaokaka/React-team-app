@@ -15,7 +15,7 @@ import {
 } from "@material-ui/core";
 import { db } from "../../firebase/index";
 import { order } from "../../actions";
-import { ORDER_STATUS_PAID, ORDER_STATUS_UNPAID,TOKEN_CHECK } from "../../status/index";
+import { ORDER_STATUS_PAID, ORDER_STATUS_UNPAID } from "../../status/index";
 
 export const Order = (props) => {
   //バリデージョン
@@ -288,7 +288,7 @@ export const Order = (props) => {
       paymentForEmail = 'クレジットカード決済'
     }
     const EmailText = `
-    ${nameForEmail}様今回はラクラクカレーをご利用頂き誠にありがとうございました。'/n'
+    ${nameForEmail}様今回はラクラクカレーをご利用頂き誠にありがとうございました。
     ご注文が確定致しましたので下記の内容をご確認下さい\n
     ［ご注文者様］${nameForEmail}様\n
     ［お届け先住所］${addressForEmail}\n
@@ -318,12 +318,8 @@ export const Order = (props) => {
         userdata.orderDate = parseInt(new Date() / 1000);
         userdata.totalPrice = props.totalPrice;
         dispatch(order(userdata, props.user.uid, props.cartInfo.id));
-<<<<<<< HEAD
         sendEmail()
         handleLink("/ordercomp");
-=======
-        handleLink(`/ordercomp/${TOKEN_CHECK}`);
->>>>>>> develop
       }
     } else {
       alert("入力内容にエラーがあります");
