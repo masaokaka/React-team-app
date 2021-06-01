@@ -5,11 +5,15 @@ import Box from "@material-ui/core/Box";
 import { Grid, TextField } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import FormLabel from "@material-ui/core/FormLabel";
+import Autocomplete from '@material-ui/lab/Autocomplete';
+
 
 export const Search = (props) => {
   const [keyword, setKeyword] = useState('');
   const [error, setError] = useState("");
   const [resultCount, setResultCount] = useState();
+  const [value, setValue] = useState();
+  const [inputValue, setInputValue] = useState('');
   const items = useSelector((state) => state.items);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -45,6 +49,10 @@ export const Search = (props) => {
       setError();
     }
 
+    const autocmpChange = (e)=>{
+      console.log(e.target.value)
+    }
+
   return (
     <React.Fragment>
       <Box width="100%">
@@ -59,7 +67,24 @@ export const Search = (props) => {
                   <FormLabel htmlFor="text" className="control-label col-sm-2">
                     商品名を入力してください
                   </FormLabel>
-                  <TextField
+                  <Autocomplete 
+                    options={items.map(item => item.name)}
+                    inputValue={keyword}
+                    onInputChange={(event, newInputValue) => {
+                      setKeyword(newInputValue)
+                    }}
+                    freeSolo
+                    renderInput={(params) => (<TextField　
+                      variant="outlined"
+                      py={1.25}
+                      px={1.875}
+                      fullWidth
+                      type="text"
+                      id="text"
+                      className="form-control input-sm"
+                      onChange={(e) => setKeyword(e.target.value)} {...params} 
+                      label='検索' />) }/>
+                  {/* <TextField
                     variant="outlined"
                     py={1.25}
                     px={1.875}
@@ -69,7 +94,7 @@ export const Search = (props) => {
                     id="text"
                     className="form-control input-sm"
                     onChange={(e) => setKeyword(e.target.value)}
-                  />
+                  /> */}
                 </Box>
                 <Box>{error && <Box color="red">{error}</Box>}</Box>
                 <Box mx="auto" width="50%">
