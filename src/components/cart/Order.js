@@ -274,15 +274,37 @@ export const Order = (props) => {
   //メール送信の関数
 
   const sendEmail = () => {
-    Email.send({
+    const EmailAddress = 'jpophikomaro@gmail.com'
+    console.log(userdata)
+    const nameForEmail = userdata.name
+    const addressForEmail = userdata.name
+    const telForEmail = userdata.tel
+    
+    if (userdata.payment === 'cash'){
+      const paymentForEmail = '代金引換'
+      const totalPriceForEmail = userdata.totalPrice
+    }else if (userdata.payment === 'credit'){
+      const paymentForEmail = 'クレジットカード決済'
+      const totalPriceForEmail = '入金済み'
+    }
+    const EmailText = `
+    ${nameForEmail}様今回はラクラクカレーをご利用頂き誠にありがとうございました。/n
+    ご注文が確定致しましたので下記の内容をご確認下さい\n
+    ［ご注文者］${nameForEmail}様\n
+    ［］`
+
+    
+    window.Email.send({
       Host : "smtp.elasticemail.com",
       Username : "okawara0618.info@gmail.com",
       Password : "14621B1362D6BFA0C786DF4C0118F9737D5A",
-      To : 'takumi.okawara@rakus-partners.co.jp',
+      To : `${EmailAddress}`,
       From : "okawara0618.info@gmail.com",
-      Subject : "This is the subject",
+      Subject : "購入確認メール",
       Body : "And this is the body"
-  })
+  }).then(
+    message => alert(message)
+  )
   }
 
   //checkCardで取得したinputのvalueがcash(代引き)ならstatus=1,credit(クレカ)ならstatus=2

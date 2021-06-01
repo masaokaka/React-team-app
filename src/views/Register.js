@@ -182,6 +182,7 @@ export const Register = () => {
 
       //ユーザー登録処理（エラー文の実装の余地あり）
       const handleRegist = () =>{
+        console.log(nameFlag && emailFlag && zipFlag && addressFlag &&tellFlag && passwordFlag && confirmFlag)
         let listElements = Array.from(document.getElementsByTagName('input'));
         const valueList = {};
         listElements.forEach((item) => {
@@ -213,8 +214,12 @@ export const Register = () => {
           if(error.message === 'The email address is already in use by another account.'){
             console.log(error.message)
             setEmailError('※このメールアドレスはすでに使われています')
+          }else{
+            alert('入力に不備があります');
           }
         });
+    }else{
+      alert('入力に不備があります');
     }
   };
 
