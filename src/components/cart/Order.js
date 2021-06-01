@@ -239,17 +239,6 @@ export const Order = (props) => {
     }
   };
 
-  //現在日時取得
-  const getNowDate = () => {
-    let day = new Date();
-    let year = day.getFullYear();
-    let month = day.getMonth() + 1;
-    let date = day.getDate();
-    let hour = day.getHours();
-    let minute = day.getMinutes();
-    return `${year}/${month}/${date} ${hour}:${minute}`;
-  };
-
   const checkInput = () => {
     if (cardSelectFlag) {
       if (
@@ -286,7 +275,7 @@ export const Order = (props) => {
     let check = checkInput();
     if (check) {
       if (window.confirm("注文してもよろしいですか？")) {
-        userdata.orderDate = getNowDate();
+        userdata.orderDate = parseInt(new Date() / 1000);
         userdata.totalPrice = props.totalPrice;
         dispatch(order(userdata, props.user.uid, props.cartInfo.id));
         handleLink("/ordercomp");

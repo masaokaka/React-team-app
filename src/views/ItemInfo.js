@@ -194,7 +194,6 @@ const[calcPrice,setCalcPrice] = useState(0)
         userId: uid,
       };
       dispatch(createcart(newCartInfo, uid));
-      console.log(newCartInfo)
       history.push("/cart");
     }
   };
