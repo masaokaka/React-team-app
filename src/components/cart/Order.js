@@ -15,7 +15,11 @@ import {
 } from "@material-ui/core";
 import { db } from "../../firebase/index";
 import { order } from "../../actions";
-import { ORDER_STATUS_PAID, ORDER_STATUS_UNPAID,TOKEN_CHECK } from "../../status/index";
+import {
+  ORDER_STATUS_PAID,
+  ORDER_STATUS_UNPAID,
+  TOKEN_CHECK,
+} from "../../status/index";
 
 export const Order = (props) => {
   //バリデージョン
@@ -30,11 +34,11 @@ export const Order = (props) => {
   const [tellError, setTellError] = useState("");
   const [tellFlag, setTellFlag] = useState(true);
   const [creditcardError, setCreditcardError] = useState("");
-  const [creditcardflag, setCreditcardflag] = useState(false);
+  const [cardNoFlag, setCardNoflag] = useState(false);//カードナンバーの判定用
   const [timeError, setTimeError] = useState("");
   const [timeFlag, setTimeFlag] = useState(false);
   const [cardSelectError, setcardSelectError] = useState("");
-  const [cardSelectFlag, setcardSelectFlag] = useState(false);
+  const [paymentFlag, setPaymentFlag] = useState(false);//支払い方法の判定用
   const [creditShowFlag, setcreditShowFlag] = useState(false);
 
   //firestoreからデータ取得
@@ -206,7 +210,7 @@ export const Order = (props) => {
       status: ORDER_STATUS_UNPAID,
     });
     setcardSelectError("");
-    setcardSelectFlag(false);
+    setPaymentFlag(false);
     setcreditShowFlag(false);
   };
   const setPaymentCredit = (e) => {
@@ -216,7 +220,7 @@ export const Order = (props) => {
       status: ORDER_STATUS_PAID,
     });
     setcardSelectError("");
-    setcardSelectFlag(true);
+    setPaymentFlag(true);
     setcreditShowFlag(true);
   };
 
@@ -227,20 +231,20 @@ export const Order = (props) => {
     setUserdata({ ...userdata, card: e.target.value });
     if (Check === "") {
       setCreditcardError("クレジットカード番号を入力して下さい");
-      setCreditcardflag(false);
+      setPaymentflag(false);
     } else if (!Check.match(Validate)) {
       setCreditcardError(
         "クレジットカード番号は14〜16桁の半角数字で入力してください"
       );
-      setCreditcardflag(false);
+      setPaymentflag(false);
     } else {
       setCreditcardError("");
-      setCreditcardflag(true);
+      setPaymentflag(true);
     }
   };
 
   const checkInput = () => {
-    if (cardSelectFlag) {
+    if (paymentFlag) {
       if (
         nameFlag &&
         emailFlag &&
@@ -248,7 +252,7 @@ export const Order = (props) => {
         addressFlag &&
         tellFlag &&
         timeFlag &&
-        creditcardflag
+        cardSelectFlag
       ) {
         return true;
       } else {

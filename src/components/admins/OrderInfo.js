@@ -11,15 +11,18 @@ import {
   Button,
 } from "@material-ui/core";
 import { useDispatch } from "react-redux";
-import {
-  updateorder,
-} from "../../actions";
+import { updateorder } from "../../actions";
+import {} from "../../status/index"
 
 export const OrderInfo = (props) => {
   const dispatch = useDispatch();
-  
+
   const statechange = (index, orderId) => {
-    if (window.confirm("キャンセルしてもよろしいですか？")) {
+    if (
+      window.confirm(
+        `ユーザー(${props.userId})のステータスを変更しますがよろしいですか？`
+      )
+    ) {
       let orders = [...props.orderInfo];
       orders[index].status = 9;
       db.collection(`users/${props.userId}/orders`)
@@ -30,7 +33,7 @@ export const OrderInfo = (props) => {
         });
     }
   };
-  console.log(props.orderInfo)
+  console.log(props.orderInfo);
   return (
     <div align="center">
       <h2>注文履歴一覧</h2>
