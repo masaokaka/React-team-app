@@ -51,9 +51,6 @@ export const Login = () => {
     }
   }
 
-
-
-
   const doLogin = () => {
     if(emailFlag && passwordFlag){
         //ローカルストレージにアイテムがあった時

@@ -15,3 +15,6 @@ export const ORDER_STATUS_PAID = 2;
 export const ORDER_STATUS_UNDELIVERIED = 3;
 export const ORDER_STATUS_DERIVERIED = 4;
 export const ORDER_STATUS_CANCELED = 9;
+
+//リダイレクト用トークン
+export const TOKEN_CHECK = "45e8cmtymhwxep94"

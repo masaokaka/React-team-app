@@ -1,6 +1,15 @@
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useParams, useHistory } from "react-router-dom";
+import {TOKEN_CHECK} from "../status/index"
 
 export const OrderComp = () => {
+  const { token } = useParams()
+  const history = useHistory()
+  useEffect(() => {
+    if (token!==TOKEN_CHECK) {
+      history.push("/")
+    }
+  })
   return (
     <div align="center">
       <h2>注文ありがとうございます！</h2>
