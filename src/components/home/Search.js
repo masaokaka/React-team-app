@@ -49,9 +49,7 @@ export const Search = (props) => {
       setError();
     }
 
-    const autocmpChange = (e)=>{
-      console.log(e.target.value)
-    }
+ 
 
   return (
     <React.Fragment>
