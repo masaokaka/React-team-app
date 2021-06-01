@@ -46,7 +46,6 @@ export const OrderHistory = () => {
         .then(() => {
           console.log(orders[index]);
           dispatch(updateorder(orders));
-          console.log("動いた");
         });
     }
   };

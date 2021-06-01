@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import {useHistory} from "react-router-dom"
+import { useHistory } from "react-router-dom";
 import { Grid, Button } from "@material-ui/core";
 export const SumPrice = (props) => {
   const [totalPrice, setTotalPrice] = useState(0);
-  const history = useHistory()
+  const history = useHistory();
   //合計金額計算処理
   useEffect(() => {
     if (props.cartInfo) {
@@ -25,9 +25,9 @@ export const SumPrice = (props) => {
               .filter((topping) => toppingIn.toppingId === topping.id)
               .forEach((topping) => {
                 if (toppingIn.toppingSize === 0) {
-                  totalPrice += topping.mprice;
+                  totalPrice += topping.mprice * itemIn.itemNum;
                 } else {
-                  totalPrice += topping.lprice;
+                  totalPrice += topping.lprice * itemIn.itemNum;
                 }
               });
           });
@@ -38,18 +38,20 @@ export const SumPrice = (props) => {
     }
   }, [props.cartInfo]);
 
-  const proceedToOrder = ()=> {
+  const proceedToOrder = () => {
     if (props.user) {
       props.setShow(true);
     } else {
-      localStorage.setItem("itemInfo", JSON.stringify(props.cartInfo.itemInfo))
-      history.push('/login')
+      localStorage.setItem("itemInfo", JSON.stringify(props.cartInfo.itemInfo));
+      history.push("/login");
     }
-  }
+  };
   return (
     <Grid container item cpacing={0} direction="column">
       <Grid container item justify="center">
-        <h3>合計金額(税込)：{Math.floor(totalPrice * 1.1).toLocaleString()}円</h3>
+        <h3>
+          合計金額(税込)：{Math.floor(totalPrice * 1.1).toLocaleString()}円
+        </h3>
       </Grid>
       <Grid container item justify="center">
         <h3>内消費税：{Math.floor(totalPrice * 0.1).toLocaleString()}円</h3>
