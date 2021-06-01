@@ -273,7 +273,6 @@ export const Register = () => {
                         <TextField label='確認用パスワード' type='password' value={confirm} onChange={(e) => ClearConfirm(e)} helperText={confirmError}/>
                       </div>
                    </Grid>
-
                   <Grid item xs> 
                       <Button variant='contained' color='secondary' onClick={(e) => handleRegist(e)}>登録</Button>
                       <Button variant='contained' color='secondary' onClick={()=>clearText()}>クリア</Button>

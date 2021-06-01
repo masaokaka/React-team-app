@@ -24,7 +24,7 @@ export const AdminUsers = () => {
   useEffect(() => {
     dispatch(fetchuserinfo());
   }, [user]);
-
+  console.log(userInfo)
   return (
     <React.Fragment>
       {userInfo.length!==0 ? (

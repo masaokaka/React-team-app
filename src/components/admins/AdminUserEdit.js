@@ -3,11 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Container, Button } from "@material-ui/core";
 import { OrderInfo } from "./OrderInfo";
-import {
-  fetchitems,
-  fetchtoppings,
-  fetchorder,
-} from "../../actions";
+import { fetchitems, fetchtoppings, fetchorder } from "../../actions";
 
 export const AdminUserEdit = () => {
   const [user, setUser] = useState();
@@ -31,8 +27,8 @@ export const AdminUserEdit = () => {
 
   useEffect(() => {
     dispatch(fetchorder(userid));
-    console.log(userid);
   }, []);
+
   return (
     <Container align="center">
       <h2>ユーザー情報詳細：{userid}</h2>

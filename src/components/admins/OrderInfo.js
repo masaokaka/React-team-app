@@ -17,6 +17,7 @@ import {
 
 export const OrderInfo = (props) => {
   const dispatch = useDispatch();
+  
   const statechange = (index, orderId) => {
     if (window.confirm("キャンセルしてもよろしいですか？")) {
       let orders = [...props.orderInfo];

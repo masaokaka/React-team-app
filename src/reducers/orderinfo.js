@@ -6,9 +6,10 @@ export const orderinfo = (state = initialState, action) => {
   switch (action.type) {
     case FETCHORDER:
       return action.orderInfo;
-    case UPDATEORDER:
-      return action.orders;
-    default:
+      case UPDATEORDER:
+        return action.orders;
+      default:
+      console.log('動き')
       return state;
   }
 };

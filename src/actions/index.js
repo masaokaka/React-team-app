@@ -241,7 +241,6 @@ export const fetchorder = (uid) => (dispatch) => {
   db.collection(`users/${uid}/orders`).get()
   .then((snapShot) => {
     snapShot.forEach((doc) => {
-        console.log(doc)
         if (doc.data().status !== 0) {
           let order = doc.data();
           order.id = doc.id;
@@ -252,7 +251,7 @@ export const fetchorder = (uid) => (dispatch) => {
         type: FETCHORDER,
         orderInfo: orders,
       });
-    });
+  })
 };
 
 //order更新
