@@ -103,7 +103,7 @@ export const Register = () => {
         setZip(e.target.value)
         if(Check === ''){
            setZipError('郵便番号を入力して下さい')
-           setEmailFlag(false)
+           setZipFlag(false)
         }else if(!Check.match(Validate)){
           setZipError('郵便番号はXXX-XXXXの形式で入力して下さい')
           setZipFlag(false)
@@ -151,7 +151,7 @@ export const Register = () => {
            setPasswordFlag(false)
         }else if(!Check.match(Validate)){
           setPasswordError('パスワードは半角英数字と記号「!@#$%^&*()_+-=[]{};:?,.」のみです')
-          setEmailFlag(false)
+          setPasswordFlag(false)
         }else { 
           setPasswordError('')
           setPasswordFlag(true)
@@ -181,22 +181,19 @@ export const Register = () => {
       }
 
       //ユーザー登録処理（エラー文の実装の余地あり）
-      const handleRegist = (e) =>{
-        console.log(2)
-        if(nameFlag && emailFlag && zipFlag && addressFlag &&tellFlag && passwordFlag && confirmFlag){
-          console.log(3)
-          let listElements = Array.from(e.target.previousElementSibling.getElementsByTagName('input'));
-          console.log(listElements)
+      const handleRegist = () =>{
+        let listElements = Array.from(document.getElementsByTagName('input'));
         const valueList = {};
         listElements.forEach((item) => {
           if(item.name){
           valueList[item.name] = item.value;
         }
       });
-      const email = valueList.email;
-      const password = valueList.password;
-      let uid = "";
-      auth
+        if(nameFlag && emailFlag && zipFlag && addressFlag &&tellFlag && passwordFlag && confirmFlag){
+          const email = valueList.email;
+          const password = valueList.password;
+          let uid = "";
+          auth
         .createUserWithEmailAndPassword(email, password)
         .then(() => {
           let user = auth.currentUser;
@@ -210,8 +207,14 @@ export const Register = () => {
           console.log(valueList)
           //管理者DBに登録情報を保存する処理
           // dispatch(adduserinfo(valueList));
+          handleLink("/");
+        },
+        error=>{
+          if(error.message === 'The email address is already in use by another account.'){
+            console.log(error.message)
+            setEmailError('※このメールアドレスはすでに使われています')
+          }
         });
-      handleLink("/");
     }
   };
 
@@ -230,54 +233,54 @@ export const Register = () => {
   return (
           <form  className={classes.root} autoComplete='off'>
               <Grid container spacing={1} justify='center'>
-                  <Grid item xs sx={{mx:'auto'}}>
-                      <div>
-                          <TextField label='名前' name='name' value={name} onChange={(e) => ClearName(e)} helperText={nameError}/>
-                      </div>
-                  </Grid>
-                    
-                  <Grid item xs>
-                      <div>
-                        <TextField label='メールアドレス' name="email" value={email} onChange={(e) => ClearEmail(e)} helperText={emailError}/>
-                      </div>
-                  </Grid>
+                      <Grid item xs sx={{mx:'auto'}}>
+                          <div>
+                              <TextField label='名前' name='name' value={name} onChange={(e) => ClearName(e)} helperText={nameError}/>
+                          </div>
+                      </Grid>
+                        
+                      <Grid item xs>
+                          <div>
+                            <TextField label='メールアドレス' name="email" value={email} onChange={(e) => ClearEmail(e)} helperText={emailError}/>
+                          </div>
+                      </Grid>
 
-                  <Grid item xs>
-                      <div>
-                          <TextField label='郵便番号' id='zip' name="zip" value={zip} onChange={(e) => ClearZip(e)} helperText={zipError}/>
-                      </div>
-                      <Button variant='contained' color='secondary' onClick={() => searchAddress()}>住所検索</Button> 
-                  </Grid>  
-                    
-                    
-                  <Grid item xs>
-                      <div>
-                        <TextField label='住所' name="address" value={address} onChange={(e) => ClearAddress(e)} helperText={addressError}/>
-                      </div>
-                  </Grid>  
+                      <Grid item xs>
+                          <div>
+                              <TextField label='郵便番号' id='zip' name="zip" value={zip} onChange={(e) => ClearZip(e)} helperText={zipError}/>
+                          </div>
+                          <Button variant='contained' color='secondary' onClick={() => searchAddress()}>住所検索</Button> 
+                      </Grid>  
+                        
+                        
+                      <Grid item xs>
+                          <div>
+                            <TextField label='住所' name="address" value={address} onChange={(e) => ClearAddress(e)} helperText={addressError}/>
+                          </div>
+                      </Grid>  
 
-                  <Grid item xs>
-                      <div>
-                          <TextField label='電話番号' name="tel" value={tell} onChange={(e) => ClearTell(e)} helperText={tellError}/>
-                      </div>
-                  </Grid>
+                      <Grid item xs>
+                          <div>
+                              <TextField label='電話番号' name="tel" value={tell} onChange={(e) => ClearTell(e)} helperText={tellError}/>
+                          </div>
+                      </Grid>
 
-                  <Grid item xs>
-                      <div>
-                            <TextField label='パスワード' id="password" type='password' name="password" value={password} onChange={(e) => ClearPassword(e)} helperText={passwordError}/>
-                      </div>
-                  </Grid>
+                      <Grid item xs>
+                          <div>
+                                <TextField label='パスワード' id="password" type='password' name="password" value={password} onChange={(e) => ClearPassword(e)} helperText={passwordError}/>
+                          </div>
+                      </Grid>
 
-                  <Grid item xs>
-                      <div>
-                        <TextField label='確認用パスワード' type='password' value={confirm} onChange={(e) => ClearConfirm(e)} helperText={confirmError}/>
-                      </div>
-                   </Grid>
-                  <Grid item xs> 
-                      <Button variant='contained' color='secondary' onClick={(e) => handleRegist(e)}>登録</Button>
-                      <Button variant='contained' color='secondary' onClick={()=>clearText()}>クリア</Button>
-                  </Grid>
-              </Grid>  
+                      <Grid item xs>
+                          <div>
+                            <TextField label='確認用パスワード' type='password' value={confirm} onChange={(e) => ClearConfirm(e)} helperText={confirmError}/>
+                          </div>
+                      </Grid>
+                </Grid>  
+
+
+                <Button variant='contained' color='secondary' onClick={(e) => handleRegist()}>登録</Button>
+                <Button variant='contained' color='secondary' onClick={()=>clearText()}>クリア</Button>
       </form>
   )
 };
