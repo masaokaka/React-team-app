@@ -129,74 +129,85 @@ export const OrderHistory = () => {
                       <h3 style={{ color: "gray" }}>キャンセル済み</h3>
                     )}
                   </TableCell>
-                  <TableRow>
-                    <TableCell align="center" colSpan={2}>
-                      商品名
-                    </TableCell>
-                    <TableCell align="center" colSpan={2}>
-                      価格(税抜)/個数
-                    </TableCell>
-                    <TableCell align="center" colSpan={2}>
-                      トッピング
-                    </TableCell>
-                    <TableCell align="center"></TableCell>
-                  </TableRow>
-                  {order.itemInfo.map((item, index) =>
-                    items.map(
-                      (it) =>
-                        it.id === item.itemId && (
-                          <TableRow key={index} colSpan={6}>
-                            <TableCell
-                              component="th"
-                              scope="items"
-                              align="center"
-                              colSpan={2}
-                            >
-                              <div>
-                                <img src={it.img} height="120" alt="カレー" />
-                              </div>
-                              <div>{it.name}</div>
-                            </TableCell>
-                            {item.itemSize == 0 ? (
-                              <TableCell align="center" colSpan={2}>
-                                <h4>
-                                  {it.mprice.toLocaleString()}円(Mサイズ) /
-                                  {item.itemNum}個
-                                </h4>
-                              </TableCell>
-                            ) : (
-                              <TableCell align="center" colSpan={2}>
-                                {it.lprice.toLocaleString()}円(Lサイズ) /
-                                {item.itemNum}個
-                              </TableCell>
-                            )}
-                            <TableCell align="center" colSpan={2}>
-                              {item.toppings.length !== 0 ? (
-                                <div>
-                                  {item.toppings.map((topping, index) =>
-                                    toppings.map(
-                                      (top) =>
-                                        topping.toppingId === top.id && (
-                                          <div key={index}>
-                                            <span>{top.name}:</span>
-                                            {topping.toppingSize === 0 ? (
-                                              <span>{top.mprice}円</span>
-                                            ) : (
-                                              <span>{top.lprice}円</span>
-                                            )}
-                                          </div>
-                                        )
-                                    )
+                  <TableCell>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell align="center" colSpan={2}>
+                            商品名
+                          </TableCell>
+                          <TableCell align="center" colSpan={2}>
+                            価格(税抜)/個数
+                          </TableCell>
+                          <TableCell align="center" colSpan={2}>
+                            トッピング
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {order.itemInfo.map((item, index) =>
+                          items.map(
+                            (it) =>
+                              it.id === item.itemId && (
+                                <TableRow key={index} colSpan={6}>
+                                  <TableCell
+                                    component="th"
+                                    scope="items"
+                                    align="center"
+                                    colSpan={2}
+                                  >
+                                    <div>
+                                      <img
+                                        src={it.img}
+                                        height="120"
+                                        alt="カレー"
+                                      />
+                                    </div>
+                                    <div>{it.name}</div>
+                                  </TableCell>
+                                  {item.itemSize == 0 ? (
+                                    <TableCell align="center" colSpan={2}>
+                                      <h4>
+                                        {it.mprice.toLocaleString()}円(Mサイズ)
+                                        /{item.itemNum}個
+                                      </h4>
+                                    </TableCell>
+                                  ) : (
+                                    <TableCell align="center" colSpan={2}>
+                                      {it.lprice.toLocaleString()}円(Lサイズ) /
+                                      {item.itemNum}個
+                                    </TableCell>
                                   )}
-                                </div>
-                              ) : (
-                                <div>なし</div>
-                              )}
-                            </TableCell>
-                          </TableRow>
-                        )
-                    )
-                  )}
+                                  <TableCell align="center" colSpan={2}>
+                                    {item.toppings.length !== 0 ? (
+                                      <div>
+                                        {item.toppings.map((topping, index) =>
+                                          toppings.map(
+                                            (top) =>
+                                              topping.toppingId === top.id && (
+                                                <div key={index}>
+                                                  <span>{top.name}:</span>
+                                                  {topping.toppingSize === 0 ? (
+                                                    <span>{top.mprice}円</span>
+                                                  ) : (
+                                                    <span>{top.lprice}円</span>
+                                                  )}
+                                                </div>
+                                              )
+                                          )
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <div>なし</div>
+                                    )}
+                                  </TableCell>
+                                </TableRow>
+                              )
+                          )
+                        )}
+                      </TableBody>
+                    </Table>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
