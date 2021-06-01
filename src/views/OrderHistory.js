@@ -36,6 +36,13 @@ export const OrderHistory = () => {
     }
   }, [user]);
 
+  const timestampToDate = (timestamp) => {
+    let dateTime = new Date(timestamp * 1000);
+    let date = dateTime.toLocaleDateString(); // => 2019/9/4
+    let time = dateTime.toLocaleTimeString("ja-JP"); // => 12:03:35
+    return date +' '+ time
+  };
+
   const statechange = (index, orderId) => {
     if (window.confirm("キャンセルしてもよろしいですか？")) {
       let orders = [...orderInfo];
@@ -46,7 +53,6 @@ export const OrderHistory = () => {
         .then(() => {
           console.log(orders[index]);
           dispatch(updateorder(orders));
-          console.log("動いた");
         });
     }
   };
@@ -76,7 +82,7 @@ export const OrderHistory = () => {
               {orderInfo.map((order, index) => (
                 <TableRow key={index}>
                   <TableCell align="center" colSpan={2}>
-                    {order.orderDate}
+                    {timestampToDate(order.orderDate)}
                   </TableCell>
                   <TableCell colSpan={2} align="center">
                     <h3>{order.totalPrice.toLocaleString()}円</h3>
@@ -134,9 +140,7 @@ export const OrderHistory = () => {
                               <div>
                                 <img src={it.img} height="120" alt="カレー" />
                               </div>
-                              <div>
-                              {it.name}
-                              </div>
+                              <div>{it.name}</div>
                             </TableCell>
                             {item.itemSize == 0 ? (
                               <TableCell align="center" colSpan={2}>
@@ -185,7 +189,9 @@ export const OrderHistory = () => {
         </TableContainer>
       )}
       {orderInfo.length === 0 && <h3>注文履歴がありません</h3>}
-      <Button variant="contained" onClick={()=>history.push('/')}>トップ画面に戻る</Button>
+      <Button variant="contained" onClick={() => history.push("/")}>
+        トップ画面に戻る
+      </Button>
     </div>
   );
 };
