@@ -194,35 +194,32 @@ const[calcPrice,setCalcPrice] = useState(0)
         userId: uid,
       };
       dispatch(createcart(newCartInfo, uid));
-      console.log(newCartInfo)
       history.push("/cart");
     }
   };
 
   return (
-      <div className="container">
-        <div className="row">
-          <div className="col-xs-offset-2 col-xs-8">
-
-            <h3 className="text-center">商品詳細</h3>
-            <div className="row">
-              <div className="col-xs-5">
-                <img src={itemRendering.img} className="img-responsive img-rounded item-img-center" />
+      <div>
+        <div>
+          <div>
+            <h3>商品詳細</h3>
+            <div>
+              <div>
+                <img src={itemRendering.img} width="300"/>
               </div>
-              
-              <div className="col-xs-5">
-                <div className="bs-component">
+              <div>
+                <div>
                   <h4>{itemRendering.name}</h4> <br/>
                   <br/>
                   <p>{itemRendering.text}</p>
                 </div>
               </div>
             </div><br/>
-            <div className="row">
-              <div className="col-xs-offset-2 col-xs-8">
-                <div className="form-group">
-                  <div className="row">
-                    <div className="col-sm-12">
+            <div>
+              <div>
+                <div>
+                  <div>
+                    <div>
                       <label htmlFor="inputResponsibleCompany">サイズ</label>
                     </div>
                     <div className="col-sm-12">
@@ -241,7 +238,7 @@ const[calcPrice,setCalcPrice] = useState(0)
                 </div>
               </div>
             </div><br/>
-            <div className="row">
+            <div>
               <div className="col-xs-offset-2 col-xs-8">
                 <div className="form-group">
                   <div className="row">

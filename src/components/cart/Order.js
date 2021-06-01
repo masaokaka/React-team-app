@@ -15,6 +15,7 @@ import {
 } from "@material-ui/core";
 import { db } from "../../firebase/index";
 import { order } from "../../actions";
+import { ORDER_STATUS_PAID, ORDER_STATUS_UNPAID } from "../../status/index";
 
 export const Order = (props) => {
   //バリデージョン
@@ -29,11 +30,11 @@ export const Order = (props) => {
   const [tellError, setTellError] = useState("");
   const [tellFlag, setTellFlag] = useState(true);
   const [creditcardError, setCreditcardError] = useState("");
-  const [creditcardflag, setCreditcardflag] = useState(true);
+  const [creditcardflag, setCreditcardflag] = useState(false);
   const [timeError, setTimeError] = useState("");
-  const [timeFlag, setTimeFlag] = useState(true);
+  const [timeFlag, setTimeFlag] = useState(false);
   const [cardSelectError, setcardSelectError] = useState("");
-  const [cardSelectFlag, setcrdSelectFlag] = useState(true);
+  const [cardSelectFlag, setcardSelectFlag] = useState(false);
   const [creditShowFlag, setcreditShowFlag] = useState(false);
 
   //firestoreからデータ取得
@@ -43,7 +44,6 @@ export const Order = (props) => {
     email: "",
     card: "",
     date: "",
-    oderDate: "",
     payment: "",
     status: "",
     tel: "",
@@ -59,12 +59,6 @@ export const Order = (props) => {
       .then((res) => {
         let userobj = res.docs[0].data(); //帰ってきたresのオブジェクトの中から登録情報を抽出
         setUserdata(userobj);
-        setcardSelectError("支払方法を選択して下さい");
-        setCreditcardflag(false);
-        setCreditcardError("クレジットカード番号を入力して下さい");
-        setCreditcardflag(false);
-        setTimeError("配達日時を入力して下さい");
-        setTimeFlag(false);
       });
   }, []); //ユーザ情報をマウント時に表示
 
@@ -125,19 +119,30 @@ export const Order = (props) => {
       setTellFlag(true);
     }
   };
-  const checkaddress = (e) => {
-    const Check = e.target.value;
-    setUserdata({ ...userdata, address: e.target.value });
-    if (Check === "") {
+
+  const checkaddress = (address) => {
+    setUserdata({ ...userdata, address: address });
+    if (address === "") {
       setAddressError("住所を入力して下さい");
       setAddressFlag(false);
-    } else if (Check === "取得に失敗しました") {
+    } else if (address === "取得に失敗しました") {
       setAddressError("正しい住所を入力して下さい");
       setAddressFlag(false);
     } else {
       setAddressError("");
       setAddressFlag(true);
     }
+  };
+
+  //【住所検索処理】(エラー文の実装の余地あり)
+  const searchAddress = () => {
+    axios
+      .get(`https://api.zipaddress.net/?zipcode=${userdata.zip}`)
+      .then((res) => {
+        setUserdata({ ...userdata, address: res.data.data.fullAddress });
+        checkaddress(res.data.data.fullAddress);
+      })
+      .catch(() => setUserdata({ ...userdata, address: "取得に失敗しました" }));
   };
 
   let today = new Date(); //日付選択で今日より前の日付を選べないようにする
@@ -195,15 +200,23 @@ export const Order = (props) => {
     }
   };
   const setPaymentCash = (e) => {
-    setUserdata({ ...userdata, payment: e.target.value, status: 1 });
+    setUserdata({
+      ...userdata,
+      payment: e.target.value,
+      status: ORDER_STATUS_UNPAID,
+    });
     setcardSelectError("");
-    setcrdSelectFlag(true);
+    setcardSelectFlag(false);
     setcreditShowFlag(false);
   };
   const setPaymentCredit = (e) => {
-    setUserdata({ ...userdata, payment: e.target.value, status: 2 });
+    setUserdata({
+      ...userdata,
+      payment: e.target.value,
+      status: ORDER_STATUS_PAID,
+    });
     setcardSelectError("");
-    setcrdSelectFlag(true);
+    setcardSelectFlag(true);
     setcreditShowFlag(true);
   };
 
@@ -226,45 +239,44 @@ export const Order = (props) => {
     }
   };
 
-  //【住所検索処理】(エラー文の実装の余地あり)
-  const searchAddress = () => {
-    const zipValue = userdata.zip;
-    let addressValue = userdata.address;
-    //不正な値の場合処理をはじく
-    axios
-      .get(`https://api.zipaddress.net/?zipcode=${zipValue}`)
-      .then((res) => {
-        setUserdata({ ...userdata, address: res.data.data.fullAddress });
-        addressValue = userdata.address;
-      })
-      .catch(() => setUserdata({ ...userdata, address: "取得に失敗しました" }));
-  };
-  //現在日時取得
-  const getNowDate = () => {
-    let day = new Date();
-    let year = day.getFullYear();
-    let month = day.getMonth() + 1;
-    let date = day.getDate();
-    let hour = day.getHours();
-    let minute = day.getMinutes();
-    return `${year}-${month}-${date} ${hour}:${minute}`;
+  const checkInput = () => {
+    if (cardSelectFlag) {
+      if (
+        nameFlag &&
+        emailFlag &&
+        zipFlag &&
+        addressFlag &&
+        tellFlag &&
+        timeFlag &&
+        creditcardflag
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      if (
+        nameFlag &&
+        emailFlag &&
+        zipFlag &&
+        addressFlag &&
+        tellFlag &&
+        timeFlag
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   };
 
   //checkCardで取得したinputのvalueがcash(代引き)ならstatus=1,credit(クレカ)ならstatus=2
   const confirmOrder = () => {
-    if (
-      nameFlag &&
-      emailFlag &&
-      zipFlag &&
-      addressFlag &&
-      tellFlag &&
-      timeFlag &&
-      creditcardflag &&
-      cardSelectFlag
-    ) {
+    let check = checkInput();
+    if (check) {
       if (window.confirm("注文してもよろしいですか？")) {
-        userdata.orderDate = getNowDate();
-        userdata.totalPrice = props.totalPrice
+        userdata.orderDate = parseInt(new Date() / 1000);
+        userdata.totalPrice = props.totalPrice;
         dispatch(order(userdata, props.user.uid, props.cartInfo.id));
         handleLink("/ordercomp");
       }
@@ -320,7 +332,7 @@ export const Order = (props) => {
           <TextField
             type="text"
             value={userdata.address}
-            onChange={(e) => checkaddress(e)}
+            onChange={(e) => checkaddress(e.target.value)}
             helperText={addressError}
             variant="outlined"
           />
@@ -361,7 +373,7 @@ export const Order = (props) => {
             </RadioGroup>
           </FormControl>
           <FormHelperText>{cardSelectError}</FormHelperText>
-          {userdata.status === 2 && (
+          {creditShowFlag && (
             <div>
               <div>カード番号</div>
               <TextField

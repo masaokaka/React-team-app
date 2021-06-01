@@ -237,21 +237,23 @@ export const adduserinfo = (userinfo) => {
 //注文履歴の取得ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
 export const fetchorder = (uid) => (dispatch) => {
   let orders = [];
-  console.log(uid)
-  db.collection(`users/${uid}/orders`).get()
-  .then((snapShot) => {
-    snapShot.forEach((doc) => {
+  db.collection(`users/${uid}/orders`)
+    .get()
+    .then((snapShot) => {
+      snapShot.forEach((doc) => {
         if (doc.data().status !== 0) {
           let order = doc.data();
           order.id = doc.id;
           orders.push(order);
         }
       });
-      dispatch({
-        type: FETCHORDER,
-        orderInfo: orders,
-      });
-  })
+      if (orders.length !== 0) {
+        dispatch({
+          type: FETCHORDER,
+          orderInfo: orders,
+        });
+      }
+    });
 };
 
 //order更新
