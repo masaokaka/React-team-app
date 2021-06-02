@@ -14,15 +14,16 @@ import { AdminItems } from "../components/admins/AdminItems";
 import { AdminUsers } from "../components/admins/AdminUsers";
 import { AdminUserEdit } from "../components/admins/AdminUserEdit";
 import { AdminToppings } from "../components/admins/AdminToppings";
-import { Grid,Divider } from "@material-ui/core";
+import { Grid, Divider } from "@material-ui/core";
+import ScrollToTop from "../components/ScrollToTop";
 
 const useStyles = makeStyles(() => ({
   link: {
     color: "black",
-    '&:hover': {
-       color: "orange",
+    "&:hover": {
+      color: "orange",
     },
-    textDecoration:"none",
+    textDecoration: "none",
   },
 }));
 
@@ -63,25 +64,27 @@ export const AdminHome = () => {
             </Link>
           </li>
         </ul>
-        <Divider/>
-        <Switch>
-          <Route
-            path={`${match.path}/users/:userid`}
-            exact
-            component={AdminUserEdit}
-          ></Route>
-          <Route
-            path={`${match.path}/items`}
-            exact
-            component={AdminItems}
-          ></Route>
-          <Route
-            path={`${match.path}/toppings`}
-            exact
-            component={AdminToppings}
-          ></Route>
-          <Route path={`${match.path}/users`} component={AdminUsers}></Route>
-        </Switch>
+        <Divider />
+        <ScrollToTop>
+          <Switch>
+            <Route
+              path={`${match.path}/users/:userid`}
+              exact
+              component={AdminUserEdit}
+            ></Route>
+            <Route
+              path={`${match.path}/items`}
+              exact
+              component={AdminItems}
+            ></Route>
+            <Route
+              path={`${match.path}/toppings`}
+              exact
+              component={AdminToppings}
+            ></Route>
+            <Route path={`${match.path}/users`} component={AdminUsers}></Route>
+          </Switch>
+        </ScrollToTop>
       </Router>
     </React.Fragment>
   );
