@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { auth } from "../firebase/index";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, Link } from "react-router-dom";
@@ -11,6 +11,7 @@ import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import { ADMIN_ID } from "../status/index";
+import { db } from "../firebase/index";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
 export const Header = () => {
   const classes = useStyles();
   const user = useSelector((state) => state.user);
+  const [userInfo, setUserInfo] = useState();
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -39,6 +41,21 @@ export const Header = () => {
       history.push("/");
     });
   };
+
+  useEffect(() => {
+    if (user) {
+      db.collection(`users/${user.uid}/userInfo`)
+        .get()
+        .then((snapShot) => {
+          snapShot.forEach((doc) => {
+            setUserInfo(doc.data());
+          });
+        });
+    }
+    return () => {
+      setUserInfo(null)
+    }
+  }, [user]);
 
   return (
     <div className={classes.root}>
@@ -59,32 +76,35 @@ export const Header = () => {
             </Link>
           </Typography>
           <div>
-            {user && <span>ようこそ{user.email}さん</span>}
-            {user && user.uid === ADMIN_ID   &&
+            {userInfo && <span>ようこそ{userInfo.name}さん</span>}
+            {user && user.uid === ADMIN_ID && (
               <Button
                 variant="contained"
                 onClick={() => history.push("/admin/users")}
               >
                 管理画面
               </Button>
-            }
+            )}
             <Button variant="contained" onClick={() => history.push("/cart")}>
               カート
             </Button>
-            {user &&
+            {user && (
               <Button
                 variant="contained"
                 onClick={() => history.push("/orderhistory")}
               >
                 注文履歴
-            </Button>
-            }
+              </Button>
+            )}
             {user ? (
               <Button variant="contained" onClick={doLogout}>
                 ログアウト
               </Button>
             ) : (
-              <Button variant="contained" onClick={() => history.push("/login")}>
+              <Button
+                variant="contained"
+                onClick={() => history.push("/login")}
+              >
                 ログイン
               </Button>
             )}
