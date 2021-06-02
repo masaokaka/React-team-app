@@ -48,7 +48,7 @@ export const Cart = () => {
 
   return (
     <div>
-      <h1>ショッピングカート</h1>
+      <h2>ショッピングカート</h2>
       {cartInfo !== null ? (
         cartInfo.itemInfo.length !== 0 ? (
           <React.Fragment>
