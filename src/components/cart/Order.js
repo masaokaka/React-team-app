@@ -284,18 +284,16 @@ export const Order = (props) => {
     
     //checkCardで取得したinputのvalueがcash(代引き)ならstatus=1,credit(クレカ)ならstatus=2
     const confirmOrder = () => {
-      
       let check = checkInput();
       if (check) {
       if (window.confirm("注文してもよろしいですか？")) {
-        console.log(userdata)
         //とってきたデータそのままだとなぜかstatusがundefinedになるので入れ替えしている。
         let now = new Date();
         userdata.orderDate = now.getTime();
         userdata.totalPrice = props.totalPrice;
         dispatch(order(userdata, props.user.uid, props.cartInfo.id));
         sendEmail(props,toppings,items,userdata)
-        handleLink(`/ordercomp"/${TOKEN_CHECK}`);
+        handleLink(`/ordercomp/${TOKEN_CHECK}`);
       }
     } else {
       alert("入力内容にエラーがあります");

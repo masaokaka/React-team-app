@@ -29,9 +29,6 @@ export const sendEmail = (props,toppings,items,userdata) => {
     const telForEmail = userdata.tel
     let paymentForEmail = ''
     let totalPriceForEmail = userdata.totalPrice
-    console.log(userdata)
-    console.log(userdata.payment === 1)
-    console.log(userdata.payment === 2)
     if (userdata.payment === 1){
       paymentForEmail = '代金引換'
     }else if (userdata.payment === 2){
@@ -46,7 +43,7 @@ export const sendEmail = (props,toppings,items,userdata) => {
     <br>【お届け先】${addressForEmail}
     <br>【お電話番号】${telForEmail}
     <br>【お支払方法】${paymentForEmail}
-    <br>【合計金額】${totalPriceForEmail * 1.1}円（税込み）`
+    <br>【合計金額】${Math.floor(totalPriceForEmail * 1.1)}円（税込み）`
     window.Email.send({
       Host : "smtp.elasticemail.com",
       Username : "okawara0618.info@gmail.com",
