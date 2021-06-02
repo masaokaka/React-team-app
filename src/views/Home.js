@@ -22,7 +22,7 @@ export const Home = () => {
 
   return (
     <React.Fragment>
-      <Slider itemsData={itemsData} />
+      <Slider itemsData={itemsData}/>
       <Search itemsData={itemsData} setItemsData={setItemsData} />
       <Box display="flex" flexWrap="wrap">
         {itemsData.map((item,index) => (
