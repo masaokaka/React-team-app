@@ -1,5 +1,5 @@
 import { db } from "../../firebase/index";
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -9,32 +9,55 @@ import {
   TableRow,
   Paper,
   Button,
+  MenuItem,
+  Select,
 } from "@material-ui/core";
 import { useDispatch } from "react-redux";
+import { updateorder } from "../../actions";
+import { timestampToDate } from "../../status/functions";
 import {
-  updateorder,
-} from "../../actions";
+  ORDER_STATUS_PAID,
+  ORDER_STATUS_UNPAID,
+  ORDER_STATUS_UNDELIVERIED,
+  ORDER_STATUS_DELIVERIED,
+  ORDER_STATUS_CANCELED,
+} from "../../status/index";
 
 export const OrderInfo = (props) => {
   const dispatch = useDispatch();
-  
-  const statechange = (index, orderId) => {
-    if (window.confirm("キャンセルしてもよろしいですか？")) {
-      let orders = [...props.orderInfo];
-      orders[index].status = 9;
+  const [orderInfo, setOrderInfo] = useState([...props.orderInfo]); //コピー作成
+
+  const doStatusChange = (index, orderId) => {
+    if (
+      window.confirm(
+        `ユーザー(${props.userId})のステータスを変更しますがよろしいですか？`
+      )
+    ) {
+      let newStatus = orderInfo[index].status;
       db.collection(`users/${props.userId}/orders`)
         .doc(orderId)
-        .update({ status: 9 })
+        .update({ status: newStatus })
         .then(() => {
-          dispatch(updateorder(orders));
+          dispatch(updateorder(orderInfo));
         });
     }
   };
-  console.log(props.orderInfo)
+
+  const changeStatus = (status, orderId) => {
+    orderInfo.forEach((order) => {
+      if (order.id === orderId) {
+        order.status = status;
+      }
+    });
+    console.log(orderInfo);
+    //ディープコピーでレンダリングを発動させている
+    setOrderInfo([...orderInfo]);
+  };
+
   return (
     <div align="center">
       <h2>注文履歴一覧</h2>
-      {props.orderInfo.length !== 0 && (
+      {orderInfo.length !== 0 && (
         <TableContainer component={Paper}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
@@ -54,109 +77,120 @@ export const OrderInfo = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {props.orderInfo.map((order, index) => (
+              {orderInfo.map((order, index) => (
                 <TableRow key={index}>
                   <TableCell align="center" colSpan={2}>
-                    {order.orderDate}
+                    {timestampToDate(order.orderDate)}
                   </TableCell>
                   <TableCell colSpan={2} align="center">
                     <h3>{order.totalPrice.toLocaleString()}円</h3>
                   </TableCell>
                   <TableCell colSpan={2} align="center">
-                    {order.status === 1 && (
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={() => statechange(index, order.id)}
-                      >
-                        注文キャンセル
-                      </Button>
-                    )}
-                    {order.status === 2 && (
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={() => statechange(index, order.id)}
-                      >
-                        注文キャンセル
-                      </Button>
-                    )}
-                    {order.status === 9 && (
-                      <h3 style={{ color: "red" }}>キャンセル済み</h3>
-                    )}
-                    {order.status === 3 && (
-                      <h3 style={{ color: "blue" }}>発送済み</h3>
-                    )}
+                    <Select
+                      id={order.id}
+                      value={order.status}
+                      onChange={(e) => changeStatus(e.target.value, order.id)}
+                    >
+                      <MenuItem value={ORDER_STATUS_UNPAID}>未入金</MenuItem>
+                      <MenuItem value={ORDER_STATUS_PAID}>入金済み</MenuItem>
+                      <MenuItem value={ORDER_STATUS_UNDELIVERIED}>
+                        発送前
+                      </MenuItem>
+                      <MenuItem value={ORDER_STATUS_DELIVERIED}>
+                        発送済み
+                      </MenuItem>
+                      <MenuItem value={ORDER_STATUS_CANCELED}>
+                        キャンセル
+                      </MenuItem>
+                    </Select>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => doStatusChange(index, order.id)}
+                    >
+                      変更
+                    </Button>
                   </TableCell>
-
-                  <TableRow>
-                    <TableCell align="center" colSpan={2}>
-                      商品名
-                    </TableCell>
-                    <TableCell align="center" colSpan={2}>
-                      価格(税抜)/個数
-                    </TableCell>
-                    <TableCell align="center" colSpan={2}>
-                      トッピング
-                    </TableCell>
-                    <TableCell align="center"></TableCell>
-                  </TableRow>
-                  {order.itemInfo.map((item, index) =>
-                    props.items.map(
-                      (it) =>
-                        it.id === item.itemId && (
-                          <TableRow key={index} colSpan={6}>
-                            <TableCell
-                              component="th"
-                              scope="items"
-                              align="center"
-                              colSpan={2}
-                            >
-                              <div>
-                                <img src={it.img} height="120" alt="カレー" />
-                              </div>
-                              <div>{it.name}</div>
-                            </TableCell>
-                            {item.itemSize == 0 ? (
-                              <TableCell align="center" colSpan={2}>
-                                <h4>
-                                  {it.mprice.toLocaleString()}円(Mサイズ) /
-                                  {item.itemNum}個
-                                </h4>
-                              </TableCell>
-                            ) : (
-                              <TableCell align="center" colSpan={2}>
-                                {it.lprice.toLocaleString()}円(Lサイズ) /
-                                {item.itemNum}個
-                              </TableCell>
-                            )}
-                            <TableCell align="center" colSpan={2}>
-                              {item.toppings.length !== 0 ? (
-                                <div>
-                                  {item.toppings.map((topping, index) =>
-                                    props.toppings.map(
-                                      (top) =>
-                                        topping.toppingId === top.id && (
-                                          <div key={index}>
-                                            <span>{top.name}:</span>
-                                            {topping.toppingSize === 0 ? (
-                                              <span>{top.mprice}円</span>
-                                            ) : (
-                                              <span>{top.lprice}円</span>
-                                            )}
-                                          </div>
-                                        )
-                                    )
+                  <TableCell>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell align="center" colSpan={2}>
+                            商品名
+                          </TableCell>
+                          <TableCell align="center" colSpan={2}>
+                            価格(税抜)/個数
+                          </TableCell>
+                          <TableCell align="center" colSpan={2}>
+                            トッピング
+                          </TableCell>
+                          <TableCell align="center"></TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {order.itemInfo.map((item, index) =>
+                          props.items.map(
+                            (it) =>
+                              it.id === item.itemId && (
+                                <TableRow key={index} colSpan={6}>
+                                  <TableCell
+                                    component="th"
+                                    scope="items"
+                                    align="center"
+                                    colSpan={2}
+                                  >
+                                    <div>
+                                      <img
+                                        src={it.img}
+                                        height="120"
+                                        alt="カレー"
+                                      />
+                                    </div>
+                                    <div>{it.name}</div>
+                                  </TableCell>
+                                  {item.itemSize == 0 ? (
+                                    <TableCell align="center" colSpan={2}>
+                                      <h4>
+                                        {it.mprice.toLocaleString()}円(Mサイズ)
+                                        /{item.itemNum}個
+                                      </h4>
+                                    </TableCell>
+                                  ) : (
+                                    <TableCell align="center" colSpan={2}>
+                                      {it.lprice.toLocaleString()}円(Lサイズ) /
+                                      {item.itemNum}個
+                                    </TableCell>
                                   )}
-                                </div>
-                              ) : (
-                                <div>なし</div>
-                              )}
-                            </TableCell>
-                          </TableRow>
-                        )
-                    )
-                  )}
+                                  <TableCell align="center" colSpan={2}>
+                                    {item.toppings.length !== 0 ? (
+                                      <div>
+                                        {item.toppings.map((topping, index) =>
+                                          props.toppings.map(
+                                            (top) =>
+                                              topping.toppingId === top.id && (
+                                                <div key={index}>
+                                                  <span>{top.name}:</span>
+                                                  {topping.toppingSize === 0 ? (
+                                                    <span>{top.mprice}円</span>
+                                                  ) : (
+                                                    <span>{top.lprice}円</span>
+                                                  )}
+                                                </div>
+                                              )
+                                          )
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <div>なし</div>
+                                    )}
+                                  </TableCell>
+                                </TableRow>
+                              )
+                          )
+                        )}
+                      </TableBody>
+                    </Table>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
