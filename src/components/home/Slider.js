@@ -15,33 +15,24 @@ export const Slider = (props) =>{
 
     return (
         <React.Fragment>
-                {console.log(props)}
-                <Swiper spaceBetween={50} 
-                        slidesPreView={1}
-                        loop={true}
-                        navogation={{
-                            prevEl:'button_prev',
-                            nextEl:'button_next',
-                        }}
-                >
-                        <SwiperSlide>
-                            <Card>
-                                <CardActionArea>
-                                    <CardMedia 
-                                        component="img"
-                                        alt='itemImage'
-                                        height="140"
-                                        image=""
-                                        title='Image'/>
-                                </CardActionArea>
-                            </Card>
-                        </SwiperSlide>
-                        <SwiperSlide>Slide 2</SwiperSlide> 
-                        <SwiperSlide>Slide 3</SwiperSlide>
-                        <SwiperSlide>Slide 4</SwiperSlide>
-                        <SwiperSlide>Slide 5</SwiperSlide>  
+                <Swiper spaceBetween={50}
+                        slidesPerView={3}
+                        virtual>
+                            {
+                                props.itemsData.map((slideContent, index) => {
+                                    return (
+                                        <SwiperSlide key={slideContent} virtualIndex={index}>
+                                        <Card>
+                                            <CardActionArea>
+                                                {console.log(slideContent.img)}
+                                            </CardActionArea>
+                                        </Card>
+                                    </SwiperSlide>
+                                    )
+                                })
+                                
+                            }    
                 </Swiper>
-
         </React.Fragment>
     )
 }
