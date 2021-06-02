@@ -84,7 +84,7 @@ export const Header = () => {
             </Link>
           </Typography>
           <div>
-            {userInfo && <spna>ようこそ{userInfo.name}さん</spna>}
+            {userInfo && <span>ようこそ{userInfo.name}さん</span>}
             {user && user.uid === ADMIN_ID && (
               <IconButton
                 className={classes.Button}

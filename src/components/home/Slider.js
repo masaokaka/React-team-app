@@ -25,21 +25,22 @@ const useStyles = makeStyles({
 export const Slider = (props) => {
   const classes = useStyles();
   const [item, setItem] = useState([...props.itemsData]);
+  
   useEffect(() => {
     setItem([...props.itemsData]);
-  }, []);
+  }, [props.itemsData]);
 
   return (
     <Container style={{ marginTop: "30px" }}>
       {item.length > 0 ? (
         <Swiper
-          spaceBetween={40}
+          spaceBetween={30}
           slidesPerView={3}
           loop={true}
           autoplay={{
             delay: 5000,
           }}
-          clasName={classes.root}
+          className={classes.root}
         >
           {item.map((slideContent, index) => {
             return (
