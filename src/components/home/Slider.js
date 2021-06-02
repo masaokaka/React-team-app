@@ -11,28 +11,40 @@ import { Card,
 SwiperCore.use([Navigation])
 
 export const Slider = (props) =>{
-    
+    const [item, setItem] = useState([]);
+    useEffect(()=>{
+        setItem(props.itemsData)
+    },[props.itemsData])
+
 
     return (
         <React.Fragment>
+            { item.length > 0 ?
                 <Swiper spaceBetween={50}
                         slidesPerView={3}
-                        virtual>
-                            {
-                                props.itemsData.map((slideContent, index) => {
+                        loop={true}
+                        autoplay={{
+                            delay: 3000,
+                        }}>
+                            { item.map((slideContent, index) => {
                                     return (
-                                        <SwiperSlide key={slideContent} virtualIndex={index}>
+                                        <SwiperSlide key={index}>
                                         <Card>
                                             <CardActionArea>
-                                                {console.log(slideContent.img)}
+                                            <CardMedia 
+                                                    component="img"
+                                                    alt='itemImage'
+                                                    height="140"
+                                                    image={slideContent.img}
+                                                    title='Image'/>
                                             </CardActionArea>
                                         </Card>
                                     </SwiperSlide>
                                     )
                                 })
-                                
                             }    
-                </Swiper>
+                </Swiper> : ''
+            }
         </React.Fragment>
     )
 }
