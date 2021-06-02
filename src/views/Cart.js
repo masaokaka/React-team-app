@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 import { Order } from "../components/cart/Order";
 import { SumPrice } from "../components/cart/SumPrice";
 import { DeleteButton } from "../components/cart/DeleteButton";
@@ -18,7 +19,9 @@ import {
   TableRow,
   Paper,
   Grid,
+  Button
 } from "@material-ui/core";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 export const Cart = () => {
   const [show, setShow] = useState(false);
@@ -28,6 +31,7 @@ export const Cart = () => {
   const cartInfo = useSelector((state) => state.cartinfo); //オブジェクト
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   useEffect(() => {
     dispatch(fetchitems());
@@ -48,7 +52,15 @@ export const Cart = () => {
 
   return (
     <div>
-      <h2>ショッピングカート</h2>
+      <Grid container>
+        <Button
+          styel={{ marginBottom: "20px" }}
+          onClick={() => history.push("/")}
+        >
+          <ArrowBackIcon />
+        </Button>
+        <h2>ショッピングカート</h2>
+      </Grid>
       {cartInfo !== null ? (
         cartInfo.itemInfo.length !== 0 ? (
           <React.Fragment>
@@ -94,7 +106,7 @@ export const Cart = () => {
                             <TableCell>{item.itemNum}個</TableCell>
                             {/* トッピング */}
                             <TableCell align="center">
-                              {item.toppings.length!==0 ? (
+                              {item.toppings.length !== 0 ? (
                                 <div>
                                   {item.toppings.map((topping, index) =>
                                     toppings.map(
@@ -117,7 +129,11 @@ export const Cart = () => {
                               )}
                             </TableCell>
                             {/* 削除ボタン */}
-                            <DeleteButton cartInfo={cartInfo} user={user} index={ index }/>
+                            <DeleteButton
+                              cartInfo={cartInfo}
+                              user={user}
+                              index={index}
+                            />
                           </TableRow>
                         )
                     )
@@ -126,9 +142,18 @@ export const Cart = () => {
               </Table>
             </TableContainer>
             <Grid container alignItems="center" justify="center" spacing={0}>
-              <SumPrice cartInfo={cartInfo} toppings={toppings} items={items} user={user} setShow={setShow} setTotal={setTotal}/>
+              <SumPrice
+                cartInfo={cartInfo}
+                toppings={toppings}
+                items={items}
+                user={user}
+                setShow={setShow}
+                setTotal={setTotal}
+              />
             </Grid>
-            {show && <Order cartInfo={cartInfo} user={user} totalPrice={ total }/>}
+            {show && (
+              <Order cartInfo={cartInfo} user={user} totalPrice={total} />
+            )}
           </React.Fragment>
         ) : (
           <h4>カートに商品がありません</h4>
