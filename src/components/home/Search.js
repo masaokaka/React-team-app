@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchitems } from "../../actions";
 import Box from "@material-ui/core/Box";
-import { Grid, TextField } from "@material-ui/core";
+import { Grid, TextField,Container } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import FormLabel from "@material-ui/core/FormLabel";
 import Autocomplete from '@material-ui/lab/Autocomplete';
-
 
 export const Search = (props) => {
   const [keyword, setKeyword] = useState("");
@@ -50,10 +49,8 @@ export const Search = (props) => {
     setError();
   };
 
- 
-
   return (
-    <React.Fragment>
+    <Container style={{marginTop:"30px"}}>
       <Box width="100%">
         <Box ml="16.66666667%" width="66.66666667%">
           <Box border={1} borderColor="#ddd" borderRadius={4} mb={2.5}>
@@ -129,6 +126,6 @@ export const Search = (props) => {
         </Box>
       </Box>
       <p>{resultCount}件の表示</p>
-    </React.Fragment>
+    </Container>
   );
 };

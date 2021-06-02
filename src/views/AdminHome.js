@@ -65,8 +65,8 @@ export const AdminHome = () => {
           </li>
         </ul>
         <Divider />
-        <Switch>
-          <ScrollToTop>
+        <ScrollToTop>
+          <Switch>
             <Route
               path={`${match.path}/users/:userid`}
               exact
@@ -83,8 +83,8 @@ export const AdminHome = () => {
               component={AdminToppings}
             ></Route>
             <Route path={`${match.path}/users`} component={AdminUsers}></Route>
-          </ScrollToTop>
-        </Switch>
+          </Switch>
+        </ScrollToTop>
       </Router>
     </React.Fragment>
   );

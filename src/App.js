@@ -34,27 +34,33 @@ function App() {
   }, []);
 
   return (
-    <React.Fragment>
-      <Router>
-        <Header />
-        <SideNav />
-        <Container>
-          <ScrollToTop>
-            <Switch>
-              <Route path="/iteminfo/:itemid" exact component={ItemInfo} />
-              <Route path="/register" exact component={Register} />
-              <Route path="/login" exact component={Login} />
-              <Route path="/cart" exact component={Cart} />
-              <Route path="/ordercomp/:token" exact component={OrderComp} />
-              <Route path="/orderhistory" exact component={OrderHistory} />
-              <Route path="/admin" component={AdminHome} />
-              <Route path="/" component={Home} />
-            </Switch>
-          </ScrollToTop>
-        </Container>
-        <Footer />
-      </Router>
-    </React.Fragment>
+      <div style={{ minHeight: "100%" }}>
+        <Router>
+          <Header />
+          <SideNav />
+          <Container
+            style={{
+              display: "flex",
+              minHeight: "100vh",
+              flexDirection: "column",
+            }}
+          >
+            <ScrollToTop>
+              <Switch>
+                <Route path="/iteminfo/:itemid" exact component={ItemInfo} />
+                <Route path="/register" exact component={Register} />
+                <Route path="/login" exact component={Login} />
+                <Route path="/cart" exact component={Cart} />
+                <Route path="/ordercomp/:token" exact component={OrderComp} />
+                <Route path="/orderhistory" exact component={OrderHistory} />
+                <Route path="/admin" component={AdminHome} />
+                <Route path="/" component={Home} />
+              </Switch>
+            </ScrollToTop>
+          </Container>
+          <Footer />
+        </Router>
+      </div>
   );
 }
 

@@ -9,7 +9,7 @@ const Copyright = () => {
       {"Copyright © "}Team A{"."}
     </Typography>
   );
-}
+};
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,6 +20,10 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(3, 2),
     backgroundColor: "orange",
     position: "relative",
+    bottom: 0,
+    left: 0,
+    width: "100%",
+    height: "30px",
   },
 }));
 
