@@ -55,13 +55,12 @@ export const ItemInfo = () => {
   const changeFlag = (e) => {
     if (toppingFlag[e.target.name] === false) {
       setToppingFlag({ ...toppingFlag, [e.target.name]: true });
-    } else {
+    } else if(toppingFlag[e.target.name] === true){
       //チェックボックスを閉じた時にトッピングの数は0になる
       const newToppingSize = {};
-      toppingsRendering.forEach((topping) => {
-        newToppingSize[topping.name] = 0;
+      setCalcToppingSize((prevSize) => {
+        return { ...prevSize, [e.target.name]: 0 };
       });
-      setCalcToppingSize(newToppingSize);
       setToppingFlag({ ...toppingFlag, [e.target.name]: false });
     }
   };
@@ -209,7 +208,7 @@ export const ItemInfo = () => {
           >
             <ArrowBackIcon />
           </Button>
-          <h2>注文履歴一覧</h2>
+          <h2>商品詳細</h2>
         </Grid>
         <Grid container align="left" style={{ marginBottom: "50px" }}>
           <Grid item xs={6}>
