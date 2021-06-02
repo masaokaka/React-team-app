@@ -157,8 +157,10 @@ export const OrderInfo = (props) => {
                                     </TableCell>
                                   ) : (
                                     <TableCell align="center" colSpan={2}>
-                                      {it.lprice.toLocaleString()}円(Lサイズ) /
-                                      {item.itemNum}個
+                                      <h4>
+                                        {it.lprice.toLocaleString()}円(Lサイズ)
+                                        /{item.itemNum}個
+                                      </h4>
                                     </TableCell>
                                   )}
                                   <TableCell align="center" colSpan={2}>
