@@ -14,7 +14,7 @@ import { AdminItems } from "../components/admins/AdminItems";
 import { AdminUsers } from "../components/admins/AdminUsers";
 import { AdminUserEdit } from "../components/admins/AdminUserEdit";
 import { AdminToppings } from "../components/admins/AdminToppings";
-import { Grid } from "@material-ui/core";
+import { Grid,Divider } from "@material-ui/core";
 
 const useStyles = makeStyles(() => ({
   link: {
@@ -63,6 +63,7 @@ export const AdminHome = () => {
             </Link>
           </li>
         </ul>
+        <Divider/>
         <Switch>
           <Route
             path={`${match.path}/users/:userid`}
