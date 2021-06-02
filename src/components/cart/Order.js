@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import {
   Button,
@@ -15,7 +16,12 @@ import {
 } from "@material-ui/core";
 import { db } from "../../firebase/index";
 import { order } from "../../actions";
-import { ORDER_STATUS_PAID, ORDER_STATUS_UNPAID,TOKEN_CHECK } from "../../status/index";
+import {
+  ORDER_STATUS_PAID,
+  ORDER_STATUS_UNPAID,
+  TOKEN_CHECK,
+} from "../../status/index";
+import {sendEmail} from '../../status/functions'
 
 export const Order = (props) => {
   //バリデージョン
@@ -30,25 +36,27 @@ export const Order = (props) => {
   const [tellError, setTellError] = useState("");
   const [tellFlag, setTellFlag] = useState(true);
   const [creditcardError, setCreditcardError] = useState("");
-  const [creditcardflag, setCreditcardflag] = useState(false);
+  const [cardNoFlag, setCardNoflag] = useState(false); //カードナンバーの判定用
   const [timeError, setTimeError] = useState("");
   const [timeFlag, setTimeFlag] = useState(false);
-  const [cardSelectError, setcardSelectError] = useState("");
-  const [cardSelectFlag, setcardSelectFlag] = useState(false);
+  const [paymentFlag, setPaymentFlag] = useState(ORDER_STATUS_UNPAID); //支払い方法の判定用 1ならカード 2なら代引き
   const [creditShowFlag, setcreditShowFlag] = useState(false);
+  const items = useSelector((state) => state.items);
+  const toppings = useSelector(state => state.toppings);
 
   //firestoreからデータ取得
   const [userdata, setUserdata] = useState({
     name: "",
     address: "",
     email: "",
-    card: "",
+    cardNo: "",
     date: "",
-    payment: "",
-    status: "",
+    payment: ORDER_STATUS_UNPAID,
+    status: ORDER_STATUS_UNPAID,
     tel: "",
     zip: "",
-  }); //ユーザー情報をオブジェクトの形にして表示
+  });
+  
   const dispatch = useDispatch();
   const history = useHistory();
   const handleLink = (path) => history.push(path);
@@ -56,17 +64,20 @@ export const Order = (props) => {
   useEffect(() => {
     db.collection(`users/${props.user.uid}/userInfo`)
       .get()
-      .then((res) => {
-        let userobj = res.docs[0].data(); //帰ってきたresのオブジェクトの中から登録情報を抽出
-        setUserdata(userobj);
+      .then((snapShot) => {
+        setUserdata({
+          ...snapShot.docs[0].data(),
+          status: ORDER_STATUS_UNPAID,
+          payment: ORDER_STATUS_UNPAID,
+        });
       });
-  }, []); //ユーザ情報をマウント時に表示
+  }, []);
 
-  //入力内容の更新処理
+  //名前のバリデーションーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
   const checkname = (e) => {
-    const Check = e.target.value;
-    setUserdata({ ...userdata, name: e.target.value });
-    if (Check === "") {
+    const name = e.target.value;
+    setUserdata({ ...userdata, name: name });
+    if (name === "") {
       setNameError("名前を入力して下さい");
       setNameFlag(false);
     } else {
@@ -74,14 +85,16 @@ export const Order = (props) => {
       setNameFlag(true);
     }
   };
+
+  //メールアドレスのバリデーションーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
   const checkmail = (e) => {
-    const Check = e.target.value;
+    const email = e.target.value;
     const Validate = /.+@.+/;
-    setUserdata({ ...userdata, email: e.target.value });
-    if (Check === "") {
+    setUserdata({ ...userdata, email: email });
+    if (email === "") {
       setEmailError("メールアドレスを入力して下さい");
       setEmailFlag(false);
-    } else if (!Check.match(Validate)) {
+    } else if (!email.match(Validate)) {
       setEmailError("メールアドレスの形式が不正です");
       setEmailFlag(false);
     } else {
@@ -89,14 +102,16 @@ export const Order = (props) => {
       setEmailFlag(true);
     }
   };
+
+  //郵便番号のバリデーションーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
   const checkzip = (e) => {
-    const Check = e.target.value;
+    const zip = e.target.value;
     const Validate = /^\d{3}[-]\d{4}$/;
-    setUserdata({ ...userdata, zip: e.target.value });
-    if (Check === "") {
+    setUserdata({ ...userdata, zip: zip });
+    if (zip === "") {
       setZipError("郵便番号を入力して下さい");
       setZipFlag(false);
-    } else if (!Check.match(Validate)) {
+    } else if (!zip.match(Validate)) {
       setZipError("郵便番号はXXX-XXXXの形式で入力して下さい");
       setZipFlag(false);
     } else {
@@ -104,14 +119,16 @@ export const Order = (props) => {
       setZipFlag(true);
     }
   };
+
+  //電話番号のバリデーションーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
   const checktel = (e) => {
-    const Check = e.target.value;
+    const tel = e.target.value;
     const Validate = /\d{2,5}[-(]\d{1,4}[-)]\d{4}$/;
-    setUserdata({ ...userdata, tel: e.target.value });
-    if (Check === "") {
+    setUserdata({ ...userdata, tel: tel });
+    if (tel === "") {
       setTellError("電話番号を入力して下さい");
       setTellFlag(false);
-    } else if (!Check.match(Validate)) {
+    } else if (!tel.match(Validate)) {
       setTellError("電話番号はXXX-XXXX-XXXXの形式で入力して下さい");
       setTellFlag(false);
     } else {
@@ -120,20 +137,7 @@ export const Order = (props) => {
     }
   };
 
-  const checkaddress = (address) => {
-    setUserdata({ ...userdata, address: address });
-    if (address === "") {
-      setAddressError("住所を入力して下さい");
-      setAddressFlag(false);
-    } else if (address === "取得に失敗しました") {
-      setAddressError("正しい住所を入力して下さい");
-      setAddressFlag(false);
-    } else {
-      setAddressError("");
-      setAddressFlag(true);
-    }
-  };
-
+  //住所のバリデーションーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
   //【住所検索処理】(エラー文の実装の余地あり)
   const searchAddress = () => {
     axios
@@ -142,9 +146,27 @@ export const Order = (props) => {
         setUserdata({ ...userdata, address: res.data.data.fullAddress });
         checkaddress(res.data.data.fullAddress);
       })
-      .catch(() => setUserdata({ ...userdata, address: "取得に失敗しました" }));
+      .catch(() => {
+        setUserdata({ ...userdata, address: "取得に失敗しました" });
+        checkaddress("取得に失敗しました");
+      });
   };
 
+  const checkaddress = (address) => {
+    setUserdata({ ...userdata, address: address });
+    if (address === "") {
+      setAddressError("住所を入力して下さい");
+      setAddressFlag(false);
+    } else if (address == "取得に失敗しました") {
+      setAddressError("正しい住所を入力して下さい");
+      setAddressFlag(false);
+    } else {
+      setAddressError("");
+      setAddressFlag(true);
+    }
+  };
+
+  //配達日時のバリデーションーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
   let today = new Date(); //日付選択で今日より前の日付を選べないようにする
   let thisYear = today.getFullYear();
   let thisMonth = ("00" + (today.getMonth() + 1)).slice(-2);
@@ -152,46 +174,30 @@ export const Order = (props) => {
   today = `${thisYear}-${thisMonth}-${thisDate}T00:00`;
 
   const checkdate = (e) => {
-    const Check = e.target.value;
-    setUserdata({ ...userdata, date: e.target.value });
-    if (Check === "") {
-      setTimeError("配達日時を入力して下さい");
-      setTimeFlag(false);
-    } else {
-      setTimeError("");
-      setTimeFlag(true);
-    }
-
+    const date = e.target.value;
     //今から3時間以内が選択されたらエラーメッセージ
     let clickday = new Date();
     let nowTimestamp = clickday.getTime();
     nowTimestamp = Math.floor(nowTimestamp / 1000);
 
-    const checkyear = Check.slice(0, 4); //選択時間hourを取得
-    const numCheckyear = Number(checkyear); //文字列を数字にする
-
-    const checkmonth = Check.slice(5, 7); //選択時間hourを取得
-    const numCheckmonth = Number(checkmonth); //文字列を数字にする
-
-    const checkday = Check.slice(8, 10); //選択時間hourを取得
-    const numCheckday = Number(checkday); //文字列を数字にする
-
-    const checkhour = Check.slice(11, 13); //選択時間hourを取得
-    const numCheckhour = Number(checkhour); //文字列を数字にする
-
-    const checkMinutes = Check.slice(14, 16); //選択分minutesを取得
-    const numCheckminutes = Number(checkMinutes); //文字列を数字にする
-
+    const checkyear = Number(date.slice(0, 4));
+    const checkmonth = Number(date.slice(5, 7));
+    const checkday = Number(date.slice(8, 10));
+    const checkhour = Number(date.slice(11, 13));
+    const checkminutes = Number(date.slice(14, 16)); 
     const selectedDay = new Date(
-      numCheckyear,
-      numCheckmonth - 1,
-      numCheckday,
-      numCheckhour - 3, //後々の条件式のために3時間分減らしている
-      numCheckminutes
-    );
-
+      checkyear,
+      checkmonth - 1,
+      checkday,
+      checkhour - 3, //後々の条件式のために3時間分減らしている
+      checkminutes
+      );
     const selectedTimestamp = Math.floor(selectedDay / 1000);
-    if (nowTimestamp > selectedTimestamp) {
+    setUserdata({ ...userdata, date: date });
+    if (date === "") {
+      setTimeError("配達日時を入力して下さい");
+      setTimeFlag(false);
+    } else if (nowTimestamp > selectedTimestamp) {
       setTimeError("今から3時間後の日時をご入力ください");
       setTimeFlag(false);
     } else {
@@ -199,48 +205,52 @@ export const Order = (props) => {
       setTimeFlag(true);
     }
   };
-  const setPaymentCash = (e) => {
-    setUserdata({
-      ...userdata,
-      payment: e.target.value,
-      status: ORDER_STATUS_UNPAID,
-    });
-    setcardSelectError("");
-    setcardSelectFlag(false);
-    setcreditShowFlag(false);
-  };
-  const setPaymentCredit = (e) => {
-    setUserdata({
-      ...userdata,
-      payment: e.target.value,
-      status: ORDER_STATUS_PAID,
-    });
-    setcardSelectError("");
-    setcardSelectFlag(true);
-    setcreditShowFlag(true);
+
+  //クレカのバリデーションーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+  const setPayment = (e) => {
+    //カード払いがチェックされた時
+    if (e.target.value == ORDER_STATUS_PAID) {
+      setUserdata({
+        ...userdata,
+        status: ORDER_STATUS_PAID,
+        payment: ORDER_STATUS_PAID,
+      });
+      setPaymentFlag(ORDER_STATUS_PAID);
+      setcreditShowFlag(true);
+      setCreditcardError("クレジットカード番号を入力して下さい");
+    } else if (ORDER_STATUS_UNPAID) {
+      setUserdata({
+        ...userdata,
+        status: ORDER_STATUS_UNPAID,
+        payment: ORDER_STATUS_UNPAID,
+        cardNo: "",
+      });
+      setPaymentFlag(ORDER_STATUS_UNPAID);
+      setcreditShowFlag(false);
+    }
   };
 
   const checkCard = (e) => {
-    const Check = e.target.value;
+    const cardNo = e.target.value;
     const Validate = /\d[0-9]{13}/g;
-    setUserdata({ ...userdata, creditcardNo: e.target.value });
-    setUserdata({ ...userdata, card: e.target.value });
-    if (Check === "") {
+    if (cardNo === "") {
       setCreditcardError("クレジットカード番号を入力して下さい");
-      setCreditcardflag(false);
-    } else if (!Check.match(Validate)) {
+      setCardNoflag(false);
+    } else if (!cardNo.match(Validate)) {
       setCreditcardError(
         "クレジットカード番号は14〜16桁の半角数字で入力してください"
       );
-      setCreditcardflag(false);
+      setCardNoflag(false);
     } else {
+      setUserdata({ ...userdata, cardNo: e.target.value });
       setCreditcardError("");
-      setCreditcardflag(true);
+      setCardNoflag(true);
     }
   };
 
   const checkInput = () => {
-    if (cardSelectFlag) {
+    //カード払いの時
+    if (paymentFlag == ORDER_STATUS_PAID) {
       if (
         nameFlag &&
         emailFlag &&
@@ -248,7 +258,7 @@ export const Order = (props) => {
         addressFlag &&
         tellFlag &&
         timeFlag &&
-        creditcardflag
+        cardNoFlag
       ) {
         return true;
       } else {
@@ -270,14 +280,19 @@ export const Order = (props) => {
     }
   };
 
-  //checkCardで取得したinputのvalueがcash(代引き)ならstatus=1,credit(クレカ)ならstatus=2
-  const confirmOrder = () => {
-    let check = checkInput();
-    if (check) {
+
+    
+    //checkCardで取得したinputのvalueがcash(代引き)ならstatus=1,credit(クレカ)ならstatus=2
+    const confirmOrder = () => {
+      let check = checkInput();
+      if (check) {
       if (window.confirm("注文してもよろしいですか？")) {
-        userdata.orderDate = parseInt(new Date() / 1000);
+        //とってきたデータそのままだとなぜかstatusがundefinedになるので入れ替えしている。
+        let now = new Date();
+        userdata.orderDate = now.getTime();
         userdata.totalPrice = props.totalPrice;
         dispatch(order(userdata, props.user.uid, props.cartInfo.id));
+        sendEmail(props,toppings,items,userdata)
         handleLink(`/ordercomp/${TOKEN_CHECK}`);
       }
     } else {
@@ -301,7 +316,7 @@ export const Order = (props) => {
             id="name"
             variant="outlined"
             value={userdata.name}
-            onChange={(e) => checkname(e)}
+            onChange={checkname}
             helperText={nameError}
           />
           <div>メールアドレス</div>
@@ -310,7 +325,7 @@ export const Order = (props) => {
             id="mail"
             variant="outlined"
             value={userdata.email}
-            onChange={(e) => checkmail(e)}
+            onChange={checkmail}
             helperText={emailError}
           />
           <div>郵便番号</div>
@@ -318,14 +333,10 @@ export const Order = (props) => {
             type="text"
             variant="outlined"
             value={userdata.zip}
-            onChange={(e) => checkzip(e)}
+            onChange={checkzip}
             helperText={zipError}
           />
-          <Button
-            variant="contained"
-            type="button"
-            onClick={() => searchAddress()}
-          >
+          <Button variant="contained" type="button" onClick={searchAddress}>
             住所検索
           </Button>
           <div>住所</div>
@@ -348,38 +359,33 @@ export const Order = (props) => {
           <TextField
             type="datetime-local"
             variant="outlined"
-            onChange={(e) => checkdate(e)}
+            onChange={checkdate}
             helperText={timeError}
           />
           <div>支払方法</div>
           <FormControl>
-            <RadioGroup>
+            <RadioGroup onChange={setPayment} value={paymentFlag}>
               <FormControlLabel
                 control={<Radio />}
-                name="pay"
-                value="cash"
+                value={ORDER_STATUS_UNPAID}
                 label="代金引換"
                 labelPlacement="end"
-                onChange={(e) => setPaymentCash(e)}
               />
               <FormControlLabel
                 control={<Radio />}
-                name="pay"
-                value="credit"
+                value={ORDER_STATUS_PAID}
                 label="クレジットカード決済"
                 labelPlacement="end"
-                onChange={(e) => setPaymentCredit(e)}
               />
             </RadioGroup>
           </FormControl>
-          <FormHelperText>{cardSelectError}</FormHelperText>
           {creditShowFlag && (
             <div>
               <div>カード番号</div>
               <TextField
                 type="text"
                 variant="outlined"
-                onChange={(e) => checkCard(e)}
+                onChange={checkCard}
                 helperText={creditcardError}
                 inputProps={{
                   maxLength: 16,
@@ -387,9 +393,11 @@ export const Order = (props) => {
               />
             </div>
           )}
-          <Button variant="contained" type="button" onClick={confirmOrder}>
-            この内容で注文する
-          </Button>
+          <div>
+            <Button variant="contained" type="button" onClick={confirmOrder}>
+              この内容で注文する
+            </Button>
+          </div>
         </div>
       </Grid>
     </React.Fragment>

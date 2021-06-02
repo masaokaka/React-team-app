@@ -1,11 +1,18 @@
-import Button from "@material-ui/core/Button";
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
 import { fetchitems, additem } from "../../actions";
-import { ADMIN_ID } from "../../status/index";
-import Input from "@material-ui/core/Input";
-
+import { Input, InputLabel } from "@material-ui/core";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  Box,
+} from "@material-ui/core";
 
 export const AdminItems = () => {
   const [id, setId] = useState();
@@ -16,23 +23,30 @@ export const AdminItems = () => {
   const [img, setImg] = useState();
   const dispatch = useDispatch();
   const items = useSelector((state) => state.items);
-  const user = useSelector((state) => state.user);
-  const history = useHistory();
-  
-  if (img) {
-    console.log(img.name)
-  }
 
   const doAddItem = () => {
-    let item = {
-      id: parseInt(id),
-      name: name,
-      text: text,
-      mprice: parseInt(mprice),
-      lprice: parseInt(lprice),
-      img: img,
-    };
-    dispatch(additem(item,items));
+    if (id && name && text && mprice && lprice && img) {
+      let item = {
+        id: parseInt(id),
+        name: name,
+        text: text,
+        mprice: parseInt(mprice),
+        lprice: parseInt(lprice),
+        img: img,
+      };
+      dispatch(additem(item, items));
+      setId("");
+      setName("");
+      setText("");
+      setMprice("");
+      setLprice("");
+      setImg("");
+    } else {
+      alert("全ての項目を入力してください");
+    }
+  };
+
+  const clearInput = () => {
     setId("");
     setName("");
     setText("");
@@ -40,7 +54,6 @@ export const AdminItems = () => {
     setLprice("");
     setImg("");
   };
-
   //画面マウント時に実行
   useEffect(() => {
     dispatch(fetchitems());
@@ -49,61 +62,72 @@ export const AdminItems = () => {
   return (
     <React.Fragment>
       <div>
-        <h2>商品追加フォーム</h2>
-        <div>
-          ID:
-          <Input type="number" onChange={(e) => setId(e.target.value)} />
-        </div>
-        <div>
-          名前:
-          <Input type="text" onChange={(e) => setName(e.target.value)} />
-        </div>
-        <div>
-          テキスト:
-          <Input type="text" onChange={(e) => setText(e.target.value)} />
-        </div>
-        <div>
-          Mサイズ金額:
-          <Input type="number" onChange={(e) => setMprice(e.target.value)} />
-        </div>
-        <div>
-          Lサイズ金額:
-          <Input type="number" onChange={(e) => setLprice(e.target.value)} />
-        </div>
-        <div>
-          画像:
-          <Input type="file" onChange={(e) => setImg(e.target.files[0])} />
-        </div>
-        <Button variant="contained" onClick={doAddItem}>
-          登録
-        </Button>
+        <h2>商品管理画面</h2>
+        <InputLabel>ID:</InputLabel>
+        <Input
+          type="number"
+          onChange={(e) => setId(e.target.value)}
+          value={id}
+        />
+        <InputLabel>名前:</InputLabel>
+        <Input
+          type="text"
+          onChange={(e) => setName(e.target.value)}
+          value={name}
+        />
+        <InputLabel>テキスト:</InputLabel>
+        <Input
+          type="text"
+          onChange={(e) => setText(e.target.value)}
+          value={text}
+        />
+        <InputLabel>Mサイズ金額:</InputLabel>
+        <Input
+          type="number"
+          onChange={(e) => setMprice(e.target.value)}
+          value={mprice}
+        />
+        <InputLabel>Lサイズ金額:</InputLabel>
+        <Input type="number" onChange={(e) => setLprice(e.target.value)} value={lprice}/>
+        <InputLabel>画像:</InputLabel>
+        <Input type="file" onChange={(e) => setImg(e.target.files[0])}/>
+        <Box>
+          <Button color="primary" variant="contained" onClick={doAddItem}>
+            登録
+          </Button>
+          <Button variant="contained" onClick={clearInput}>
+            クリア
+          </Button>
+        </Box>
         {items.length !== 0 ? (
-          <table border="1">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>商品名</th>
-                <th>画像</th>
-                <th>テキスト</th>
-                <th>価格(M)</th>
-                <th>価格(L)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((item, index) => (
-                <tr key={index}>
-                  <td>{item.id}</td>
-                  <td>{item.name}</td>
-                  <td>
-                    <img src={item.img} alt="カレー" width="100px" />
-                  </td>
-                  <td>{item.text}</td>
-                  <td>{item.mprice}円</td>
-                  <td>{item.lprice}円</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>ID</TableCell>
+                  <TableCell>商品名</TableCell>
+                  <TableCell>画像</TableCell>
+                  <TableCell>テキスト</TableCell>
+                  <TableCell>価格(M)</TableCell>
+                  <TableCell>価格(L)</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {items.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{item.id}</TableCell>
+                    <TableCell>{item.name}</TableCell>
+                    <TableCell>
+                      <img src={item.img} alt="カレー" width="100px" />
+                    </TableCell>
+                    <TableCell>{item.text}</TableCell>
+                    <TableCell>{item.mprice}円</TableCell>
+                    <TableCell>{item.lprice}円</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         ) : (
           <div>商品がありません</div>
         )}

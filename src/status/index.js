@@ -13,7 +13,7 @@ export const ORDER_STATUS_CART = 0;
 export const ORDER_STATUS_UNPAID = 1;
 export const ORDER_STATUS_PAID = 2;
 export const ORDER_STATUS_UNDELIVERIED = 3;
-export const ORDER_STATUS_DERIVERIED = 4;
+export const ORDER_STATUS_DELIVERIED = 4;
 export const ORDER_STATUS_CANCELED = 9;
 
 //リダイレクト用トークン

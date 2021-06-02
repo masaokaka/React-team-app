@@ -252,7 +252,7 @@ export const fetchorder = (uid) => (dispatch) => {
 //order更新
 export const updateorder = (orders) => ({
   type: UPDATEORDER,
-  orders: orders,
+  orderInfo: orders,
 });
 
 //ユーザー情報取得処理

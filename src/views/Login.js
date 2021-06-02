@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { auth, sessionPersistance } from "../firebase/index";
@@ -7,10 +7,10 @@ import { fetchcart, updatecart, createcart } from "../actions";
 import { db } from "../firebase/index";
 
 export const Login = () => {
-  const [email,setEmail]= useState([])
+  const [email,setEmail]= useState('')
   const [emailError,setEmailError]= useState('')
   const [emailFlag,setEmailFlag] = useState(true)
-  const [password,setPassword]= useState([])
+  const [password,setPassword]= useState('')
   const [passwordError,setPasswordError]= useState('')
   const [passwordFlag,setPasswordFlag] = useState(true)
   const [errorText,setErrorText] = useState('');
@@ -18,41 +18,53 @@ export const Login = () => {
   const dispatch = useDispatch();
   const cartInfo = useSelector((state) => state.cartinfo);
 
+  //アンマウント時、ローカルストレージにデータが残っていたら削除
+  useEffect(() => {
+    return () => {
+      if (localStorage) {
+        localStorage.removeItem("itemInfo");
+      }
+    };
+  }, []);
+
   //バリデーション
   const ClearEmail = (e) => {
-    const Check = e.target.value
-    const Validate = /.+@.+/
-    setEmail(e.target.value)
-    if(Check === ''){
-      setEmailError('メールアドレスを入力して下さい')
-      setEmailFlag(false)
-    }else if(!Check.match(Validate)){
-      setEmailError('メールアドレスの形式が不正です')
-      setEmailFlag(false)
-    }else { 
-      setEmailError('')
-      setEmailFlag(true)
+    const Check = e.target.value;
+    const Validate = /.+@.+/;
+    setEmail(e.target.value);
+    if (Check === "") {
+      setEmailError("メールアドレスを入力して下さい");
+      setEmailFlag(false);
+    } else if (!Check.match(Validate)) {
+      setEmailError("メールアドレスの形式が不正です");
+      setEmailFlag(false);
+    } else {
+      setEmailError("");
+      setEmailFlag(true);
     }
-  }
+  };
 
   const ClearPassword = (e) => {
-    const Check = e.target.value
-    const Validate = /^[a-zA-Z0-9!#$%&()*+,.:;=?@[\]^_{}-]+$/
-    setPassword(e.target.value)
-    if(Check === ''){
-       setPasswordError('パスワードを入力して下さい')
-       setPasswordFlag(false)
-    }else if(!Check.match(Validate)){
-      setPasswordError('パスワードは半角英数字と記号「!@#$%^&*()_+-=[]{};:?,.」のみです')
-      setEmailFlag(false)
-    }else { 
-      setPasswordError('')
-      setPasswordFlag(true)
+    const Check = e.target.value;
+    const Validate = /^[a-zA-Z0-9!#$%&()*+,.:;=?@[\]^_{}-]+$/;
+    setPassword(e.target.value);
+    if (Check === "") {
+      setPasswordError("パスワードを入力して下さい");
+      setPasswordFlag(false);
+    } else if (!Check.match(Validate)) {
+      setPasswordError(
+        "パスワードは半角英数字と記号「!@#$%^&*()_+-=[]{};:?,.」のみです"
+      );
+      setEmailFlag(false);
+    } else {
+      setPasswordError("");
+      setPasswordFlag(true);
     }
-  }
+  };
 
   const doLogin = () => {
     if(emailFlag && passwordFlag){
+      if(email !== '' && password !== '' ){
         //ローカルストレージにアイテムがあった時
         let itemInfo = JSON.parse(localStorage.getItem("itemInfo"));
         //ログイン処理
@@ -70,7 +82,9 @@ export const Login = () => {
                       //statusがカート状態のものがあった場合
                       if (doc.data().status === 0) {
                         cartExist = true;
-                        let newCartInfo = JSON.parse(JSON.stringify(doc.data()));
+                        let newCartInfo = JSON.parse(
+                          JSON.stringify(doc.data())
+                        );
                         newCartInfo.id = doc.id;
                         newCartInfo.itemInfo = [
                           ...newCartInfo.itemInfo,
@@ -103,8 +117,11 @@ export const Login = () => {
             } else {
               history.push("/");
             }
-          }).catch(() => setErrorText('ログインに失敗しました'))
+          }).catch(() => alert('メールアドレスかパスワード、またはその両方がが間違っています'))
         }); 
+      }
+    }else {
+      alert('入力に誤りがあります');
     }
   };
   return (
@@ -114,7 +131,7 @@ export const Login = () => {
       <p>{passwordError}</p>
       <input type="password" onChange={(e) => ClearPassword(e)} />
       <button onClick={doLogin}>ログイン</button>
-      <p style={{color:'red'}}>{errorText}</p>
+      <p style={{ color: "red" }}>{errorText}</p>
       <Link to="/register">ユーザー登録はこちら</Link>
     </div>
   );
