@@ -45,8 +45,8 @@ export const Order = (props) => {
     email: "",
     cardNo: "",
     date: "",
-    payment: "",
-    status: "",
+    payment: ORDER_STATUS_UNPAID,
+    status: ORDER_STATUS_UNPAID,
     tel: "",
     zip: "",
   });
@@ -59,7 +59,11 @@ export const Order = (props) => {
     db.collection(`users/${props.user.uid}/userInfo`)
       .get()
       .then((snapShot) => {
-        setUserdata(snapShot.docs[0].data());
+        setUserdata({
+          ...snapShot.docs[0].data(),
+          status: ORDER_STATUS_UNPAID,
+          payment: ORDER_STATUS_UNPAID,
+        });
       });
   }, []);
 
@@ -208,7 +212,7 @@ export const Order = (props) => {
       setPaymentFlag(ORDER_STATUS_PAID);
       setcreditShowFlag(true);
       setCreditcardError("クレジットカード番号を入力して下さい");
-    } else {
+    } else if (ORDER_STATUS_UNPAID) {
       setUserdata({
         ...userdata,
         status: ORDER_STATUS_UNPAID,
@@ -276,9 +280,6 @@ export const Order = (props) => {
     if (check) {
       if (window.confirm("注文してもよろしいですか？")) {
         //とってきたデータそのままだとなぜかstatusがundefinedになるので入れ替えしている。
-        if (userdata.status === undefined) {
-          userdata.status = 1;
-        }
         let now = new Date();
         userdata.orderDate = now.getTime();
         userdata.totalPrice = props.totalPrice;
