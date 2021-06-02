@@ -12,9 +12,17 @@ import {
   TableRow,
   Paper,
   Button,
+  Grid,
 } from "@material-ui/core";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchitems, fetchtoppings, fetchorder, updateorder, unsetcart } from "../actions";
+import {
+  fetchitems,
+  fetchtoppings,
+  fetchorder,
+  updateorder,
+  unsetcart,
+} from "../actions";
 import {
   ORDER_STATUS_PAID,
   ORDER_STATUS_UNPAID,
@@ -56,7 +64,15 @@ export const OrderHistory = () => {
   };
   return (
     <div align="center">
-      <h2>注文履歴一覧</h2>
+      <Grid container>
+        <Button
+          styel={{ marginBottom: "20px" }}
+          onClick={() => history.push("/")}
+        >
+          <ArrowBackIcon />
+        </Button>
+        <h2>注文履歴一覧</h2>
+      </Grid>
       {orderInfo.length !== 0 && (
         <TableContainer component={Paper}>
           <Table stickyHeader aria-label="sticky table">
@@ -215,9 +231,6 @@ export const OrderHistory = () => {
         </TableContainer>
       )}
       {orderInfo.length === 0 && <h3>注文履歴がありません</h3>}
-      <Button variant="contained" onClick={() => history.push("/")}>
-        トップ画面に戻る
-      </Button>
     </div>
   );
 };
