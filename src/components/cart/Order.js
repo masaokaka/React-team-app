@@ -332,8 +332,8 @@ export const Order = (props) => {
       Subject : "購入確認メール",
       Body : `${EmailText}`
   }).then(
-    message => alert('ご注文確認メールを送信しました')
-  )
+      () => alert('ご注文確認メールを送信しました')
+    )
   }
 
   //checkCardで取得したinputのvalueがcash(代引き)ならstatus=1,credit(クレカ)ならstatus=2
@@ -343,7 +343,7 @@ export const Order = (props) => {
       if (window.confirm("注文してもよろしいですか？")) {
         userdata.orderDate = parseInt(new Date() / 1000);
         userdata.totalPrice = props.totalPrice;
-        // dispatch(order(userdata, props.user.uid, props.cartInfo.id));
+        dispatch(order(userdata, props.user.uid, props.cartInfo.id));
         sendEmail()
         handleLink("/ordercomp");
       }
