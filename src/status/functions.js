@@ -19,7 +19,7 @@ export const sendEmail = (props,toppings,items,userdata) => {
       })
       items.forEach(item => {
         if(item.id === iteminfo.itemId){
-          orderInfoBox.push(`・【${item.name} ${iteminfo.itemSize === 0 ? '(M)':'(L)'}】,【（トッピング）：${toppingsBox.join()}】数量:${iteminfo.itemNum}<br>`)
+          orderInfoBox.push(`・【${item.name} ${iteminfo.itemSize === 0 ? '(M)':'(L)'}】,【（トッピング）：${toppingsBox.join('')}】数量:${iteminfo.itemNum}<br>`)
         }
       });
     })
@@ -39,7 +39,7 @@ export const sendEmail = (props,toppings,items,userdata) => {
     ご注文が確定致しましたので下記の内容をご確認下さい<br>
     【ご注文者様】${nameForEmail}様
     <br>【ご注文商品】
-    <br>${orderInfoBox.join()}
+    <br>${orderInfoBox.join('')}
     <br>【お届け先】${addressForEmail}
     <br>【お電話番号】${telForEmail}
     <br>【お支払方法】${paymentForEmail}
@@ -53,6 +53,6 @@ export const sendEmail = (props,toppings,items,userdata) => {
       Subject : "購入確認メール",
       Body : `${EmailText}`
     }).then(
-      () => alert('ご注文確認メールを送信しました')
+      () => alert(`${EmailAddress}ご注文確認メールを送信しました`)
       )
     }

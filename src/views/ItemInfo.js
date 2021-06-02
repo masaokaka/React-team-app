@@ -309,7 +309,7 @@ const[calcPrice,setCalcPrice] = useState(0)
               <div className="col-xs-offset-2 col-xs-3">
                 <div className="form-group">
                   <p>
-                      <button className="form-control btn btn-warning btn-block" onClick={() => doAddCart()}>ボタン</button>
+                      <button className="form-control btn btn-warning btn-block" onClick={() => doAddCart()}>カートに追加</button>
                   </p>
                 </div>
               </div>
