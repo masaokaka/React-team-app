@@ -13,6 +13,8 @@ import {
   Button,
   Box,
 } from "@material-ui/core";
+import AddAPhotoIcon from "@material-ui/icons/AddAPhoto";
+import IconButton from "@material-ui/core/IconButton";
 
 export const AdminItems = () => {
   const [id, setId] = useState();
@@ -88,9 +90,18 @@ export const AdminItems = () => {
           value={mprice}
         />
         <InputLabel>Lサイズ金額:</InputLabel>
-        <Input type="number" onChange={(e) => setLprice(e.target.value)} value={lprice}/>
-        <InputLabel>画像:</InputLabel>
-        <Input type="file" onChange={(e) => setImg(e.target.files[0])}/>
+        <Input
+          type="number"
+          onChange={(e) => setLprice(e.target.value)}
+          value={lprice}
+        />
+        <InputLabel htmlFor="icon-button-file">画像：
+          <Input
+            id="icon-button-file"
+            type="file"
+            onChange={(e) => setImg(e.target.files[0])}
+          />
+        </InputLabel>
         <Box>
           <Button color="primary" variant="contained" onClick={doAddItem}>
             登録

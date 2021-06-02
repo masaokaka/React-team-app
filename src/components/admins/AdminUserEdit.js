@@ -31,8 +31,8 @@ export const AdminUserEdit = () => {
   },[]);
 
   return (
-    <Container align="center">
-      <h2>ユーザー情報詳細：{userid}</h2>
+    <Container>
+      <h2>ユーザー情報詳細 (ID:  {userid})</h2>
       {user && (
         <div>
           <div>

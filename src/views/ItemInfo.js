@@ -202,7 +202,7 @@ const[calcPrice,setCalcPrice] = useState(0)
       <div>
         <div>
           <div>
-            <h3>商品詳細</h3>
+            <h2>商品詳細</h2>
             <div>
               <div>
                 <img src={itemRendering.img} width="300"/>

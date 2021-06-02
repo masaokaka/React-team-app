@@ -30,6 +30,7 @@ export const FETCHUSERINFO = "fetchuserinfo";
 //注文履歴
 export const FETCHORDER = "fetchorder";
 export const UPDATEORDER = "updateorder";
+export const UNSETORDER = "unsetorder";
 
 export const sidenav = (onClose) => ({
   type: SIDENAV,
@@ -253,6 +254,12 @@ export const fetchorder = (uid) => (dispatch) => {
 export const updateorder = (orders) => ({
   type: UPDATEORDER,
   orderInfo: orders,
+});
+
+//オーダー情報の削除
+export const unsetorder = () => ({
+  type: UNSETORDER,
+  orderInfo: [],
 });
 
 //ユーザー情報取得処理

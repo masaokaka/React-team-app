@@ -14,12 +14,15 @@ import { AdminItems } from "../components/admins/AdminItems";
 import { AdminUsers } from "../components/admins/AdminUsers";
 import { AdminUserEdit } from "../components/admins/AdminUserEdit";
 import { AdminToppings } from "../components/admins/AdminToppings";
-import { Box, Grid } from "@material-ui/core";
+import { Grid,Divider } from "@material-ui/core";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
+const useStyles = makeStyles(() => ({
+  link: {
+    color: "black",
+    '&:hover': {
+       color: "orange",
+    },
+    textDecoration:"none",
   },
 }));
 
@@ -43,19 +46,24 @@ export const AdminHome = () => {
   return (
     <React.Fragment>
       <Router>
-        <Box>
-          <Grid container>
-            <Grid item>
-              <Link to={`${match.url}/users`}>ユーザー情報管理</Link>
-            </Grid>
-            <Grid item>
-              <Link to={`${match.url}/items`}>商品情報管理</Link>
-            </Grid>
-            <Grid item>
-              <Link to={`${match.url}/toppings`}>トッピング情報管理</Link>
-            </Grid>
-          </Grid>
-        </Box>
+        <ul>
+          <li>
+            <Link to={`${match.url}/users`} className={classes.link}>
+              <h4>ユーザー情報</h4>
+            </Link>
+          </li>
+          <li>
+            <Link to={`${match.url}/items`} className={classes.link}>
+              <h4>商品情報</h4>
+            </Link>
+          </li>
+          <li>
+            <Link to={`${match.url}/toppings`} className={classes.link}>
+              <h4>トッピング情報</h4>
+            </Link>
+          </li>
+        </ul>
+        <Divider/>
         <Switch>
           <Route
             path={`${match.path}/users/:userid`}
