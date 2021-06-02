@@ -25,24 +25,29 @@ export const AdminItems = () => {
   const [img, setImg] = useState();
   const dispatch = useDispatch();
   const items = useSelector((state) => state.items);
+  const [counter, setCounter] = useState(0);
 
   const doAddItem = () => {
     if (id && name && text && mprice && lprice && img) {
-      let item = {
-        id: parseInt(id),
-        name: name,
-        text: text,
-        mprice: parseInt(mprice),
-        lprice: parseInt(lprice),
-        img: img,
-      };
-      dispatch(additem(item, items));
-      setId("");
-      setName("");
-      setText("");
-      setMprice("");
-      setLprice("");
-      setImg("");
+      if (img.type.match("image.*")) {
+        let item = {
+          id: parseInt(id),
+          name: name,
+          text: text,
+          mprice: parseInt(mprice),
+          lprice: parseInt(lprice),
+          img: img,
+        };
+        dispatch(additem(item, items));
+      } else {
+        alert("画像の形式が間違っています")
+      }
+        setId("");
+        setName("");
+        setText("");
+        setMprice("");
+        setLprice("");
+        setCounter((current) => current + 1);
     } else {
       alert("全ての項目を入力してください");
     }
@@ -54,7 +59,7 @@ export const AdminItems = () => {
     setText("");
     setMprice("");
     setLprice("");
-    setImg("");
+    setCounter(current => current +1)
   };
   //画面マウント時に実行
   useEffect(() => {
@@ -95,10 +100,12 @@ export const AdminItems = () => {
           onChange={(e) => setLprice(e.target.value)}
           value={lprice}
         />
-        <InputLabel htmlFor="icon-button-file">画像：
+        <InputLabel htmlFor="icon-button-file">
+          画像：
           <Input
             id="icon-button-file"
             type="file"
+            key={counter}
             onChange={(e) => setImg(e.target.files[0])}
           />
         </InputLabel>
