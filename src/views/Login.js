@@ -5,6 +5,12 @@ import { auth, sessionPersistance } from "../firebase/index";
 import { Link } from "react-router-dom";
 import { fetchcart, updatecart, createcart } from "../actions";
 import { db } from "../firebase/index";
+import {
+  TextField,
+  Button,
+  Container,
+  Box,
+} from "@material-ui/core";
 
 export const Login = () => {
   const [email,setEmail]= useState('')
@@ -127,14 +133,44 @@ export const Login = () => {
     }
   };
   return (
-    <div>
-      <p>{emailError}</p>
-      <input type="email" onChange={(e) => ClearEmail(e)} />
-      <p>{passwordError}</p>
-      <input type="password" onChange={(e) => ClearPassword(e)} />
-      <button onClick={doLogin}>ログイン</button>
+    <Container maxWidth='sm'>
+      <Box mt={3} textAlign='center'>
+                <Box>
+                    <TextField
+                            label="メールアドレス"
+                            type="email"
+                            onChange={(e) => ClearEmail(e)}
+                            helperText={emailError}
+                            width={400}
+                          />
+                </Box>
+                
+                <Box>
+                    <TextField
+                            label="パスワード"
+                            type="password"
+                            onChange={(e) => ClearPassword(e)}
+                            helperText={passwordError}
+                          />   
+                </Box>
+      </Box>
+
+
+      <Box mt={5} textAlign='right'>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={doLogin}
+            >
+              ログイン
+            </Button>
+      </Box>
+      
       <p style={{ color: "red" }}>{errorText}</p>
-      <Link to="/register">ユーザー登録はこちら</Link>
-    </div>
+      <Box textAlign='center'>
+          <Link to="/register">ユーザー登録はこちら</Link>
+      </Box>
+      
+    </Container>
   );
 };
