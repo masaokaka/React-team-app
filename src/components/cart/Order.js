@@ -50,8 +50,8 @@ export const Order = (props) => {
     email: "",
     cardNo: "",
     date: "",
-    payment: "",
-    status: "",
+    payment: "ORDER_STATUS_UNPAID",
+    status: "ORDER_STATUS_UNPAID",
     tel: "",
     zip: "",
   });
@@ -285,7 +285,6 @@ export const Order = (props) => {
     let toppingsBox =[]
     let orderInfoBox =[]
     props.cartInfo.itemInfo.forEach(iteminfo => {
-      console.log(iteminfo) 
       iteminfo.toppings.forEach(topping => {
         toppings.forEach((toppingData)=>{
           if(topping.toppingId === toppingData.id){
@@ -295,25 +294,20 @@ export const Order = (props) => {
       })
       items.forEach(item => {
         if(item.id === iteminfo.itemId){
-          console.log(item)
           orderInfoBox.push(`・【${item.name} ${iteminfo.itemSize === 0 ? '(M)':'(L)'}】,【（トッピング）：${toppingsBox.join()}】数量:${iteminfo.itemNum}<br>`)
         }
       });
     })
-    console.log(itemInfoForEmailBox)
     const EmailAddress = userdata.email
     const nameForEmail = userdata.name
     const addressForEmail = userdata.address
     const telForEmail = userdata.tel
-    
     let paymentForEmail = ''
-    let totalPriceForEmail = ''
+    let totalPriceForEmail = userdata.totalPrice
     if (userdata.payment === 'cash'){
       paymentForEmail = '代金引換'
-      totalPriceForEmail = userdata.totalPrice
     }else if (userdata.payment === 'credit'){
       paymentForEmail = 'クレジットカード決済'
-      totalPriceForEmail = userdata.totalPrice
     }
     const EmailText = `${nameForEmail}様<br>
     今回はラクラクカレーをご利用頂き誠にありがとうございました。<br>
@@ -333,15 +327,16 @@ export const Order = (props) => {
       From : "okawara0618.info@gmail.com",
       Subject : "購入確認メール",
       Body : `${EmailText}`
-  }).then(
+    }).then(
       () => alert('ご注文確認メールを送信しました')
-    )
-  }
-
-  //checkCardで取得したinputのvalueがcash(代引き)ならstatus=1,credit(クレカ)ならstatus=2
-  const confirmOrder = () => {
-    let check = checkInput();
-    if (check) {
+      )
+    }
+    
+    //checkCardで取得したinputのvalueがcash(代引き)ならstatus=1,credit(クレカ)ならstatus=2
+    const confirmOrder = () => {
+      
+      let check = checkInput();
+      if (check) {
       if (window.confirm("注文してもよろしいですか？")) {
         //とってきたデータそのままだとなぜかstatusがundefinedになるので入れ替えしている。
         if (userdata.status === undefined) {
@@ -350,7 +345,7 @@ export const Order = (props) => {
         let now = new Date();
         userdata.orderDate = now.getTime();
         userdata.totalPrice = props.totalPrice;
-        dispatch(order(userdata, props.user.uid, props.cartInfo.id));
+        // dispatch(order(userdata, props.user.uid, props.cartInfo.id));
         sendEmail()
         handleLink("/ordercomp");
       }
