@@ -182,7 +182,6 @@ export const Register = () => {
       setConfirmFlag(true);
     }
   };
-
   //ユーザー登録処理（エラー文の実装の余地あり）
   const handleRegist = () => {
     let listElements = Array.from(document.getElementsByTagName("input"));
@@ -213,27 +212,26 @@ export const Register = () => {
             valueList.userId = user.uid;
           }
         })
-        .then(
-          () => {
-            db.collection(`users/${uid}/userInfo`).add(valueList);
-            //新しく追加しました（管理者テーブルへの情報追加
-            db.collection(`admin/${ADMIN_ID}/user`)
-              .doc(USERS_TABLE_ID)
-              .update({
-                users: firebase.firestore.FieldValue.arrayUnion(valueList),
-              });
-            handleLink("/");
-          },
-          (error) => {
-            if (
-              error.message ===
-              "The email address is already in use by another account."
-            ) {
-              console.log(error.message);
-              setEmailError("※このメールアドレスはすでに使われています");
-            }
+        .then(() => {
+          db.collection(`users/${uid}/userInfo`).add(valueList);
+          //新しく追加しました（管理者テーブルへの情報追加
+          db.collection(`admin/${ADMIN_ID}/user`)
+          .doc(USERS_TABLE_ID)
+          .update({
+            users: firebase.firestore.FieldValue.arrayUnion(valueList),
+          });
+          handleLink("/");
+        },
+        error=>{
+          if(error.message === 'The email address is already in use by another account.'){
+            console.log(error.message)
+            setEmailError('※このメールアドレスはすでに使われています')
+          }else{
+            alert('入力に不備があります');
           }
-        );
+        });
+    }else{
+      alert('入力に不備があります');
     }
   };
 

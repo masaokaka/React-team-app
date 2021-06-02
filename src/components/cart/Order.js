@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import {
   Button,
@@ -20,6 +21,7 @@ import {
   ORDER_STATUS_UNPAID,
   TOKEN_CHECK,
 } from "../../status/index";
+import {sendEmail} from '../../status/functions'
 
 export const Order = (props) => {
   //バリデージョン
@@ -39,6 +41,10 @@ export const Order = (props) => {
   const [timeFlag, setTimeFlag] = useState(false);
   const [paymentFlag, setPaymentFlag] = useState(ORDER_STATUS_UNPAID); //支払い方法の判定用 1ならカード 2なら代引き
   const [creditShowFlag, setcreditShowFlag] = useState(false);
+  const items = useSelector((state) => state.items);
+  const toppings = useSelector(state => state.toppings);
+
+  //firestoreからデータ取得
   const [userdata, setUserdata] = useState({
     name: "",
     address: "",
@@ -274,16 +280,19 @@ export const Order = (props) => {
     }
   };
 
-  //checkCardで取得したinputのvalueがcash(代引き)ならstatus=1,credit(クレカ)ならstatus=2
-  const confirmOrder = () => {
-    let check = checkInput();
-    if (check) {
+
+    
+    //checkCardで取得したinputのvalueがcash(代引き)ならstatus=1,credit(クレカ)ならstatus=2
+    const confirmOrder = () => {
+      let check = checkInput();
+      if (check) {
       if (window.confirm("注文してもよろしいですか？")) {
         //とってきたデータそのままだとなぜかstatusがundefinedになるので入れ替えしている。
         let now = new Date();
         userdata.orderDate = now.getTime();
         userdata.totalPrice = props.totalPrice;
         dispatch(order(userdata, props.user.uid, props.cartInfo.id));
+        sendEmail(props,toppings,items,userdata)
         handleLink(`/ordercomp/${TOKEN_CHECK}`);
       }
     } else {

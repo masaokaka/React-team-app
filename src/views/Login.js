@@ -7,13 +7,13 @@ import { fetchcart, updatecart, createcart } from "../actions";
 import { db } from "../firebase/index";
 
 export const Login = () => {
-  const [email, setEmail] = useState([]);
-  const [emailError, setEmailError] = useState("");
-  const [emailFlag, setEmailFlag] = useState(true);
-  const [password, setPassword] = useState([]);
-  const [passwordError, setPasswordError] = useState("");
-  const [passwordFlag, setPasswordFlag] = useState(true);
-  const [errorText, setErrorText] = useState("");
+  const [email,setEmail]= useState('')
+  const [emailError,setEmailError]= useState('')
+  const [emailFlag,setEmailFlag] = useState(true)
+  const [password,setPassword]= useState('')
+  const [passwordError,setPasswordError]= useState('')
+  const [passwordFlag,setPasswordFlag] = useState(true)
+  const [errorText,setErrorText] = useState('');
   const history = useHistory();
   const dispatch = useDispatch();
   const cartInfo = useSelector((state) => state.cartinfo);
@@ -63,14 +63,13 @@ export const Login = () => {
   };
 
   const doLogin = () => {
-    if (emailFlag && passwordFlag) {
-      //ローカルストレージにアイテムがあった時
-      let itemInfo = JSON.parse(localStorage.getItem("itemInfo"));
-      //ログイン処理
-      auth.setPersistence(sessionPersistance).then(() => {
-        auth
-          .signInWithEmailAndPassword(email, password)
-          .then((user) => {
+    if(emailFlag && passwordFlag){
+      if(email !== '' && password !== '' ){
+        //ローカルストレージにアイテムがあった時
+        let itemInfo = JSON.parse(localStorage.getItem("itemInfo"));
+        //ログイン処理
+        auth.setPersistence(sessionPersistance).then(() => {
+          auth.signInWithEmailAndPassword(email, password).then((user) => {
             //ローカルにアイテムが保存されていた場合はdbのカートへ追加もしくは新規カート作成を行う
             if (itemInfo) {
               db.collection(`users/${user.user.uid}/orders`)
@@ -118,9 +117,11 @@ export const Login = () => {
             } else {
               history.push("/");
             }
-          })
-          .catch(() => setErrorText("ログインに失敗しました"));
-      });
+          }).catch(() => alert('メールアドレスかパスワード、またはその両方がが間違っています'))
+        }); 
+      }
+    }else {
+      alert('入力に誤りがあります');
     }
   };
   return (
