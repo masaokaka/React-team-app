@@ -21,6 +21,7 @@ import {
   ORDER_STATUS_UNPAID,
   TOKEN_CHECK,
 } from "../../status/index";
+import {sendEmail} from '../../status/functions'
 
 export const Order = (props) => {
   //バリデージョン
@@ -50,8 +51,8 @@ export const Order = (props) => {
     email: "",
     cardNo: "",
     date: "",
-    payment: "ORDER_STATUS_UNPAID",
-    status: "ORDER_STATUS_UNPAID",
+    payment: ORDER_STATUS_UNPAID,
+    status: ORDER_STATUS_UNPAID,
     tel: "",
     zip: "",
   });
@@ -64,7 +65,11 @@ export const Order = (props) => {
     db.collection(`users/${props.user.uid}/userInfo`)
       .get()
       .then((snapShot) => {
-        setUserdata(snapShot.docs[0].data());
+        setUserdata({
+          ...snapShot.docs[0].data(),
+          status: ORDER_STATUS_UNPAID,
+          payment: ORDER_STATUS_UNPAID,
+        });
       });
   }, []);
 
@@ -213,7 +218,7 @@ export const Order = (props) => {
       setPaymentFlag(ORDER_STATUS_PAID);
       setcreditShowFlag(true);
       setCreditcardError("クレジットカード番号を入力して下さい");
-    } else {
+    } else if (ORDER_STATUS_UNPAID) {
       setUserdata({
         ...userdata,
         status: ORDER_STATUS_UNPAID,
@@ -276,61 +281,6 @@ export const Order = (props) => {
   };
 
 
-  //メール送信の処理
-
-
- 
-  const sendEmail = () => {
-    let itemInfoForEmailBox =[]
-    let toppingsBox =[]
-    let orderInfoBox =[]
-    props.cartInfo.itemInfo.forEach(iteminfo => {
-      iteminfo.toppings.forEach(topping => {
-        toppings.forEach((toppingData)=>{
-          if(topping.toppingId === toppingData.id){
-            toppingsBox.push(`${toppingData.name}${topping.toppingSize === 0 ? '(M)':'(L)'}`)
-          }
-        })
-      })
-      items.forEach(item => {
-        if(item.id === iteminfo.itemId){
-          orderInfoBox.push(`・【${item.name} ${iteminfo.itemSize === 0 ? '(M)':'(L)'}】,【（トッピング）：${toppingsBox.join()}】数量:${iteminfo.itemNum}<br>`)
-        }
-      });
-    })
-    const EmailAddress = userdata.email
-    const nameForEmail = userdata.name
-    const addressForEmail = userdata.address
-    const telForEmail = userdata.tel
-    let paymentForEmail = ''
-    let totalPriceForEmail = userdata.totalPrice
-    if (userdata.payment === 'cash'){
-      paymentForEmail = '代金引換'
-    }else if (userdata.payment === 'credit'){
-      paymentForEmail = 'クレジットカード決済'
-    }
-    const EmailText = `${nameForEmail}様<br>
-    今回はラクラクカレーをご利用頂き誠にありがとうございました。<br>
-    ご注文が確定致しましたので下記の内容をご確認下さい<br>
-    【ご注文者様】${nameForEmail}様
-    <br>【ご注文商品】
-    <br>${orderInfoBox.join()}
-    <br>【お届け先】${addressForEmail}
-    <br>【お電話番号】${telForEmail}
-    <br>【お支払方法】${paymentForEmail}
-    <br>【合計金額】${totalPriceForEmail * 1.1}円（税込み）`
-    window.Email.send({
-      Host : "smtp.elasticemail.com",
-      Username : "okawara0618.info@gmail.com",
-      Password : "14621B1362D6BFA0C786DF4C0118F9737D5A",
-      To : `${EmailAddress}`,
-      From : "okawara0618.info@gmail.com",
-      Subject : "購入確認メール",
-      Body : `${EmailText}`
-    }).then(
-      () => alert('ご注文確認メールを送信しました')
-      )
-    }
     
     //checkCardで取得したinputのvalueがcash(代引き)ならstatus=1,credit(クレカ)ならstatus=2
     const confirmOrder = () => {
@@ -338,16 +288,14 @@ export const Order = (props) => {
       let check = checkInput();
       if (check) {
       if (window.confirm("注文してもよろしいですか？")) {
+        console.log(userdata)
         //とってきたデータそのままだとなぜかstatusがundefinedになるので入れ替えしている。
-        if (userdata.status === undefined) {
-          userdata.status = 1;
-        }
         let now = new Date();
         userdata.orderDate = now.getTime();
         userdata.totalPrice = props.totalPrice;
-        // dispatch(order(userdata, props.user.uid, props.cartInfo.id));
-        sendEmail()
-        handleLink("/ordercomp");
+        dispatch(order(userdata, props.user.uid, props.cartInfo.id));
+        sendEmail(props,toppings,items,userdata)
+        handleLink(`/ordercomp"/${TOKEN_CHECK}`);
       }
     } else {
       alert("入力内容にエラーがあります");
