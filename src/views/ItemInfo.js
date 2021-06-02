@@ -6,7 +6,7 @@ import { fetchitems, fetchtoppings } from "../actions";
 import { createcart, fetchcart, updatecart } from "../actions";
 import { useHistory } from "react-router-dom";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import { Button, Grid } from "@material-ui/core";
+import { Button, Grid, Select, MenuItem } from "@material-ui/core";
 export const ItemInfo = () => {
   const user = useSelector((state) => state.user);
   const cartInfo = useSelector((state) => state.cartinfo); //オブジェクト
@@ -55,7 +55,7 @@ export const ItemInfo = () => {
   const changeFlag = (e) => {
     if (toppingFlag[e.target.name] === false) {
       setToppingFlag({ ...toppingFlag, [e.target.name]: true });
-    } else if(toppingFlag[e.target.name] === true){
+    } else if (toppingFlag[e.target.name] === true) {
       //チェックボックスを閉じた時にトッピングの数は0になる
       const newToppingSize = {};
       setCalcToppingSize((prevSize) => {
@@ -213,7 +213,7 @@ export const ItemInfo = () => {
         <Grid container align="left" style={{ marginBottom: "50px" }}>
           <Grid item xs={6}>
             <Grid container justify="center">
-              <img src={itemRendering.img} width="400" />
+              <img src={itemRendering.img} width="300" />
             </Grid>
           </Grid>
           <Grid item xs={6}>
@@ -279,12 +279,18 @@ export const ItemInfo = () => {
           </Grid>
           <Grid item xs={6}>
             <Grid container>
-              <h5>※以下よりトッピングを選択してください</h5>
+              <h5 style={{ margin: "0" }}>
+                ※以下よりトッピングを選択してください
+              </h5>
             </Grid>
             <Grid container>
               {toppingsRendering.map((topping, index) => {
                 return (
-                  <Grid item key={index}>
+                  <Grid
+                    item
+                    key={index}
+                    style={{ marginBottom: "10px", marginLeft: "20px" }}
+                  >
                     <label>
                       <input
                         name={toppingsRendering[index].name}
@@ -331,58 +337,47 @@ export const ItemInfo = () => {
             </Grid>
           </Grid>
         </Grid>
-        <div className="row">
-          <div className="col-xs-offset-2 col-xs-8">
-            <div className="form-group">
-              <div className="row">
-                <div className="col-xs-5 col-sm-5">
-                  <label htmlFor="">数量:</label>
-                  <label className="control-label" htmlFor="inputError">
-                    数量を選択してください
-                  </label>
-                  <select
-                    className="area"
-                    className="form-control"
-                    onChange={(e) => {
-                      getSelectValue(e);
-                    }}
-                  >
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                    <option value="11">11</option>
-                    <option value="12">12</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <br />
-        <div className="row">
-          <div className="col-xs-offset-2 col-xs-10">
-            <div className="form-group">
-              <span id="total-price">この商品金額：{totalPrice} 円(税抜)</span>
-            </div>
-          </div>
-        </div>
+        <Grid container justify="center" style={{ marginTop: " 20px" }}>
+          <Grid item xs={2}>
+            <label>
+              <h4 style={{ margin: 0 }}>数量選択：</h4>
+            </label>
+          </Grid>
+          <Grid item xs={2}>
+            <Select
+              value={selectValue}
+              onChange={(e) => {
+                getSelectValue(e);
+              }}
+            >
+              <MenuItem value={1}>1</MenuItem>
+              <MenuItem value={2}>2</MenuItem>
+              <MenuItem value={3}>3</MenuItem>
+              <MenuItem value={4}>4</MenuItem>
+              <MenuItem value={5}>5</MenuItem>
+              <MenuItem value={6}>6</MenuItem>
+              <MenuItem value={7}>7</MenuItem>
+              <MenuItem value={8}>8</MenuItem>
+              <MenuItem value={9}>9</MenuItem>
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={11}>11</MenuItem>
+              <MenuItem value={12}>12</MenuItem>
+            </Select>
+          </Grid>
+          <Grid item xs={6}></Grid>
+        </Grid>
+        <h3>合計：{totalPrice} 円(税抜)</h3>
         <div className="row">
           <div className="col-xs-offset-2 col-xs-3">
             <div className="form-group">
               <p>
-                <button
-                  className="form-control btn btn-warning btn-block"
+                <Button
+                  variant="contained"
+                  color="primary"
                   onClick={() => doAddCart()}
                 >
                   カートに追加
-                </button>
+                </Button>
               </p>
             </div>
           </div>

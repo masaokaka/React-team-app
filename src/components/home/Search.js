@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchitems } from "../../actions";
 import Box from "@material-ui/core/Box";
-import { Grid, TextField,Container } from "@material-ui/core";
+import { Grid, TextField,Container,IconButton } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-import FormLabel from "@material-ui/core/FormLabel";
+import SearchIcon from "@material-ui/icons/Search";
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
 export const Search = (props) => {
@@ -50,53 +50,48 @@ export const Search = (props) => {
   };
 
   return (
-    <Container style={{marginTop:"30px"}}>
+    <Container style={{ marginTop: "30px" }}>
       <Box width="100%">
         <Box ml="16.66666667%" width="66.66666667%">
           <Box border={1} borderColor="#ddd" borderRadius={4} mb={2.5}>
-            <Box bgcolor="#f5f5f5" py={1.25} px={1.875}>
+            <Box
+              bgcolor="#f5f5f5"
+              py={1.25}
+              px={1.875}
+            >
               <Box fontSize={16}>商品を検索する</Box>
             </Box>
             <Box p={1.875} fontSize={14}>
               <Box>
                 <Box mx="auto" width="75%">
-                  <FormLabel htmlFor="text" className="control-label col-sm-2">
-                    商品名を入力してください
-                  </FormLabel>
-                  <Autocomplete 
-                    options={items.map(item => item.name)}
+                  <Autocomplete
+                    options={items.map((item) => item.name)}
                     inputValue={keyword}
                     onInputChange={(event, newInputValue) => {
-                      setKeyword(newInputValue)
+                      setKeyword(newInputValue);
                     }}
                     freeSolo
-                    renderInput={(params) => (<TextField　
-                      variant="outlined"
-                      py={1.25}
-                      px={1.875}
-                      fullWidth
-                      type="text"
-                      id="text"
-                      className="form-control input-sm"
-                      onChange={(e) => setKeyword(e.target.value)} {...params} 
-                      label='検索' />) }/>
-                  {/* <TextField
-                    variant="outlined"
-                    py={1.25}
-                    px={1.875}
-                    fullWidth
-                    type="text"
-                    value={keyword}
-                    id="text"
-                    className="form-control input-sm"
-                    onChange={(e) => setKeyword(e.target.value)}
-                  /> */}
+                    renderInput={(params) => (
+                      <TextField
+                        variant="outlined"
+                        py={1.25}
+                        px={1.875}
+                        fullWidth
+                        type="text"
+                        id="text"
+                        className="form-control input-sm"
+                        onChange={(e) => setKeyword(e.target.value)}
+                        {...params}
+                        label="商品名を入力してください"
+                      />
+                    )}
+                  />
                 </Box>
                 <Box>{error && <Box color="red">{error}</Box>}</Box>
                 <Box mx="auto" width="50%">
                   <Grid container justify="center">
                     <Grid item xs={3}>
-                      <Button
+                      <IconButton
                         variant="contained"
                         color="primary"
                         size="medium"
@@ -104,12 +99,12 @@ export const Search = (props) => {
                         className="btn btn-primary"
                         onClick={searchKeyword}
                       >
-                        検索
-                      </Button>
+                        <SearchIcon/>
+                      </IconButton>
                     </Grid>
                     <Grid item xs={3}>
                       <Button
-                        variant="contained"
+                        variant="outlined"
                         value="クリア"
                         size="medium"
                         className="btn btn-default"

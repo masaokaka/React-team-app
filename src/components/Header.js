@@ -10,6 +10,11 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
+import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
+import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
+import HistoryIcon from "@material-ui/icons/History";
+import MeetingRoomIcon from "@material-ui/icons/MeetingRoom";
+import MeetingRoomOutlinedIcon from "@material-ui/icons/MeetingRoomOutlined";
 import { ADMIN_ID } from "../status/index";
 import { db } from "../firebase/index";
 
@@ -18,7 +23,10 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   menuButton: {
-    marginRight: theme.spacing(2),
+    marginReft: theme.spacing(2),
+  },
+  Button: {
+    marginLeft: theme.spacing(2),
   },
   title: {
     flexGrow: 1,
@@ -53,8 +61,8 @@ export const Header = () => {
         });
     }
     return () => {
-      setUserInfo(null)
-    }
+      setUserInfo(null);
+    };
   }, [user]);
 
   return (
@@ -76,37 +84,40 @@ export const Header = () => {
             </Link>
           </Typography>
           <div>
-            {userInfo && <span>ようこそ{userInfo.name}さん</span>}
+            {userInfo && <spna>ようこそ{userInfo.name}さん</spna>}
             {user && user.uid === ADMIN_ID && (
-              <Button
-                variant="contained"
+              <IconButton
+                className={classes.Button}
                 onClick={() => history.push("/admin/users")}
               >
-                管理画面
-              </Button>
+                <SupervisorAccountIcon />
+              </IconButton>
             )}
-            <Button variant="contained" onClick={() => history.push("/cart")}>
-              カート
-            </Button>
+            <IconButton
+              className={classes.Button}
+              onClick={() => history.push("/cart")}
+            >
+              <ShoppingCartIcon />
+            </IconButton>
             {user && (
-              <Button
-                variant="contained"
+              <IconButton
+                className={classes.Button}
                 onClick={() => history.push("/orderhistory")}
               >
-                注文履歴
-              </Button>
+                <HistoryIcon />
+              </IconButton>
             )}
             {user ? (
-              <Button variant="contained" onClick={doLogout}>
-                ログアウト
-              </Button>
+              <IconButton className={classes.Button} onClick={doLogout}>
+                <MeetingRoomOutlinedIcon />
+              </IconButton>
             ) : (
-              <Button
-                variant="contained"
+              <IconButton
+                className={classes.Button}
                 onClick={() => history.push("/login")}
               >
-                ログイン
-              </Button>
+                <MeetingRoomIcon />
+              </IconButton>
             )}
           </div>
         </Toolbar>
