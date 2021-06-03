@@ -13,7 +13,7 @@ export const sendEmail = (props,toppings,items,userdata) => {
       iteminfo.toppings.forEach(topping => {
         toppings.forEach((toppingData)=>{
           if(topping.toppingId === toppingData.id){
-            toppingsBox.push(`${toppingData.name}${topping.toppingSize === 0 ? '(M)':'(L)'}`)
+            toppingsBox.push(`${toppingData.name}${topping.toppingSize === 0 ? '(普通)':'(多め)'}`)
           }
         })
       })
