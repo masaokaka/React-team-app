@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Navigation, Autoplay } from "swiper";
+import { fetchitems } from "../../actions";
 import "swiper/swiper.min.css";
 import { makeStyles } from "@material-ui/core/styles";
 import {
@@ -16,7 +18,6 @@ SwiperCore.use([Autoplay]);
 
 const useStyles = makeStyles({
   root: {
-    width: 1000,
     alignItems: "center",
     margin: "20px",
   },
@@ -24,22 +25,24 @@ const useStyles = makeStyles({
 
 export const Slider = (props) => {
   const classes = useStyles();
-  const [item, setItem] = useState([...props.itemsData]);
+  const item = useSelector((state) => state.items);
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    setItem([...props.itemsData]);
+    dispatch(fetchitems());
   }, []);
 
   return (
     <Container style={{ marginTop: "30px" }}>
       {item.length > 0 ? (
         <Swiper
-          spaceBetween={40}
+          spaceBetween={20}
           slidesPerView={3}
           loop={true}
           autoplay={{
             delay: 5000,
           }}
-          clasName={classes.root}
+          className={classes.root}
         >
           {item.map((slideContent, index) => {
             return (

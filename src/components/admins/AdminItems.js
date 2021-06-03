@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchitems, additem } from "../../actions";
+import { fetchitems, additem, deleteitem } from "../../actions";
 import { Input, InputLabel } from "@material-ui/core";
 import {
   Table,
@@ -13,8 +13,9 @@ import {
   Button,
   Box,
 } from "@material-ui/core";
-import AddAPhotoIcon from "@material-ui/icons/AddAPhoto";
 import IconButton from "@material-ui/core/IconButton";
+import DeleteIcon from "@material-ui/icons/Delete";
+import PublishIcon from "@material-ui/icons/Publish";
 
 export const AdminItems = () => {
   const [id, setId] = useState();
@@ -40,14 +41,14 @@ export const AdminItems = () => {
         };
         dispatch(additem(item, items));
       } else {
-        alert("画像の形式が間違っています")
+        alert("画像の形式が間違っています");
       }
-        setId("");
-        setName("");
-        setText("");
-        setMprice("");
-        setLprice("");
-        setCounter((current) => current + 1);
+      setId("");
+      setName("");
+      setText("");
+      setMprice("");
+      setLprice("");
+      setCounter((current) => current + 1);
     } else {
       alert("全ての項目を入力してください");
     }
@@ -59,8 +60,17 @@ export const AdminItems = () => {
     setText("");
     setMprice("");
     setLprice("");
-    setCounter(current => current +1)
+    setCounter((current) => current + 1);
   };
+
+  const deleteItem = (index) => {
+    if (window.confirm(`「${items[index].name}」を削除しますか？`)) {
+      let newItems = [...items];
+      newItems.splice(index, 1);
+      dispatch(deleteitem(newItems));
+    }
+  };
+
   //画面マウント時に実行
   useEffect(() => {
     dispatch(fetchitems());
@@ -110,9 +120,9 @@ export const AdminItems = () => {
           />
         </InputLabel>
         <Box>
-          <Button color="primary" variant="contained" onClick={doAddItem}>
-            登録
-          </Button>
+          <IconButton color="primary" variant="contained" onClick={doAddItem}>
+            <PublishIcon />
+          </IconButton>
           <Button variant="contained" onClick={clearInput}>
             クリア
           </Button>
@@ -125,22 +135,28 @@ export const AdminItems = () => {
                   <TableCell>ID</TableCell>
                   <TableCell>商品名</TableCell>
                   <TableCell>画像</TableCell>
-                  <TableCell>テキスト</TableCell>
+                  <TableCell width={500}>テキスト</TableCell>
                   <TableCell>価格(M)</TableCell>
                   <TableCell>価格(L)</TableCell>
+                  <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {items.map((item, index) => (
-                  <TableRow key={index}>
+                  <TableRow key={index} colSpan={12}>
                     <TableCell>{item.id}</TableCell>
                     <TableCell>{item.name}</TableCell>
                     <TableCell>
                       <img src={item.img} alt="カレー" width="100px" />
                     </TableCell>
-                    <TableCell>{item.text}</TableCell>
+                    <TableCell width={500}>{item.text}</TableCell>
                     <TableCell>{item.mprice}円</TableCell>
                     <TableCell>{item.lprice}円</TableCell>
+                    <TableCell>
+                      <IconButton onClick={() => deleteItem(index)}>
+                        <DeleteIcon></DeleteIcon>
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

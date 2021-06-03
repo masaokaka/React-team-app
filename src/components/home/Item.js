@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useHistory,Link } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
@@ -40,14 +40,17 @@ export const Item = (props) => {
             image={props.item.img}
             title={props.item.name}
           />
+          <CardContent>
+            <Typography
+              style={{
+                color: "black",
+              }}
+            >
+              {props.item.name}
+            </Typography>
+          </CardContent>
         </CardActionArea>
-        <CardContent style={{paddingTop:"0"}}>
-          <Link style={{
-            textDecoration: "none",
-            color:"black"
-          }}>
-            <h4>{props.item.name}</h4>
-          </Link>
+        <CardContent style={{ paddingTop: "0" }}>
           <Typography variant="body2" color="textPrimary" component="div">
             <Grid container>
               <Grid item xs={6}>
