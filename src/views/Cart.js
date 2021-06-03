@@ -129,11 +129,13 @@ export const Cart = () => {
                               )}
                             </TableCell>
                             {/* 削除ボタン */}
-                            <DeleteButton
-                              cartInfo={cartInfo}
-                              user={user}
-                              index={index}
-                            />
+                            {!show &&
+                              <DeleteButton
+                                cartInfo={cartInfo}
+                                user={user}
+                                index={index}
+                              />
+                            }
                           </TableRow>
                         )
                     )
