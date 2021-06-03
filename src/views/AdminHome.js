@@ -14,7 +14,8 @@ import { AdminItems } from "../components/admins/AdminItems";
 import { AdminUsers } from "../components/admins/AdminUsers";
 import { AdminUserEdit } from "../components/admins/AdminUserEdit";
 import { AdminToppings } from "../components/admins/AdminToppings";
-import { Grid, Divider } from "@material-ui/core";
+import { Grid, Divider, IconButton, Box } from "@material-ui/core";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ScrollToTop from "../components/ScrollToTop";
 
 const useStyles = makeStyles(() => ({
@@ -46,6 +47,14 @@ export const AdminHome = () => {
 
   return (
     <React.Fragment>
+      <Box>
+        <IconButton
+          styel={{ marginBottom: "20px" }}
+          onClick={() => history.push("/")}
+        >
+          <ArrowBackIcon />
+        </IconButton>
+      </Box>
       <Router>
         <ul>
           <li>

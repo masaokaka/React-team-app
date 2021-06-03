@@ -1,10 +1,10 @@
-import { ADDITEMS } from "../actions";
+import { UPDATEITEMS } from "../actions";
 
 const initialState = [];
 
 export const items = (state = initialState, action) => {
   switch (action.type) {
-    case ADDITEMS:
+    case UPDATEITEMS:
       return action.itemData;
     default:
       return state;

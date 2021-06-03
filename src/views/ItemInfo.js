@@ -261,7 +261,7 @@ export const ItemInfo = () => {
               </label>
             </Grid>
           </Grid>
-          <Grid xs={6}></Grid>
+          <Grid item xs={6}></Grid>
         </Grid>
         <Grid container justify="center" style={{ marginTop: " 20px" }}>
           <Grid item xs={2}>

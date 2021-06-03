@@ -7,11 +7,12 @@ export const SIDENAV = "sidenav";
 export const SETUSER = "setuser";
 export const UNSETUSER = "unsetuser";
 // 商品データ
-export const ADDITEMS = "additem";
+export const UPDATEITEMS = "additem";
 export const FETCHITEMS = "fetchitems";
+export const DELETEITEM = "deleteitem";
 //トッピングデータ
 export const FETCHTOPPINGS = "fetchtoppings";
-export const ADDTOPPINGS = "addtopping";
+export const UPDATETOPPINGS = "updatetopping";
 
 //カート
 export const CREATECART = "createcart";
@@ -55,7 +56,7 @@ export const fetchitems = () => (dispatch) => {
     .then((snapShot) => {
       snapShot.forEach((doc) => {
         dispatch({
-          type: ADDITEMS,
+          type: UPDATEITEMS,
           itemData: doc.data().itemData, //配列
         });
       });
@@ -74,12 +75,24 @@ export const additem = (item, items) => (dispatch) => {
         .update({ itemData: newitems })
         .then(() => {
           dispatch({
-            type: ADDITEMS,
+            type: UPDATEITEMS,
             itemData: newitems,
           });
         });
     });
   });
+};
+//管理者dbへの商品情報削除処理
+export const deleteitem = (newItems) => (dispatch) => {
+  db.collection(`admin/${ADMIN_ID}/item`)
+    .doc(ITEMS_TABLE_ID)
+    .update({ itemData: newItems })
+    .then(() => {
+      dispatch({
+        type: UPDATEITEMS,
+        itemData: newItems,
+      });
+    });
 };
 
 //管理者dbからトッピング情報をとってくる処理ーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
@@ -89,20 +102,20 @@ export const fetchtoppings = () => (dispatch) => {
     .then((snapShot) => {
       snapShot.forEach((doc) => {
         dispatch({
-          type: ADDTOPPINGS,
+          type: UPDATETOPPINGS,
           toppingData: doc.data().toppingData, //配列
         });
       });
     });
 };
 //管理者dbへのトッピング情報追加処理
-export const addtopping = (newtoppings) => (dispatch) => {
+export const updatetopping = (newtoppings) => (dispatch) => {
   db.collection(`admin/${ADMIN_ID}/topping`)
     .doc(TOPPINGS_TABLE_ID)
     .update({ toppingData: newtoppings })
     .then(() => {
       dispatch({
-        type: ADDTOPPINGS,
+        type: UPDATETOPPINGS,
         toppingData: newtoppings,
       });
     });
