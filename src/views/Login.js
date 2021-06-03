@@ -156,7 +156,7 @@ export const Login = () => {
       </Box>
 
 
-      <Box mt={5} textAlign='right'>
+      <Box mt={5} textAlign='center'>
             <Button
               variant="contained"
               color="secondary"
