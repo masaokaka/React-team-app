@@ -47,6 +47,7 @@ export const OrderHistory = () => {
   useEffect(() => {
     if (user) {
       dispatch(fetchorder(user.uid));
+      return () => dispatch(fetchorder(null));
     }
   }, [user]);
 
